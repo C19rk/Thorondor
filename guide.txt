@@ -1,0 +1,21 @@
+==GitHub create a new repository on the command line==
+git init
+git add .
+git commit -m "commit"
+git branch -M main
+git remote add origin https://github.com/C19rk/Thorondor.git
+git push -u origin main
+
+==GitHub push an existing repository from the command line=
+git remote add origin https://github.com/C19rk/Thorondor.git
+git branch -M main
+git push -u origin main
+
+==Use installed python 3.10 venv==
+.\venv\Scripts\activate
+
+==deactivate venv==
+deactivate
+
+==where is python?==
+Get-Command python

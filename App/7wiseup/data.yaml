@@ -1,0 +1,5 @@
+train: 7wiseup/images/train
+val: 7wiseup/images/val
+
+nc: 5
+names: ["normal", "looking_away", "head_down", "talking", "phone"]
