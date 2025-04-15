@@ -1,0 +1,7 @@
+path: C:/Users/Administrator/Desktop/VSCode/Research Project/Thorondor/data
+
+train: images/train
+val: images/val
+
+nc: 3
+names: ["normal", "looking_away", "using_phone"]

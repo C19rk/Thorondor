@@ -11,11 +11,24 @@ git remote add origin https://github.com/C19rk/Thorondor.git
 git branch -M main
 git push -u origin main
 
-==Use installed python 3.10 venv==
+
+==Use installed venv==
 .\venv\Scripts\activate
 
 ==deactivate venv==
 deactivate
 
+
 ==where is python?==
 Get-Command python
+
+
+
+
+
+==train yolo==
+yolo detect train data=cheating.yaml model=yolov8n.pt epochs=50 imgsz=640
+
+
+==To Run the App==
+python detect_cheating.py
