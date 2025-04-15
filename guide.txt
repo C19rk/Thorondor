@@ -12,6 +12,16 @@ git branch -M main
 git push -u origin main
 
 
+==remove old venv==
+Remove-Item -Recurse -Force ".\venv"
+
+
+==installing venv and requirements==
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+
+
 ==Use installed venv==
 .\venv\Scripts\activate
 
@@ -23,12 +33,18 @@ deactivate
 Get-Command python
 
 
+==where is yolo?==
+Get-Command yolo
 
 
-
-==train yolo==
+==to begin training yolo==
+.\venv\Scripts\activate
+cd Thorondor/App/yolo
+--or--
+cd App/yolo
 yolo detect train data=cheating.yaml model=yolov8n.pt epochs=50 imgsz=640
 
 
-==To Run the App==
+==To Run something like a script==
 python detect_cheating.py
+python generate_synthetic_dataset.py
