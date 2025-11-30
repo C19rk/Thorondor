@@ -1,10 +1,19 @@
 from flask import Flask, Response, render_template_string
-import cv2, threading, time, logging
+import cv2, threading, time, logging, csv
+from datetime import datetime
 from ultralytics import YOLO
 
 app = Flask(__name__)
 
 # === Logging Setup ===
+csv_file = "detections.csv"
+with open(csv_file, "a", newline="") as f:
+    writer = csv.writer(f)
+    f.seek(0, 2)
+    if f.tell() == 0:
+        writer.writerow(["timestamp", "camera", "object", "confidence", "x1", "y1", "x2", "y2"])
+
+
 log_file = "detections.log"
 logging.basicConfig(
     filename=log_file,
@@ -19,9 +28,9 @@ yolo = YOLO("../App/runs/aidetection7/weights/best.pt")
 camera_sources = {
     # "cam1: "rtsp://username:password@tapo_ip_address:554/stream1", (strem 1 for hd 2 for low)"
     # Connect to the same 2.4 GHz network as the camera
-    "cam1": "rtsp://camera1:camera1234@192.168.254.109:554/stream2",
-    "cam2": "rtsp://camera1:camera1234@192.168.254.109:554/stream2",
-    "cam3": "rtsp://camera1:camera1234@192.168.254.109:554/stream2",
+    "cam1": "rtsp://camera1:camera1234@192.168.0.100:554/stream2",
+    "cam2": "rtsp://camera1:camera1234@192.168.0.100:554/stream2",
+    "cam3": "rtsp://camera1:camera1234@192.168.0.100:554/stream2",
 }
 
 # === Shared frame storage for low latency ===
@@ -50,7 +59,7 @@ def generate_frames(cam_name):
             time.sleep(0.01)
             continue
 
-        results = yolo.predict(frame, imgsz=640, conf=0.25)
+        results = yolo.predict(frame, imgsz=640, conf=0.75)
         for r in results:
             for box in r.boxes:
                 cls = int(box.cls[0].item())
@@ -62,6 +71,18 @@ def generate_frames(cam_name):
                 cv2.putText(frame, f"{label} {conf:.2f}", (x1,y1-10),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
                 logging.info(f"[{cam_name}] Detected {label} ({conf:.2f}) at [{x1},{y1},{x2},{y2}]")
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+
+                # --- Write to CSV ---
+                with open(csv_file, "a", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow([timestamp, cam_name, label, conf, x1, y1, x2, y2])
+
+                # --- Write human-readable log for SSE panel ---
+                readable_line = f"{timestamp} - [{cam_name}] Detected {label} ({conf:.2f}) at [{x1},{y1},{x2},{y2}]"
+
+                with open("detections.log", "a") as f:
+                    f.write(readable_line + "\n")
 
         ret, buffer = cv2.imencode('.jpg', frame)
         if not ret:
