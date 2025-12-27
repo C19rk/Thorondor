@@ -23982,3 +23982,2150 @@ AttributeError: module 'datetime' has no attribute 'now'
 2025-11-25 21:44:53.463 - [cam1] Detected watch (0.33) at [2,6,404,360]
 2025-11-25 21:44:53,586 - [cam1] Detected watch (0.34) at [2,6,404,360]
 2025-11-25 21:44:53.586 - [cam1] Detected watch (0.34) at [2,6,404,360]
+2025-11-30 13:50:52,611 - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-11-30 13:50:52,612 - [33mPress CTRL+C to quit[0m
+2025-11-30 13:51:32,858 - 127.0.0.1 - - [30/Nov/2025 13:51:32] "GET / HTTP/1.1" 200 -
+2025-11-30 13:51:44,548 - 127.0.0.1 - - [30/Nov/2025 13:51:44] "GET / HTTP/1.1" 200 -
+2025-11-30 13:51:44,590 - 127.0.0.1 - - [30/Nov/2025 13:51:44] "GET /log_stream HTTP/1.1" 200 -
+2025-11-30 13:51:56,938 - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-11-30 13:51:56,939 - [33mPress CTRL+C to quit[0m
+2025-11-30 13:51:57,376 - 127.0.0.1 - - [30/Nov/2025 13:51:57] "GET / HTTP/1.1" 200 -
+2025-11-30 13:55:49,741 - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-11-30 13:55:49,742 - [33mPress CTRL+C to quit[0m
+2025-11-30 13:55:49,747 - 127.0.0.1 - - [30/Nov/2025 13:55:49] "GET / HTTP/1.1" 200 -
+2025-11-30 13:55:51,321 - [cam1] Pose label: looking_down
+2025-11-30 13:55:51,332 - 127.0.0.1 - - [30/Nov/2025 13:55:51] "GET /video/cam1 HTTP/1.1" 200 -
+2025-11-30 13:55:51,333 - 127.0.0.1 - - [30/Nov/2025 13:55:51] "GET /log_stream HTTP/1.1" 200 -
+2025-11-30 13:55:51,696 - [cam1] Pose label: looking_down
+2025-11-30 13:55:51,707 - 127.0.0.1 - - [30/Nov/2025 13:55:51] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-11-30 13:55:52,017 - [cam1] Pose label: looking_down
+2025-11-30 13:55:52,173 - [cam1] Detected smart_watch (0.58) at [213,22,529,474]
+2025-11-30 13:55:52,324 - [cam1] Pose label: looking_down
+2025-11-30 13:55:52,519 - [cam1] Detected smart_watch (0.54) at [216,26,521,474]
+2025-11-30 13:55:52,663 - [cam1] Pose label: looking_down
+2025-11-30 13:55:53,020 - [cam1] Pose label: looking_down
+2025-11-30 13:55:53,260 - [cam1] Pose label: looking_down
+2025-11-30 13:55:53,493 - [cam1] Pose label: looking_down
+2025-11-30 13:55:53,626 - [cam1] Detected smart_watch (0.60) at [224,88,458,439]
+2025-11-30 13:55:53,736 - [cam1] Pose label: looking_down
+2025-11-30 13:55:53,737 - [cam1] Pose label: looking_down
+2025-11-30 13:55:54,005 - [cam1] Pose label: looking_down
+2025-11-30 13:55:54,005 - [cam1] Pose label: facing_camera
+2025-11-30 13:55:54,511 - [cam1] Detected smart_watch (0.51) at [236,125,436,430]
+2025-11-30 13:55:54,656 - [cam1] Pose label: looking_down
+2025-11-30 13:55:54,656 - [cam1] Pose label: looking_down
+2025-11-30 13:55:54,909 - [cam1] Pose label: looking_down
+2025-11-30 13:55:55,142 - [cam1] Pose label: looking_down
+2025-11-30 13:55:55,378 - [cam1] Pose label: looking_down
+2025-11-30 13:55:55,616 - [cam1] Pose label: looking_down
+2025-11-30 13:55:55,847 - [cam1] Pose label: looking_down
+2025-11-30 13:55:56,132 - [cam1] Pose label: looking_down
+2025-11-30 13:55:56,368 - [cam1] Pose label: looking_down
+2025-11-30 13:55:56,596 - [cam1] Pose label: looking_down
+2025-11-30 13:55:56,836 - [cam1] Pose label: looking_down
+2025-11-30 13:55:57,066 - [cam1] Pose label: looking_down
+2025-11-30 13:55:57,300 - [cam1] Pose label: looking_down
+2025-11-30 13:55:57,535 - [cam1] Pose label: looking_down
+2025-11-30 13:55:57,768 - [cam1] Pose label: looking_down
+2025-11-30 13:55:58,004 - [cam1] Pose label: looking_down
+2025-11-30 13:55:58,240 - [cam1] Pose label: looking_down
+2025-11-30 13:55:58,473 - [cam1] Pose label: looking_down
+2025-11-30 13:55:58,705 - [cam1] Pose label: facing_camera
+2025-11-30 13:55:58,936 - [cam1] Pose label: facing_camera
+2025-11-30 13:55:59,177 - [cam1] Pose label: looking_down
+2025-11-30 13:55:59,414 - [cam1] Pose label: facing_camera
+2025-11-30 13:55:59,650 - [cam1] Pose label: facing_camera
+2025-11-30 13:55:59,911 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:00,182 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:00,417 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:00,648 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:00,884 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:01,114 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:01,352 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:01,620 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:02,012 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:02,317 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:02,606 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:02,868 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:03,188 - [cam1] Pose label: looking_down
+2025-11-30 13:56:03,462 - [cam1] Pose label: looking_down
+2025-11-30 13:56:03,704 - [cam1] Pose label: looking_down
+2025-11-30 13:56:03,937 - [cam1] Pose label: looking_down
+2025-11-30 13:56:04,180 - [cam1] Pose label: looking_down
+2025-11-30 13:56:04,310 - [cam1] Detected phone (0.73) at [214,0,450,289]
+2025-11-30 13:56:04,311 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:56:04,812 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:56:05,413 - [cam1] Pose label: looking_down
+2025-11-30 13:56:05,650 - [cam1] Pose label: looking_down
+2025-11-30 13:56:05,880 - [cam1] Pose label: looking_down
+2025-11-30 13:56:06,108 - [cam1] Pose label: looking_down
+2025-11-30 13:56:06,339 - [cam1] Pose label: looking_down
+2025-11-30 13:56:06,467 - [cam1] Detected phone (0.51) at [227,117,328,219]
+2025-11-30 13:56:06,572 - [cam1] Pose label: looking_down
+2025-11-30 13:56:06,816 - [cam1] Pose label: looking_down
+2025-11-30 13:56:07,048 - [cam1] Pose label: looking_down
+2025-11-30 13:56:07,290 - [cam1] Pose label: looking_down
+2025-11-30 13:56:07,531 - [cam1] Pose label: looking_down
+2025-11-30 13:56:07,775 - [cam1] Pose label: looking_down
+2025-11-30 13:56:08,012 - [cam1] Pose label: looking_down
+2025-11-30 13:56:08,256 - [cam1] Pose label: looking_down
+2025-11-30 13:56:08,497 - [cam1] Pose label: looking_down
+2025-11-30 13:56:08,738 - [cam1] Pose label: looking_down
+2025-11-30 13:56:08,982 - [cam1] Pose label: looking_down
+2025-11-30 13:56:09,219 - [cam1] Pose label: looking_down
+2025-11-30 13:56:09,458 - [cam1] Pose label: looking_down
+2025-11-30 13:56:09,704 - [cam1] Pose label: looking_down
+2025-11-30 13:56:09,944 - [cam1] Pose label: looking_down
+2025-11-30 13:56:10,188 - [cam1] Pose label: looking_down
+2025-11-30 13:56:10,433 - [cam1] Pose label: looking_down
+2025-11-30 13:56:10,666 - [cam1] Pose label: looking_down
+2025-11-30 13:56:10,950 - [cam1] Pose label: looking_down
+2025-11-30 13:56:11,188 - [cam1] Pose label: looking_down
+2025-11-30 13:56:11,427 - [cam1] Pose label: looking_down
+2025-11-30 13:56:11,666 - [cam1] Pose label: looking_down
+2025-11-30 13:56:11,904 - [cam1] Pose label: looking_down
+2025-11-30 13:56:12,163 - [cam1] Pose label: looking_down
+2025-11-30 13:56:12,401 - [cam1] Pose label: looking_down
+2025-11-30 13:56:12,713 - [cam1] Pose label: looking_down
+2025-11-30 13:56:12,959 - [cam1] Pose label: looking_down
+2025-11-30 13:56:13,204 - [cam1] Pose label: looking_down
+2025-11-30 13:56:13,445 - [cam1] Pose label: looking_down
+2025-11-30 13:56:13,684 - [cam1] Pose label: looking_down
+2025-11-30 13:56:13,923 - [cam1] Pose label: looking_down
+2025-11-30 13:56:14,165 - [cam1] Pose label: looking_down
+2025-11-30 13:56:14,407 - [cam1] Pose label: looking_down
+2025-11-30 13:56:14,667 - [cam1] Pose label: looking_down
+2025-11-30 13:56:14,923 - [cam1] Pose label: looking_down
+2025-11-30 13:56:15,175 - [cam1] Pose label: looking_down
+2025-11-30 13:56:15,437 - [cam1] Pose label: looking_down
+2025-11-30 13:56:15,692 - [cam1] Pose label: looking_down
+2025-11-30 13:56:15,928 - [cam1] Pose label: looking_down
+2025-11-30 13:56:16,164 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:16,405 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:16,646 - [cam1] Pose label: looking_down
+2025-11-30 13:56:16,885 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:17,128 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:17,370 - [cam1] Pose label: looking_down
+2025-11-30 13:56:17,616 - [cam1] Pose label: looking_down
+2025-11-30 13:56:17,856 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:18,143 - [cam1] Pose label: looking_down
+2025-11-30 13:56:18,386 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:18,387 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:18,633 - [cam1] Pose label: looking_down
+2025-11-30 13:56:18,633 - [cam1] Pose label: looking_down
+2025-11-30 13:56:18,921 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:19,062 - [cam1] Detected phone (0.50) at [1,17,595,478]
+2025-11-30 13:56:19,062 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:56:19,563 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:56:20,172 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:20,428 - [cam1] Pose label: looking_down
+2025-11-30 13:56:20,768 - [cam1] Pose label: looking_down
+2025-11-30 13:56:20,914 - [cam1] Detected phone (0.61) at [0,18,599,477]
+2025-11-30 13:56:21,030 - [cam1] Pose label: facing_camera
+2025-11-30 13:56:21,178 - [cam1] Detected phone (0.56) at [1,20,581,477]
+2025-11-30 13:56:21,289 - [cam1] Pose label: looking_down
+2025-11-30 13:56:21,430 - [cam1] Detected phone (0.60) at [0,16,566,477]
+2025-11-30 13:56:21,543 - [cam1] Pose label: looking_down
+2025-11-30 13:56:21,674 - [cam1] Detected phone (0.57) at [0,20,613,477]
+2025-11-30 13:56:21,780 - [cam1] Pose label: looking_down
+2025-11-30 13:56:21,914 - [cam1] Detected phone (0.53) at [0,21,619,477]
+2025-11-30 13:56:22,057 - [cam1] Pose label: looking_down
+2025-11-30 13:56:22,316 - [cam1] Pose label: looking_down
+2025-11-30 13:56:22,555 - [cam1] Pose label: looking_down
+2025-11-30 13:56:22,797 - [cam1] Pose label: looking_down
+2025-11-30 13:56:22,932 - [cam1] Detected phone (0.50) at [0,27,604,478]
+2025-11-30 13:56:23,044 - [cam1] Pose label: looking_down
+2025-11-30 13:56:23,178 - [cam1] Detected phone (0.58) at [0,25,623,477]
+2025-11-30 13:56:23,287 - [cam1] Pose label: looking_down
+2025-11-30 13:56:23,536 - [cam1] Pose label: looking_down
+2025-11-30 13:56:23,792 - [cam1] Pose label: looking_down
+2025-11-30 13:56:23,925 - [cam1] Detected phone (0.56) at [302,83,427,265]
+2025-11-30 13:56:24,038 - [cam1] Pose label: looking_down
+2025-11-30 13:56:24,304 - [cam1] Pose label: looking_down
+2025-11-30 13:56:24,549 - [cam1] Pose label: looking_down
+2025-11-30 13:56:24,803 - [cam1] Pose label: looking_down
+2025-11-30 13:56:25,057 - [cam1] Pose label: looking_down
+2025-11-30 13:56:25,302 - [cam1] Pose label: looking_down
+2025-11-30 13:56:25,545 - [cam1] Pose label: looking_down
+2025-11-30 13:56:25,790 - [cam1] Pose label: looking_down
+2025-11-30 13:56:26,025 - [cam1] Pose label: looking_down
+2025-11-30 13:56:26,274 - [cam1] Pose label: looking_down
+2025-11-30 13:56:26,525 - [cam1] Pose label: looking_down
+2025-11-30 13:56:26,773 - [cam1] Pose label: looking_down
+2025-11-30 13:56:27,023 - [cam1] Pose label: looking_down
+2025-11-30 13:56:27,316 - [cam1] Pose label: looking_down
+2025-11-30 13:56:27,567 - [cam1] Pose label: looking_down
+2025-11-30 13:56:27,813 - [cam1] Pose label: looking_down
+2025-11-30 13:56:28,066 - [cam1] Pose label: looking_down
+2025-11-30 13:56:28,321 - [cam1] Pose label: looking_down
+2025-11-30 13:56:28,567 - [cam1] Pose label: looking_down
+2025-11-30 13:56:28,567 - [cam1] Pose label: looking_down
+2025-11-30 13:56:28,812 - [cam1] Pose label: looking_down
+2025-11-30 13:56:29,055 - [cam1] Pose label: looking_down
+2025-11-30 13:56:29,055 - [cam1] Pose label: looking_down
+2025-11-30 13:56:29,301 - [cam1] Pose label: looking_down
+2025-11-30 13:56:29,302 - [cam1] Pose label: looking_down
+2025-11-30 13:56:29,552 - [cam1] Pose label: looking_down
+2025-11-30 13:56:29,806 - [cam1] Pose label: looking_down
+2025-11-30 13:56:30,056 - [cam1] Pose label: looking_down
+2025-11-30 13:56:30,310 - [cam1] Pose label: looking_down
+2025-11-30 13:56:30,551 - [cam1] Pose label: looking_down
+2025-11-30 13:56:30,795 - [cam1] Pose label: looking_down
+2025-11-30 13:56:31,042 - [cam1] Pose label: looking_down
+2025-11-30 13:56:31,283 - [cam1] Pose label: looking_down
+2025-11-30 13:56:31,525 - [cam1] Pose label: looking_down
+2025-11-30 13:56:31,773 - [cam1] Pose label: looking_down
+2025-11-30 13:56:32,016 - [cam1] Pose label: looking_down
+2025-11-30 13:56:32,264 - [cam1] Pose label: looking_down
+2025-11-30 13:56:32,524 - [cam1] Pose label: looking_down
+2025-11-30 13:56:32,773 - [cam1] Pose label: looking_down
+2025-11-30 13:56:33,016 - [cam1] Pose label: looking_down
+2025-11-30 13:56:33,256 - [cam1] Pose label: looking_down
+2025-11-30 13:56:33,503 - [cam1] Pose label: looking_down
+2025-11-30 13:56:33,752 - [cam1] Pose label: looking_down
+2025-11-30 13:56:34,005 - [cam1] Pose label: looking_down
+2025-11-30 13:56:34,257 - [cam1] Pose label: looking_down
+2025-11-30 13:56:34,547 - [cam1] Pose label: looking_down
+2025-11-30 13:56:34,791 - [cam1] Pose label: looking_down
+2025-11-30 13:56:35,049 - [cam1] Pose label: looking_down
+2025-11-30 13:56:35,296 - [cam1] Pose label: looking_down
+2025-11-30 13:56:35,569 - [cam1] Pose label: looking_down
+2025-11-30 13:56:35,849 - [cam1] Pose label: looking_down
+2025-11-30 13:56:36,098 - [cam1] Pose label: looking_down
+2025-11-30 13:56:36,341 - [cam1] Pose label: looking_down
+2025-11-30 13:56:36,582 - [cam1] Pose label: looking_down
+2025-11-30 13:56:36,720 - [cam1] Detected phone (0.74) at [149,0,396,283]
+2025-11-30 13:56:36,721 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:56:37,222 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:56:37,829 - [cam1] Pose label: looking_down
+2025-11-30 13:56:38,068 - [cam1] Pose label: looking_down
+2025-11-30 13:56:38,311 - [cam1] Pose label: looking_down
+2025-11-30 13:56:38,544 - [cam1] Pose label: looking_down
+2025-11-30 13:56:38,792 - [cam1] Pose label: looking_down
+2025-11-30 13:56:39,025 - [cam1] Pose label: looking_down
+2025-11-30 13:56:39,263 - [cam1] Pose label: looking_down
+2025-11-30 13:56:39,507 - [cam1] Pose label: looking_down
+2025-11-30 13:56:39,745 - [cam1] Pose label: looking_down
+2025-11-30 13:56:39,992 - [cam1] Pose label: looking_down
+2025-11-30 13:56:40,234 - [cam1] Pose label: looking_down
+2025-11-30 13:56:40,376 - [cam1] Detected phone (0.70) at [205,38,315,308]
+2025-11-30 13:56:40,493 - [cam1] Pose label: looking_down
+2025-11-30 13:56:40,623 - [cam1] Detected phone (0.72) at [201,33,315,304]
+2025-11-30 13:56:40,730 - [cam1] Pose label: looking_down
+2025-11-30 13:56:40,875 - [cam1] Detected phone (0.68) at [202,33,312,308]
+2025-11-30 13:56:40,985 - [cam1] Pose label: looking_down
+2025-11-30 13:56:41,126 - [cam1] Detected phone (0.65) at [202,32,314,311]
+2025-11-30 13:56:41,236 - [cam1] Pose label: looking_down
+2025-11-30 13:56:41,378 - [cam1] Detected phone (0.57) at [202,32,310,305]
+2025-11-30 13:56:41,494 - [cam1] Pose label: looking_down
+2025-11-30 13:56:41,626 - [cam1] Detected phone (0.60) at [200,30,314,312]
+2025-11-30 13:56:41,736 - [cam1] Pose label: looking_down
+2025-11-30 13:56:41,874 - [cam1] Detected phone (0.74) at [197,28,316,307]
+2025-11-30 13:56:41,991 - [cam1] Pose label: looking_down
+2025-11-30 13:56:42,133 - [cam1] Detected phone (0.66) at [191,23,318,305]
+2025-11-30 13:56:42,243 - [cam1] Pose label: looking_down
+2025-11-30 13:56:42,381 - [cam1] Detected phone (0.60) at [191,18,317,306]
+2025-11-30 13:56:42,495 - [cam1] Pose label: looking_down
+2025-11-30 13:56:42,628 - [cam1] Detected phone (0.65) at [187,12,312,304]
+2025-11-30 13:56:42,743 - [cam1] Pose label: looking_down
+2025-11-30 13:56:42,882 - [cam1] Detected phone (0.68) at [184,18,308,311]
+2025-11-30 13:56:43,041 - [cam1] Pose label: looking_down
+2025-11-30 13:56:43,179 - [cam1] Detected phone (0.65) at [184,20,313,317]
+2025-11-30 13:56:43,296 - [cam1] Pose label: looking_down
+2025-11-30 13:56:43,441 - [cam1] Detected phone (0.52) at [181,21,306,318]
+2025-11-30 13:56:43,552 - [cam1] Pose label: looking_down
+2025-11-30 13:56:43,804 - [cam1] Pose label: looking_down
+2025-11-30 13:56:43,943 - [cam1] Detected phone (0.62) at [184,24,314,318]
+2025-11-30 13:56:44,054 - [cam1] Pose label: looking_down
+2025-11-30 13:56:44,188 - [cam1] Detected phone (0.71) at [183,27,320,323]
+2025-11-30 13:56:44,302 - [cam1] Pose label: looking_down
+2025-11-30 13:56:44,438 - [cam1] Detected phone (0.65) at [182,30,309,329]
+2025-11-30 13:56:44,553 - [cam1] Pose label: looking_down
+2025-11-30 13:56:44,694 - [cam1] Detected phone (0.61) at [179,32,307,330]
+2025-11-30 13:56:44,806 - [cam1] Pose label: looking_down
+2025-11-30 13:56:44,942 - [cam1] Detected phone (0.72) at [182,35,320,329]
+2025-11-30 13:56:45,077 - [cam1] Pose label: looking_down
+2025-11-30 13:56:45,262 - [cam1] Detected phone (0.65) at [187,39,318,335]
+2025-11-30 13:56:45,421 - [cam1] Pose label: looking_down
+2025-11-30 13:56:45,596 - [cam1] Detected phone (0.54) at [183,39,314,332]
+2025-11-30 13:56:45,730 - [cam1] Pose label: looking_down
+2025-11-30 13:56:45,925 - [cam1] Detected phone (0.60) at [183,41,316,335]
+2025-11-30 13:56:46,086 - [cam1] Pose label: looking_down
+2025-11-30 13:56:46,331 - [cam1] Detected phone (0.68) at [186,40,314,335]
+2025-11-30 13:56:46,514 - [cam1] Pose label: looking_down
+2025-11-30 13:56:46,665 - [cam1] Detected phone (0.60) at [188,42,317,332]
+2025-11-30 13:56:46,775 - [cam1] Pose label: looking_down
+2025-11-30 13:56:47,029 - [cam1] Pose label: looking_down
+2025-11-30 13:56:47,298 - [cam1] Pose label: looking_down
+2025-11-30 13:56:47,546 - [cam1] Pose label: looking_down
+2025-11-30 13:56:47,806 - [cam1] Pose label: looking_down
+2025-11-30 13:56:48,074 - [cam1] Pose label: looking_down
+2025-11-30 13:56:48,337 - [cam1] Pose label: looking_down
+2025-11-30 13:56:48,601 - [cam1] Pose label: looking_down
+2025-11-30 13:56:48,859 - [cam1] Pose label: looking_down
+2025-11-30 13:56:49,109 - [cam1] Pose label: looking_down
+2025-11-30 13:56:49,397 - [cam1] Pose label: looking_down
+2025-11-30 13:56:49,678 - [cam1] Pose label: looking_down
+2025-11-30 13:56:49,956 - [cam1] Pose label: looking_down
+2025-11-30 13:56:50,228 - [cam1] Pose label: looking_down
+2025-11-30 13:56:50,498 - [cam1] Pose label: looking_down
+2025-11-30 13:56:50,769 - [cam1] Pose label: looking_down
+2025-11-30 13:56:50,769 - [cam1] Pose label: looking_left
+2025-11-30 13:56:51,040 - [cam1] Pose label: looking_down
+2025-11-30 13:56:51,413 - [cam1] Pose label: looking_down
+2025-11-30 13:56:51,862 - [cam1] Pose label: looking_down
+2025-11-30 13:56:52,262 - [cam1] Pose label: looking_down
+2025-11-30 13:56:52,581 - [cam1] Pose label: looking_down
+2025-11-30 13:56:52,902 - [cam1] Pose label: looking_down
+2025-11-30 13:56:53,187 - [cam1] Pose label: looking_down
+2025-11-30 13:56:53,612 - [cam1] Pose label: looking_down
+2025-11-30 13:56:53,977 - [cam1] Pose label: looking_down
+2025-11-30 13:56:53,977 - [cam1] Pose label: looking_left
+2025-11-30 13:56:54,287 - [cam1] Pose label: looking_down
+2025-11-30 13:56:54,554 - [cam1] Pose label: looking_down
+2025-11-30 13:56:54,881 - [cam1] Pose label: looking_down
+2025-11-30 13:56:55,154 - [cam1] Pose label: looking_down
+2025-11-30 13:56:55,406 - [cam1] Pose label: looking_down
+2025-11-30 13:56:55,671 - [cam1] Pose label: looking_down
+2025-11-30 13:56:55,944 - [cam1] Pose label: looking_down
+2025-11-30 13:56:56,221 - [cam1] Pose label: looking_down
+2025-11-30 13:56:56,664 - [cam1] Pose label: looking_down
+2025-11-30 13:56:56,961 - [cam1] Pose label: looking_down
+2025-11-30 13:56:57,245 - [cam1] Pose label: looking_down
+2025-11-30 13:56:57,550 - [cam1] Pose label: looking_down
+2025-11-30 13:56:57,803 - [cam1] Pose label: looking_down
+2025-11-30 13:56:58,059 - [cam1] Pose label: looking_down
+2025-11-30 13:56:58,345 - [cam1] Pose label: looking_down
+2025-11-30 13:56:58,621 - [cam1] Pose label: looking_down
+2025-11-30 13:56:58,896 - [cam1] Pose label: looking_down
+2025-11-30 13:56:59,168 - [cam1] Pose label: looking_down
+2025-11-30 13:56:59,435 - [cam1] Pose label: looking_down
+2025-11-30 13:56:59,722 - [cam1] Pose label: looking_down
+2025-11-30 13:56:59,987 - [cam1] Pose label: looking_down
+2025-11-30 13:57:00,304 - [cam1] Pose label: looking_down
+2025-11-30 13:57:00,605 - [cam1] Pose label: looking_down
+2025-11-30 13:57:00,902 - [cam1] Pose label: looking_down
+2025-11-30 13:57:01,208 - [cam1] Pose label: looking_down
+2025-11-30 13:57:01,481 - [cam1] Pose label: looking_down
+2025-11-30 13:57:01,727 - [cam1] Pose label: looking_down
+2025-11-30 13:57:02,011 - [cam1] Pose label: looking_down
+2025-11-30 13:57:02,289 - [cam1] Pose label: looking_down
+2025-11-30 13:57:02,540 - [cam1] Pose label: looking_down
+2025-11-30 13:57:02,842 - [cam1] Pose label: looking_down
+2025-11-30 13:57:03,114 - [cam1] Pose label: looking_down
+2025-11-30 13:57:03,358 - [cam1] Pose label: looking_down
+2025-11-30 13:57:03,623 - [cam1] Pose label: looking_down
+2025-11-30 13:57:03,881 - [cam1] Pose label: looking_down
+2025-11-30 13:57:04,154 - [cam1] Pose label: looking_down
+2025-11-30 13:57:04,414 - [cam1] Pose label: looking_down
+2025-11-30 13:57:04,415 - [cam1] Pose label: looking_left
+2025-11-30 13:57:04,685 - [cam1] Pose label: looking_down
+2025-11-30 13:57:04,945 - [cam1] Pose label: looking_down
+2025-11-30 13:57:05,196 - [cam1] Pose label: looking_down
+2025-11-30 13:57:05,432 - [cam1] Pose label: looking_down
+2025-11-30 13:57:05,673 - [cam1] Pose label: looking_down
+2025-11-30 13:57:05,915 - [cam1] Pose label: looking_down
+2025-11-30 13:57:06,200 - [cam1] Pose label: looking_down
+2025-11-30 13:57:06,462 - [cam1] Pose label: looking_down
+2025-11-30 13:57:06,736 - [cam1] Pose label: looking_down
+2025-11-30 13:57:06,989 - [cam1] Pose label: looking_down
+2025-11-30 13:57:07,273 - [cam1] Pose label: looking_down
+2025-11-30 13:57:07,550 - [cam1] Pose label: looking_down
+2025-11-30 13:57:07,870 - [cam1] Pose label: looking_down
+2025-11-30 13:57:08,211 - [cam1] Pose label: looking_down
+2025-11-30 13:57:08,493 - [cam1] Pose label: looking_down
+2025-11-30 13:57:08,765 - [cam1] Pose label: looking_down
+2025-11-30 13:57:09,011 - [cam1] Pose label: looking_down
+2025-11-30 13:57:09,256 - [cam1] Pose label: looking_down
+2025-11-30 13:57:09,508 - [cam1] Pose label: looking_down
+2025-11-30 13:57:09,759 - [cam1] Pose label: looking_down
+2025-11-30 13:57:10,070 - [cam1] Pose label: looking_down
+2025-11-30 13:57:10,360 - [cam1] Pose label: looking_down
+2025-11-30 13:57:10,624 - [cam1] Pose label: looking_down
+2025-11-30 13:57:10,872 - [cam1] Pose label: looking_down
+2025-11-30 13:57:11,119 - [cam1] Pose label: looking_down
+2025-11-30 13:57:11,367 - [cam1] Pose label: looking_down
+2025-11-30 13:57:11,367 - [cam1] Pose label: looking_left
+2025-11-30 13:57:11,619 - [cam1] Pose label: looking_down
+2025-11-30 13:57:11,866 - [cam1] Pose label: looking_down
+2025-11-30 13:57:12,155 - [cam1] Pose label: looking_down
+2025-11-30 13:57:12,414 - [cam1] Pose label: looking_down
+2025-11-30 13:57:12,666 - [cam1] Pose label: looking_down
+2025-11-30 13:57:12,969 - [cam1] Pose label: looking_down
+2025-11-30 13:57:13,278 - [cam1] Pose label: looking_down
+2025-11-30 13:57:13,567 - [cam1] Pose label: looking_down
+2025-11-30 13:57:13,845 - [cam1] Pose label: looking_down
+2025-11-30 13:57:14,122 - [cam1] Pose label: looking_down
+2025-11-30 13:57:14,409 - [cam1] Pose label: looking_down
+2025-11-30 13:57:14,712 - [cam1] Pose label: looking_down
+2025-11-30 13:57:14,995 - [cam1] Pose label: looking_down
+2025-11-30 13:57:15,241 - [cam1] Pose label: looking_down
+2025-11-30 13:57:15,242 - [cam1] Pose label: looking_down
+2025-11-30 13:57:15,489 - [cam1] Pose label: looking_down
+2025-11-30 13:57:15,727 - [cam1] Pose label: looking_down
+2025-11-30 13:57:15,980 - [cam1] Pose label: facing_camera
+2025-11-30 13:57:16,274 - [cam1] Pose label: looking_down
+2025-11-30 13:57:16,523 - [cam1] Pose label: facing_camera
+2025-11-30 13:57:16,773 - [cam1] Pose label: looking_down
+2025-11-30 13:57:17,026 - [cam1] Pose label: looking_down
+2025-11-30 13:57:17,273 - [cam1] Pose label: looking_down
+2025-11-30 13:57:17,523 - [cam1] Pose label: looking_down
+2025-11-30 13:57:17,777 - [cam1] Pose label: looking_down
+2025-11-30 13:57:18,042 - [cam1] Pose label: looking_down
+2025-11-30 13:57:18,312 - [cam1] Pose label: looking_down
+2025-11-30 13:57:18,548 - [cam1] Pose label: looking_down
+2025-11-30 13:57:18,685 - [cam1] Detected smart_watch (0.54) at [242,126,365,268]
+2025-11-30 13:57:18,796 - [cam1] Pose label: looking_down
+2025-11-30 13:57:18,932 - [cam1] Detected smart_watch (0.71) at [233,122,364,256]
+2025-11-30 13:57:19,046 - [cam1] Pose label: looking_down
+2025-11-30 13:57:19,304 - [cam1] Pose label: looking_down
+2025-11-30 13:57:19,547 - [cam1] Pose label: looking_down
+2025-11-30 13:57:19,795 - [cam1] Pose label: looking_down
+2025-11-30 13:57:20,047 - [cam1] Pose label: looking_down
+2025-11-30 13:57:20,299 - [cam1] Pose label: looking_down
+2025-11-30 13:57:20,554 - [cam1] Pose label: looking_down
+2025-11-30 13:57:20,798 - [cam1] Pose label: facing_camera
+2025-11-30 13:57:21,057 - [cam1] Pose label: looking_down
+2025-11-30 13:57:21,308 - [cam1] Pose label: looking_down
+2025-11-30 13:57:21,564 - [cam1] Pose label: looking_down
+2025-11-30 13:57:21,811 - [cam1] Pose label: looking_down
+2025-11-30 13:57:22,050 - [cam1] Pose label: looking_down
+2025-11-30 13:57:22,299 - [cam1] Pose label: looking_down
+2025-11-30 13:57:22,551 - [cam1] Pose label: looking_down
+2025-11-30 13:57:22,802 - [cam1] Pose label: looking_down
+2025-11-30 13:57:23,047 - [cam1] Pose label: looking_down
+2025-11-30 13:57:23,292 - [cam1] Pose label: looking_down
+2025-11-30 13:57:23,537 - [cam1] Pose label: looking_down
+2025-11-30 13:57:23,827 - [cam1] Pose label: looking_down
+2025-11-30 13:57:24,074 - [cam1] Pose label: looking_down
+2025-11-30 13:57:24,317 - [cam1] Pose label: looking_down
+2025-11-30 13:57:24,458 - [cam1] Detected phone (0.78) at [194,41,407,259]
+2025-11-30 13:57:24,458 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:57:24,959 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:57:25,564 - [cam1] Pose label: looking_down
+2025-11-30 13:57:25,704 - [cam1] Detected smart_watch (0.53) at [204,60,419,259]
+2025-11-30 13:57:25,831 - [cam1] Pose label: looking_down
+2025-11-30 13:57:26,097 - [cam1] Pose label: looking_down
+2025-11-30 13:57:26,338 - [cam1] Pose label: looking_down
+2025-11-30 13:57:26,579 - [cam1] Pose label: looking_down
+2025-11-30 13:57:26,820 - [cam1] Pose label: looking_down
+2025-11-30 13:57:27,056 - [cam1] Pose label: looking_down
+2025-11-30 13:57:27,299 - [cam1] Pose label: looking_down
+2025-11-30 13:57:27,548 - [cam1] Pose label: looking_down
+2025-11-30 13:57:27,795 - [cam1] Pose label: looking_down
+2025-11-30 13:57:28,043 - [cam1] Pose label: looking_down
+2025-11-30 13:57:28,285 - [cam1] Pose label: looking_down
+2025-11-30 13:57:28,526 - [cam1] Pose label: looking_down
+2025-11-30 13:57:28,766 - [cam1] Pose label: looking_down
+2025-11-30 13:57:29,014 - [cam1] Pose label: looking_down
+2025-11-30 13:57:29,152 - [cam1] Detected phone (0.88) at [187,36,406,294]
+2025-11-30 13:57:29,266 - [cam1] Pose label: looking_down
+2025-11-30 13:57:29,409 - [cam1] Detected phone (0.68) at [182,31,407,378]
+2025-11-30 13:57:29,520 - [cam1] Pose label: looking_left
+2025-11-30 13:57:29,520 - [cam1] Pose label: looking_down
+2025-11-30 13:57:29,768 - [cam1] Pose label: looking_down
+2025-11-30 13:57:29,770 - [cam1] Pose label: looking_down
+2025-11-30 13:57:30,027 - [cam1] Pose label: looking_down
+2025-11-30 13:57:30,288 - [cam1] Pose label: looking_down
+2025-11-30 13:57:30,542 - [cam1] Pose label: looking_down
+2025-11-30 13:57:30,682 - [cam1] Detected phone (0.87) at [187,0,441,261]
+2025-11-30 13:57:30,803 - [cam1] Pose label: looking_down
+2025-11-30 13:57:30,803 - [cam1] Pose label: looking_down
+2025-11-30 13:57:31,056 - [cam1] Pose label: looking_down
+2025-11-30 13:57:31,196 - [cam1] Detected phone (0.81) at [183,0,426,260]
+2025-11-30 13:57:31,310 - [cam1] Pose label: looking_down
+2025-11-30 13:57:31,559 - [cam1] Pose label: looking_down
+2025-11-30 13:57:31,820 - [cam1] Pose label: looking_down
+2025-11-30 13:57:31,952 - [cam1] Detected smart_watch (0.54) at [181,81,394,387]
+2025-11-30 13:57:32,113 - [cam1] Pose label: looking_down
+2025-11-30 13:57:32,359 - [cam1] Pose label: looking_down
+2025-11-30 13:57:32,502 - [cam1] Detected phone (0.66) at [163,129,377,434]
+2025-11-30 13:57:32,615 - [cam1] Pose label: looking_down
+2025-11-30 13:57:32,859 - [cam1] Pose label: looking_down
+2025-11-30 13:57:32,996 - [cam1] Detected smart_watch (0.51) at [164,136,376,469]
+2025-11-30 13:57:33,107 - [cam1] Pose label: looking_down
+2025-11-30 13:57:33,107 - [cam1] Pose label: looking_right
+2025-11-30 13:57:33,365 - [cam1] Pose label: looking_down
+2025-11-30 13:57:33,607 - [cam1] Pose label: looking_down
+2025-11-30 13:57:33,856 - [cam1] Pose label: looking_down
+2025-11-30 13:57:34,112 - [cam1] Pose label: looking_down
+2025-11-30 13:57:34,365 - [cam1] Pose label: looking_down
+2025-11-30 13:57:34,502 - [cam1] Detected phone (0.64) at [166,128,379,445]
+2025-11-30 13:57:34,502 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:57:35,003 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:57:35,606 - [cam1] Pose label: looking_down
+2025-11-30 13:57:35,848 - [cam1] Pose label: looking_down
+2025-11-30 13:57:36,077 - [cam1] Pose label: looking_down
+2025-11-30 13:57:36,209 - [cam1] Detected phone (0.50) at [171,116,377,453]
+2025-11-30 13:57:36,317 - [cam1] Pose label: looking_down
+2025-11-30 13:57:36,555 - [cam1] Pose label: looking_down
+2025-11-30 13:57:36,787 - [cam1] Pose label: looking_down
+2025-11-30 13:57:36,926 - [cam1] Detected phone (0.54) at [174,112,375,361]
+2025-11-30 13:57:37,045 - [cam1] Pose label: looking_down
+2025-11-30 13:57:37,294 - [cam1] Pose label: looking_left
+2025-11-30 13:57:37,545 - [cam1] Pose label: looking_down
+2025-11-30 13:57:37,683 - [cam1] Detected phone (0.56) at [178,113,373,349]
+2025-11-30 13:57:37,797 - [cam1] Pose label: looking_down
+2025-11-30 13:57:38,042 - [cam1] Pose label: looking_down
+2025-11-30 13:57:38,286 - [cam1] Pose label: looking_down
+2025-11-30 13:57:38,530 - [cam1] Pose label: looking_down
+2025-11-30 13:57:38,774 - [cam1] Pose label: looking_down
+2025-11-30 13:57:39,022 - [cam1] Pose label: looking_left
+2025-11-30 13:57:39,271 - [cam1] Pose label: looking_left
+2025-11-30 13:57:39,417 - [cam1] Detected smart_watch (0.60) at [158,102,380,448]
+2025-11-30 13:57:39,531 - [cam1] Pose label: looking_left
+2025-11-30 13:57:39,532 - [cam1] Pose label: looking_down
+2025-11-30 13:57:39,668 - [cam1] Detected smart_watch (0.50) at [143,102,380,449]
+2025-11-30 13:57:39,776 - [cam1] Pose label: looking_down
+2025-11-30 13:57:39,927 - [cam1] Detected smart_watch (0.59) at [161,106,383,449]
+2025-11-30 13:57:40,042 - [cam1] Pose label: looking_left
+2025-11-30 13:57:40,290 - [cam1] Pose label: looking_down
+2025-11-30 13:57:40,532 - [cam1] Pose label: looking_down
+2025-11-30 13:57:40,716 - [cam1] Detected smart_watch (0.51) at [162,110,383,450]
+2025-11-30 13:57:40,832 - [cam1] Pose label: looking_left
+2025-11-30 13:57:40,833 - [cam1] Pose label: looking_down
+2025-11-30 13:57:40,987 - [cam1] Detected smart_watch (0.54) at [172,111,387,444]
+2025-11-30 13:57:41,107 - [cam1] Pose label: looking_down
+2025-11-30 13:57:41,107 - [cam1] Pose label: looking_down
+2025-11-30 13:57:41,369 - [cam1] Pose label: looking_down
+2025-11-30 13:57:41,523 - [cam1] Detected smart_watch (0.63) at [177,112,386,421]
+2025-11-30 13:57:41,636 - [cam1] Pose label: looking_left
+2025-11-30 13:57:41,898 - [cam1] Pose label: looking_left
+2025-11-30 13:57:42,154 - [cam1] Pose label: looking_left
+2025-11-30 13:57:42,304 - [cam1] Detected smart_watch (0.54) at [181,115,389,417]
+2025-11-30 13:57:42,427 - [cam1] Pose label: looking_left
+2025-11-30 13:57:42,608 - [cam1] Detected smart_watch (0.56) at [180,118,390,446]
+2025-11-30 13:57:42,769 - [cam1] Pose label: looking_left
+2025-11-30 13:57:42,770 - [cam1] Pose label: looking_down
+2025-11-30 13:57:43,077 - [cam1] Pose label: looking_left
+2025-11-30 13:57:43,291 - [cam1] Detected smart_watch (0.60) at [180,122,389,455]
+2025-11-30 13:57:43,438 - [cam1] Pose label: looking_down
+2025-11-30 13:57:43,683 - [cam1] Detected smart_watch (0.56) at [179,120,385,441]
+2025-11-30 13:57:43,832 - [cam1] Pose label: looking_down
+2025-11-30 13:57:44,089 - [cam1] Pose label: looking_down
+2025-11-30 13:57:44,344 - [cam1] Pose label: facing_camera
+2025-11-30 13:57:44,591 - [cam1] Pose label: looking_left
+2025-11-30 13:57:44,839 - [cam1] Pose label: looking_down
+2025-11-30 13:57:45,114 - [cam1] Pose label: facing_camera
+2025-11-30 13:57:45,373 - [cam1] Pose label: looking_down
+2025-11-30 13:57:45,648 - [cam1] Pose label: looking_down
+2025-11-30 13:57:45,912 - [cam1] Pose label: looking_down
+2025-11-30 13:57:46,173 - [cam1] Pose label: looking_down
+2025-11-30 13:57:46,448 - [cam1] Pose label: looking_down
+2025-11-30 13:57:46,765 - [cam1] Pose label: looking_down
+2025-11-30 13:57:47,041 - [cam1] Pose label: looking_down
+2025-11-30 13:57:47,306 - [cam1] Pose label: looking_down
+2025-11-30 13:57:47,567 - [cam1] Pose label: looking_down
+2025-11-30 13:57:47,823 - [cam1] Pose label: looking_down
+2025-11-30 13:57:48,091 - [cam1] Pose label: looking_down
+2025-11-30 13:57:48,359 - [cam1] Pose label: looking_down
+2025-11-30 13:57:48,751 - [cam1] Pose label: looking_down
+2025-11-30 13:57:49,214 - [cam1] Pose label: looking_down
+2025-11-30 13:57:49,596 - [cam1] Pose label: looking_down
+2025-11-30 13:57:49,942 - [cam1] Pose label: looking_down
+2025-11-30 13:57:49,942 - [cam1] Pose label: looking_down
+2025-11-30 13:57:50,288 - [cam1] Pose label: looking_down
+2025-11-30 13:57:50,289 - [cam1] Pose label: looking_down
+2025-11-30 13:57:50,597 - [cam1] Pose label: looking_down
+2025-11-30 13:57:50,598 - [cam1] Pose label: looking_down
+2025-11-30 13:57:50,599 - [cam1] Pose label: looking_down
+2025-11-30 13:57:50,960 - [cam1] Pose label: looking_down
+2025-11-30 13:57:50,961 - [cam1] Pose label: looking_down
+2025-11-30 13:57:50,963 - [cam1] Pose label: looking_down
+2025-11-30 13:57:51,309 - [cam1] Pose label: looking_down
+2025-11-30 13:57:51,310 - [cam1] Pose label: looking_left
+2025-11-30 13:57:51,582 - [cam1] Pose label: looking_down
+2025-11-30 13:57:51,582 - [cam1] Pose label: looking_down
+2025-11-30 13:57:51,825 - [cam1] Pose label: looking_down
+2025-11-30 13:57:51,825 - [cam1] Pose label: looking_down
+2025-11-30 13:57:52,077 - [cam1] Pose label: looking_down
+2025-11-30 13:57:52,323 - [cam1] Pose label: looking_down
+2025-11-30 13:57:52,571 - [cam1] Pose label: looking_down
+2025-11-30 13:57:52,859 - [cam1] Pose label: looking_down
+2025-11-30 13:57:52,860 - [cam1] Pose label: looking_down
+2025-11-30 13:57:53,213 - [cam1] Pose label: looking_down
+2025-11-30 13:57:53,534 - [cam1] Pose label: looking_down
+2025-11-30 13:57:53,900 - [cam1] Pose label: looking_down
+2025-11-30 13:57:54,212 - [cam1] Pose label: looking_down
+2025-11-30 13:57:54,507 - [cam1] Pose label: looking_down
+2025-11-30 13:57:54,796 - [cam1] Pose label: looking_down
+2025-11-30 13:57:55,151 - [cam1] Pose label: looking_down
+2025-11-30 13:57:55,319 - [cam1] Detected phone (0.57) at [154,38,382,383]
+2025-11-30 13:57:55,319 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:57:55,820 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:57:56,435 - [cam1] Pose label: looking_down
+2025-11-30 13:57:56,718 - [cam1] Pose label: looking_down
+2025-11-30 13:57:56,987 - [cam1] Pose label: looking_down
+2025-11-30 13:57:57,155 - [cam1] Detected phone (0.56) at [132,29,369,377]
+2025-11-30 13:57:57,279 - [cam1] Pose label: looking_down
+2025-11-30 13:57:57,542 - [cam1] Pose label: looking_down
+2025-11-30 13:57:57,703 - [cam1] Detected smart_watch (0.57) at [180,43,378,364]
+2025-11-30 13:57:57,823 - [cam1] Pose label: looking_down
+2025-11-30 13:57:58,086 - [cam1] Pose label: looking_down
+2025-11-30 13:57:58,378 - [cam1] Pose label: looking_down
+2025-11-30 13:57:58,670 - [cam1] Pose label: facing_camera
+2025-11-30 13:57:59,011 - [cam1] Pose label: looking_down
+2025-11-30 13:57:59,284 - [cam1] Pose label: looking_down
+2025-11-30 13:57:59,563 - [cam1] Pose label: looking_down
+2025-11-30 13:57:59,860 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:00,142 - [cam1] Pose label: looking_down
+2025-11-30 13:58:00,403 - [cam1] Pose label: looking_down
+2025-11-30 13:58:00,676 - [cam1] Pose label: looking_down
+2025-11-30 13:58:00,935 - [cam1] Pose label: looking_down
+2025-11-30 13:58:01,189 - [cam1] Pose label: looking_down
+2025-11-30 13:58:01,447 - [cam1] Pose label: looking_down
+2025-11-30 13:58:01,697 - [cam1] Pose label: looking_down
+2025-11-30 13:58:01,960 - [cam1] Pose label: looking_down
+2025-11-30 13:58:02,211 - [cam1] Pose label: looking_down
+2025-11-30 13:58:02,460 - [cam1] Pose label: looking_down
+2025-11-30 13:58:02,704 - [cam1] Pose label: looking_down
+2025-11-30 13:58:02,969 - [cam1] Pose label: looking_down
+2025-11-30 13:58:03,241 - [cam1] Pose label: looking_down
+2025-11-30 13:58:03,502 - [cam1] Pose label: looking_down
+2025-11-30 13:58:03,764 - [cam1] Pose label: looking_down
+2025-11-30 13:58:04,014 - [cam1] Pose label: looking_down
+2025-11-30 13:58:04,264 - [cam1] Pose label: looking_down
+2025-11-30 13:58:04,518 - [cam1] Pose label: looking_down
+2025-11-30 13:58:04,771 - [cam1] Pose label: looking_down
+2025-11-30 13:58:05,034 - [cam1] Pose label: looking_down
+2025-11-30 13:58:05,295 - [cam1] Pose label: looking_down
+2025-11-30 13:58:05,562 - [cam1] Pose label: looking_down
+2025-11-30 13:58:05,828 - [cam1] Pose label: looking_down
+2025-11-30 13:58:06,085 - [cam1] Pose label: looking_down
+2025-11-30 13:58:06,335 - [cam1] Pose label: looking_down
+2025-11-30 13:58:06,594 - [cam1] Pose label: looking_down
+2025-11-30 13:58:06,903 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:07,142 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:07,393 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:07,657 - [cam1] Pose label: looking_down
+2025-11-30 13:58:07,907 - [cam1] Pose label: looking_down
+2025-11-30 13:58:08,166 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:08,316 - [cam1] Detected phone (0.51) at [359,247,522,479]
+2025-11-30 13:58:08,316 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:58:08,818 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:58:09,426 - [cam1] Pose label: looking_down
+2025-11-30 13:58:09,670 - [cam1] Pose label: looking_down
+2025-11-30 13:58:09,921 - [cam1] Pose label: looking_down
+2025-11-30 13:58:10,169 - [cam1] Pose label: looking_down
+2025-11-30 13:58:10,406 - [cam1] Pose label: looking_down
+2025-11-30 13:58:10,657 - [cam1] Pose label: looking_down
+2025-11-30 13:58:10,908 - [cam1] Pose label: looking_down
+2025-11-30 13:58:11,161 - [cam1] Pose label: looking_down
+2025-11-30 13:58:11,412 - [cam1] Pose label: looking_down
+2025-11-30 13:58:11,659 - [cam1] Pose label: looking_down
+2025-11-30 13:58:11,912 - [cam1] Pose label: looking_down
+2025-11-30 13:58:12,173 - [cam1] Pose label: looking_down
+2025-11-30 13:58:12,418 - [cam1] Pose label: looking_down
+2025-11-30 13:58:12,675 - [cam1] Pose label: looking_down
+2025-11-30 13:58:12,932 - [cam1] Pose label: looking_down
+2025-11-30 13:58:13,181 - [cam1] Pose label: looking_down
+2025-11-30 13:58:13,435 - [cam1] Pose label: looking_down
+2025-11-30 13:58:13,701 - [cam1] Pose label: looking_down
+2025-11-30 13:58:13,970 - [cam1] Pose label: looking_down
+2025-11-30 13:58:14,225 - [cam1] Pose label: looking_down
+2025-11-30 13:58:14,512 - [cam1] Pose label: looking_down
+2025-11-30 13:58:14,787 - [cam1] Pose label: looking_down
+2025-11-30 13:58:14,788 - [cam1] Pose label: looking_down
+2025-11-30 13:58:15,056 - [cam1] Pose label: looking_down
+2025-11-30 13:58:15,303 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:15,552 - [cam1] Pose label: looking_down
+2025-11-30 13:58:15,853 - [cam1] Pose label: looking_down
+2025-11-30 13:58:15,854 - [cam1] Pose label: looking_down
+2025-11-30 13:58:16,102 - [cam1] Pose label: looking_down
+2025-11-30 13:58:16,102 - [cam1] Pose label: looking_down
+2025-11-30 13:58:16,365 - [cam1] Pose label: looking_down
+2025-11-30 13:58:16,365 - [cam1] Pose label: looking_down
+2025-11-30 13:58:16,621 - [cam1] Pose label: looking_down
+2025-11-30 13:58:16,621 - [cam1] Pose label: looking_down
+2025-11-30 13:58:16,622 - [cam1] Pose label: looking_down
+2025-11-30 13:58:16,901 - [cam1] Pose label: looking_down
+2025-11-30 13:58:17,174 - [cam1] Pose label: looking_down
+2025-11-30 13:58:17,428 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:17,687 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:17,935 - [cam1] Pose label: looking_down
+2025-11-30 13:58:18,231 - [cam1] Pose label: looking_down
+2025-11-30 13:58:18,514 - [cam1] Pose label: looking_down
+2025-11-30 13:58:18,762 - [cam1] Pose label: looking_down
+2025-11-30 13:58:19,012 - [cam1] Pose label: looking_down
+2025-11-30 13:58:19,268 - [cam1] Pose label: looking_down
+2025-11-30 13:58:19,518 - [cam1] Pose label: looking_down
+2025-11-30 13:58:19,763 - [cam1] Pose label: looking_down
+2025-11-30 13:58:20,015 - [cam1] Pose label: looking_down
+2025-11-30 13:58:20,262 - [cam1] Pose label: looking_down
+2025-11-30 13:58:20,513 - [cam1] Pose label: looking_down
+2025-11-30 13:58:20,764 - [cam1] Pose label: looking_down
+2025-11-30 13:58:20,764 - [cam1] Pose label: looking_down
+2025-11-30 13:58:21,026 - [cam1] Pose label: looking_down
+2025-11-30 13:58:21,297 - [cam1] Pose label: looking_down
+2025-11-30 13:58:21,550 - [cam1] Pose label: looking_down
+2025-11-30 13:58:21,801 - [cam1] Pose label: looking_down
+2025-11-30 13:58:22,043 - [cam1] Pose label: looking_down
+2025-11-30 13:58:22,294 - [cam1] Pose label: looking_down
+2025-11-30 13:58:22,543 - [cam1] Pose label: looking_down
+2025-11-30 13:58:22,544 - [cam1] Pose label: looking_down
+2025-11-30 13:58:22,800 - [cam1] Pose label: looking_down
+2025-11-30 13:58:23,052 - [cam1] Pose label: looking_down
+2025-11-30 13:58:23,302 - [cam1] Pose label: looking_down
+2025-11-30 13:58:23,593 - [cam1] Pose label: looking_down
+2025-11-30 13:58:23,836 - [cam1] Pose label: looking_down
+2025-11-30 13:58:24,081 - [cam1] Pose label: looking_down
+2025-11-30 13:58:24,329 - [cam1] Pose label: looking_down
+2025-11-30 13:58:24,581 - [cam1] Pose label: looking_down
+2025-11-30 13:58:24,844 - [cam1] Pose label: looking_down
+2025-11-30 13:58:25,102 - [cam1] Pose label: looking_down
+2025-11-30 13:58:25,345 - [cam1] Pose label: looking_down
+2025-11-30 13:58:25,595 - [cam1] Pose label: looking_down
+2025-11-30 13:58:25,855 - [cam1] Pose label: looking_down
+2025-11-30 13:58:26,127 - [cam1] Pose label: looking_down
+2025-11-30 13:58:26,376 - [cam1] Pose label: looking_down
+2025-11-30 13:58:26,641 - [cam1] Pose label: looking_down
+2025-11-30 13:58:26,641 - [cam1] Pose label: looking_right
+2025-11-30 13:58:26,889 - [cam1] Pose label: looking_down
+2025-11-30 13:58:27,141 - [cam1] Pose label: looking_down
+2025-11-30 13:58:27,392 - [cam1] Pose label: looking_down
+2025-11-30 13:58:27,392 - [cam1] Pose label: looking_right
+2025-11-30 13:58:27,644 - [cam1] Pose label: looking_down
+2025-11-30 13:58:27,895 - [cam1] Pose label: looking_down
+2025-11-30 13:58:27,896 - [cam1] Pose label: looking_right
+2025-11-30 13:58:28,156 - [cam1] Pose label: looking_down
+2025-11-30 13:58:28,419 - [cam1] Pose label: looking_down
+2025-11-30 13:58:28,671 - [cam1] Pose label: looking_down
+2025-11-30 13:58:28,917 - [cam1] Pose label: looking_down
+2025-11-30 13:58:29,165 - [cam1] Pose label: looking_down
+2025-11-30 13:58:29,419 - [cam1] Pose label: looking_down
+2025-11-30 13:58:29,663 - [cam1] Pose label: looking_down
+2025-11-30 13:58:29,928 - [cam1] Pose label: looking_down
+2025-11-30 13:58:30,174 - [cam1] Pose label: looking_down
+2025-11-30 13:58:30,426 - [cam1] Pose label: looking_down
+2025-11-30 13:58:30,675 - [cam1] Pose label: looking_down
+2025-11-30 13:58:30,930 - [cam1] Pose label: looking_down
+2025-11-30 13:58:31,232 - [cam1] Pose label: looking_down
+2025-11-30 13:58:31,483 - [cam1] Pose label: looking_down
+2025-11-30 13:58:31,739 - [cam1] Pose label: looking_down
+2025-11-30 13:58:32,002 - [cam1] Pose label: looking_down
+2025-11-30 13:58:32,253 - [cam1] Pose label: looking_down
+2025-11-30 13:58:32,504 - [cam1] Pose label: looking_down
+2025-11-30 13:58:32,758 - [cam1] Pose label: looking_left
+2025-11-30 13:58:33,010 - [cam1] Pose label: looking_left
+2025-11-30 13:58:33,269 - [cam1] Pose label: looking_left
+2025-11-30 13:58:33,530 - [cam1] Pose label: looking_down
+2025-11-30 13:58:33,775 - [cam1] Pose label: looking_down
+2025-11-30 13:58:34,025 - [cam1] Pose label: looking_down
+2025-11-30 13:58:34,274 - [cam1] Pose label: looking_down
+2025-11-30 13:58:34,530 - [cam1] Pose label: looking_down
+2025-11-30 13:58:34,792 - [cam1] Pose label: looking_right
+2025-11-30 13:58:35,062 - [cam1] Pose label: looking_right
+2025-11-30 13:58:35,317 - [cam1] Pose label: looking_down
+2025-11-30 13:58:35,569 - [cam1] Pose label: looking_right
+2025-11-30 13:58:35,816 - [cam1] Pose label: looking_down
+2025-11-30 13:58:36,069 - [cam1] Pose label: looking_down
+2025-11-30 13:58:36,320 - [cam1] Pose label: looking_down
+2025-11-30 13:58:36,572 - [cam1] Pose label: looking_down
+2025-11-30 13:58:36,824 - [cam1] Pose label: looking_down
+2025-11-30 13:58:37,073 - [cam1] Pose label: looking_down
+2025-11-30 13:58:37,323 - [cam1] Pose label: looking_down
+2025-11-30 13:58:37,573 - [cam1] Pose label: looking_down
+2025-11-30 13:58:37,822 - [cam1] Pose label: looking_down
+2025-11-30 13:58:38,070 - [cam1] Pose label: looking_down
+2025-11-30 13:58:38,317 - [cam1] Pose label: looking_down
+2025-11-30 13:58:38,561 - [cam1] Pose label: looking_down
+2025-11-30 13:58:38,811 - [cam1] Pose label: looking_down
+2025-11-30 13:58:39,107 - [cam1] Pose label: looking_down
+2025-11-30 13:58:39,357 - [cam1] Pose label: looking_down
+2025-11-30 13:58:39,602 - [cam1] Pose label: looking_down
+2025-11-30 13:58:39,847 - [cam1] Pose label: looking_down
+2025-11-30 13:58:40,096 - [cam1] Pose label: looking_down
+2025-11-30 13:58:40,345 - [cam1] Pose label: looking_down
+2025-11-30 13:58:40,592 - [cam1] Pose label: looking_down
+2025-11-30 13:58:40,840 - [cam1] Pose label: looking_down
+2025-11-30 13:58:41,087 - [cam1] Pose label: looking_down
+2025-11-30 13:58:41,338 - [cam1] Pose label: looking_down
+2025-11-30 13:58:41,587 - [cam1] Pose label: looking_right
+2025-11-30 13:58:41,831 - [cam1] Pose label: looking_down
+2025-11-30 13:58:42,077 - [cam1] Pose label: looking_down
+2025-11-30 13:58:42,334 - [cam1] Pose label: looking_down
+2025-11-30 13:58:42,584 - [cam1] Pose label: looking_down
+2025-11-30 13:58:42,832 - [cam1] Pose label: looking_down
+2025-11-30 13:58:43,075 - [cam1] Pose label: looking_down
+2025-11-30 13:58:43,323 - [cam1] Pose label: looking_down
+2025-11-30 13:58:43,581 - [cam1] Pose label: looking_left
+2025-11-30 13:58:43,827 - [cam1] Pose label: looking_left
+2025-11-30 13:58:44,077 - [cam1] Pose label: looking_left
+2025-11-30 13:58:44,325 - [cam1] Pose label: looking_left
+2025-11-30 13:58:44,574 - [cam1] Pose label: looking_left
+2025-11-30 13:58:44,826 - [cam1] Pose label: looking_down
+2025-11-30 13:58:45,073 - [cam1] Pose label: looking_down
+2025-11-30 13:58:45,324 - [cam1] Pose label: looking_down
+2025-11-30 13:58:45,568 - [cam1] Pose label: looking_down
+2025-11-30 13:58:45,811 - [cam1] Pose label: looking_down
+2025-11-30 13:58:46,057 - [cam1] Pose label: looking_down
+2025-11-30 13:58:46,305 - [cam1] Pose label: looking_down
+2025-11-30 13:58:46,561 - [cam1] Pose label: looking_down
+2025-11-30 13:58:46,857 - [cam1] Pose label: looking_down
+2025-11-30 13:58:47,111 - [cam1] Pose label: looking_down
+2025-11-30 13:58:47,365 - [cam1] Pose label: looking_down
+2025-11-30 13:58:47,621 - [cam1] Pose label: looking_down
+2025-11-30 13:58:47,862 - [cam1] Pose label: looking_down
+2025-11-30 13:58:48,112 - [cam1] Pose label: looking_down
+2025-11-30 13:58:48,366 - [cam1] Pose label: looking_down
+2025-11-30 13:58:48,610 - [cam1] Pose label: looking_down
+2025-11-30 13:58:48,857 - [cam1] Pose label: looking_down
+2025-11-30 13:58:49,110 - [cam1] Pose label: looking_down
+2025-11-30 13:58:49,358 - [cam1] Pose label: looking_down
+2025-11-30 13:58:49,606 - [cam1] Pose label: looking_down
+2025-11-30 13:58:49,856 - [cam1] Pose label: looking_down
+2025-11-30 13:58:50,107 - [cam1] Pose label: looking_down
+2025-11-30 13:58:50,347 - [cam1] Pose label: looking_down
+2025-11-30 13:58:50,626 - [cam1] Pose label: looking_down
+2025-11-30 13:58:50,946 - [cam1] Pose label: looking_down
+2025-11-30 13:58:51,256 - [cam1] Pose label: looking_down
+2025-11-30 13:58:51,518 - [cam1] Pose label: looking_down
+2025-11-30 13:58:51,814 - [cam1] Pose label: looking_down
+2025-11-30 13:58:52,189 - [cam1] Pose label: looking_down
+2025-11-30 13:58:52,446 - [cam1] Pose label: looking_down
+2025-11-30 13:58:52,755 - [cam1] Pose label: looking_down
+2025-11-30 13:58:52,755 - [cam1] Pose label: looking_down
+2025-11-30 13:58:53,063 - [cam1] Pose label: looking_down
+2025-11-30 13:58:53,327 - [cam1] Pose label: looking_down
+2025-11-30 13:58:53,622 - [cam1] Pose label: looking_down
+2025-11-30 13:58:53,905 - [cam1] Pose label: looking_down
+2025-11-30 13:58:53,905 - [cam1] Pose label: looking_left
+2025-11-30 13:58:54,214 - [cam1] Pose label: looking_down
+2025-11-30 13:58:54,490 - [cam1] Pose label: looking_down
+2025-11-30 13:58:54,748 - [cam1] Pose label: looking_down
+2025-11-30 13:58:55,008 - [cam1] Pose label: looking_down
+2025-11-30 13:58:55,008 - [cam1] Pose label: looking_left
+2025-11-30 13:58:55,266 - [cam1] Pose label: looking_down
+2025-11-30 13:58:55,511 - [cam1] Pose label: looking_down
+2025-11-30 13:58:55,762 - [cam1] Pose label: looking_down
+2025-11-30 13:58:56,013 - [cam1] Pose label: facing_camera
+2025-11-30 13:58:56,266 - [cam1] Pose label: looking_down
+2025-11-30 13:58:56,511 - [cam1] Pose label: looking_down
+2025-11-30 13:58:56,654 - [cam1] Detected phone (0.60) at [257,123,376,290]
+2025-11-30 13:58:56,654 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:58:57,155 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:58:57,839 - [cam1] Pose label: looking_down
+2025-11-30 13:58:58,167 - [cam1] Pose label: looking_down
+2025-11-30 13:58:58,479 - [cam1] Pose label: looking_down
+2025-11-30 13:58:58,848 - [cam1] Pose label: looking_down
+2025-11-30 13:58:59,138 - [cam1] Pose label: looking_down
+2025-11-30 13:58:59,454 - [cam1] Pose label: looking_down
+2025-11-30 13:58:59,754 - [cam1] Pose label: looking_down
+2025-11-30 13:59:00,091 - [cam1] Pose label: looking_down
+2025-11-30 13:59:00,379 - [cam1] Pose label: looking_down
+2025-11-30 13:59:00,647 - [cam1] Pose label: looking_down
+2025-11-30 13:59:00,897 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:01,155 - [cam1] Pose label: looking_down
+2025-11-30 13:59:01,449 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:01,703 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:01,955 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:02,217 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:02,484 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:02,748 - [cam1] Pose label: looking_down
+2025-11-30 13:59:02,991 - [cam1] Pose label: looking_down
+2025-11-30 13:59:03,247 - [cam1] Pose label: looking_down
+2025-11-30 13:59:03,494 - [cam1] Pose label: looking_down
+2025-11-30 13:59:03,739 - [cam1] Pose label: looking_down
+2025-11-30 13:59:03,988 - [cam1] Pose label: looking_down
+2025-11-30 13:59:04,239 - [cam1] Pose label: looking_down
+2025-11-30 13:59:04,496 - [cam1] Pose label: looking_down
+2025-11-30 13:59:04,747 - [cam1] Pose label: looking_down
+2025-11-30 13:59:04,999 - [cam1] Pose label: looking_down
+2025-11-30 13:59:05,259 - [cam1] Pose label: looking_down
+2025-11-30 13:59:05,505 - [cam1] Pose label: looking_down
+2025-11-30 13:59:05,757 - [cam1] Pose label: looking_down
+2025-11-30 13:59:06,005 - [cam1] Pose label: looking_down
+2025-11-30 13:59:06,258 - [cam1] Pose label: looking_down
+2025-11-30 13:59:06,503 - [cam1] Pose label: looking_down
+2025-11-30 13:59:06,762 - [cam1] Pose label: looking_down
+2025-11-30 13:59:07,009 - [cam1] Pose label: looking_down
+2025-11-30 13:59:07,294 - [cam1] Pose label: looking_down
+2025-11-30 13:59:07,576 - [cam1] Pose label: looking_down
+2025-11-30 13:59:07,892 - [cam1] Pose label: looking_down
+2025-11-30 13:59:08,165 - [cam1] Pose label: looking_down
+2025-11-30 13:59:08,454 - [cam1] Pose label: looking_down
+2025-11-30 13:59:08,732 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:09,003 - [cam1] Pose label: looking_down
+2025-11-30 13:59:09,316 - [cam1] Pose label: looking_down
+2025-11-30 13:59:09,586 - [cam1] Pose label: looking_down
+2025-11-30 13:59:09,837 - [cam1] Pose label: looking_down
+2025-11-30 13:59:10,093 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:10,350 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:10,611 - [cam1] Pose label: looking_down
+2025-11-30 13:59:10,857 - [cam1] Pose label: looking_down
+2025-11-30 13:59:11,107 - [cam1] Pose label: looking_down
+2025-11-30 13:59:11,359 - [cam1] Pose label: looking_down
+2025-11-30 13:59:11,619 - [cam1] Pose label: looking_down
+2025-11-30 13:59:11,875 - [cam1] Pose label: looking_down
+2025-11-30 13:59:12,123 - [cam1] Pose label: looking_down
+2025-11-30 13:59:12,372 - [cam1] Pose label: looking_down
+2025-11-30 13:59:12,628 - [cam1] Pose label: looking_down
+2025-11-30 13:59:12,874 - [cam1] Pose label: looking_down
+2025-11-30 13:59:13,124 - [cam1] Pose label: looking_down
+2025-11-30 13:59:13,124 - [cam1] Pose label: looking_left
+2025-11-30 13:59:13,379 - [cam1] Pose label: looking_down
+2025-11-30 13:59:13,528 - [cam1] Detected phone (0.51) at [144,20,554,477]
+2025-11-30 13:59:13,528 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:59:14,029 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:59:14,638 - [cam1] Pose label: looking_down
+2025-11-30 13:59:14,773 - [cam1] Detected phone (0.51) at [145,27,566,480]
+2025-11-30 13:59:14,885 - [cam1] Pose label: looking_down
+2025-11-30 13:59:15,120 - [cam1] Pose label: looking_down
+2025-11-30 13:59:15,365 - [cam1] Pose label: looking_down
+2025-11-30 13:59:15,508 - [cam1] Detected phone (0.55) at [137,30,550,480]
+2025-11-30 13:59:15,636 - [cam1] Pose label: looking_down
+2025-11-30 13:59:15,637 - [cam1] Pose label: looking_down
+2025-11-30 13:59:15,840 - [cam1] Detected phone (0.53) at [139,34,553,480]
+2025-11-30 13:59:15,998 - [cam1] Pose label: looking_down
+2025-11-30 13:59:16,353 - [cam1] Pose label: looking_down
+2025-11-30 13:59:16,681 - [cam1] Pose label: looking_down
+2025-11-30 13:59:16,971 - [cam1] Pose label: looking_down
+2025-11-30 13:59:17,226 - [cam1] Pose label: looking_down
+2025-11-30 13:59:17,484 - [cam1] Pose label: looking_down
+2025-11-30 13:59:17,734 - [cam1] Pose label: looking_down
+2025-11-30 13:59:17,990 - [cam1] Pose label: looking_down
+2025-11-30 13:59:18,316 - [cam1] Pose label: looking_down
+2025-11-30 13:59:18,457 - [cam1] Detected phone (0.54) at [170,39,327,331]
+2025-11-30 13:59:18,574 - [cam1] Pose label: looking_down
+2025-11-30 13:59:18,834 - [cam1] Pose label: looking_down
+2025-11-30 13:59:19,082 - [cam1] Pose label: looking_down
+2025-11-30 13:59:19,227 - [cam1] Detected phone (0.69) at [152,47,315,335]
+2025-11-30 13:59:19,343 - [cam1] Pose label: looking_down
+2025-11-30 13:59:19,598 - [cam1] Pose label: looking_down
+2025-11-30 13:59:19,848 - [cam1] Pose label: looking_down
+2025-11-30 13:59:20,104 - [cam1] Pose label: looking_down
+2025-11-30 13:59:20,356 - [cam1] Pose label: looking_down
+2025-11-30 13:59:20,598 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:20,850 - [cam1] Pose label: looking_down
+2025-11-30 13:59:21,101 - [cam1] Pose label: looking_down
+2025-11-30 13:59:21,364 - [cam1] Pose label: looking_down
+2025-11-30 13:59:21,619 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:21,867 - [cam1] Pose label: looking_down
+2025-11-30 13:59:22,124 - [cam1] Pose label: looking_down
+2025-11-30 13:59:22,375 - [cam1] Pose label: looking_down
+2025-11-30 13:59:22,630 - [cam1] Pose label: looking_down
+2025-11-30 13:59:22,880 - [cam1] Pose label: looking_down
+2025-11-30 13:59:23,129 - [cam1] Pose label: looking_down
+2025-11-30 13:59:23,377 - [cam1] Pose label: looking_down
+2025-11-30 13:59:23,633 - [cam1] Pose label: looking_down
+2025-11-30 13:59:23,886 - [cam1] Pose label: looking_right
+2025-11-30 13:59:24,133 - [cam1] Pose label: looking_right
+2025-11-30 13:59:24,382 - [cam1] Pose label: looking_right
+2025-11-30 13:59:24,633 - [cam1] Pose label: looking_right
+2025-11-30 13:59:24,876 - [cam1] Pose label: looking_right
+2025-11-30 13:59:25,125 - [cam1] Pose label: looking_down
+2025-11-30 13:59:25,379 - [cam1] Pose label: looking_right
+2025-11-30 13:59:25,626 - [cam1] Pose label: looking_down
+2025-11-30 13:59:25,873 - [cam1] Pose label: looking_down
+2025-11-30 13:59:26,173 - [cam1] Pose label: looking_down
+2025-11-30 13:59:26,430 - [cam1] Pose label: looking_left
+2025-11-30 13:59:26,688 - [cam1] Pose label: looking_left
+2025-11-30 13:59:26,935 - [cam1] Pose label: looking_left
+2025-11-30 13:59:27,076 - [cam1] Detected phone (0.59) at [317,158,500,286]
+2025-11-30 13:59:27,076 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 13:59:27,577 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 13:59:28,181 - [cam1] Pose label: looking_left
+2025-11-30 13:59:28,315 - [cam1] Detected smart_watch (0.53) at [171,0,378,292]
+2025-11-30 13:59:28,430 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:28,572 - [cam1] Detected smart_watch (0.55) at [177,0,378,290]
+2025-11-30 13:59:28,685 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:28,822 - [cam1] Detected smart_watch (0.62) at [172,0,376,295]
+2025-11-30 13:59:28,928 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:29,064 - [cam1] Detected smart_watch (0.58) at [177,0,377,280]
+2025-11-30 13:59:29,179 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:29,314 - [cam1] Detected smart_watch (0.63) at [177,0,377,293]
+2025-11-30 13:59:29,427 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:29,571 - [cam1] Detected smart_watch (0.62) at [177,0,379,299]
+2025-11-30 13:59:29,682 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:29,820 - [cam1] Detected smart_watch (0.52) at [176,0,377,289]
+2025-11-30 13:59:29,934 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:30,082 - [cam1] Detected smart_watch (0.66) at [174,0,380,299]
+2025-11-30 13:59:30,195 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:30,333 - [cam1] Detected smart_watch (0.63) at [174,0,379,298]
+2025-11-30 13:59:30,444 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:30,586 - [cam1] Detected smart_watch (0.65) at [171,0,381,297]
+2025-11-30 13:59:30,706 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:30,846 - [cam1] Detected smart_watch (0.61) at [172,0,383,310]
+2025-11-30 13:59:30,960 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:31,099 - [cam1] Detected smart_watch (0.60) at [170,0,387,313]
+2025-11-30 13:59:31,216 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:31,361 - [cam1] Detected smart_watch (0.70) at [182,0,387,314]
+2025-11-30 13:59:31,473 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:31,617 - [cam1] Detected smart_watch (0.66) at [178,0,386,315]
+2025-11-30 13:59:31,729 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:31,865 - [cam1] Detected smart_watch (0.67) at [171,0,387,317]
+2025-11-30 13:59:31,981 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:32,120 - [cam1] Detected smart_watch (0.66) at [172,0,389,313]
+2025-11-30 13:59:32,234 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:32,380 - [cam1] Detected smart_watch (0.63) at [175,0,389,314]
+2025-11-30 13:59:32,516 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:32,844 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:33,006 - [cam1] Detected smart_watch (0.69) at [171,0,386,316]
+2025-11-30 13:59:33,148 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:33,378 - [cam1] Detected smart_watch (0.68) at [170,0,385,317]
+2025-11-30 13:59:33,565 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:33,787 - [cam1] Detected smart_watch (0.53) at [176,0,389,313]
+2025-11-30 13:59:33,920 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:34,072 - [cam1] Detected smart_watch (0.55) at [169,0,389,313]
+2025-11-30 13:59:34,188 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:34,445 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:34,704 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:34,845 - [cam1] Detected smart_watch (0.57) at [176,0,389,312]
+2025-11-30 13:59:34,967 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:35,266 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:35,582 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:35,856 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:36,124 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:36,372 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:36,621 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:36,874 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:37,128 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:37,379 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:37,639 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:37,890 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:38,149 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:38,401 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:38,654 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:38,903 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:39,153 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:39,404 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:39,655 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:39,916 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:40,160 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:40,403 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:40,658 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:40,910 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:41,054 - [cam1] Detected smart_watch (0.60) at [172,0,393,313]
+2025-11-30 13:59:41,168 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:41,425 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:41,682 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:41,935 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:42,187 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:42,326 - [cam1] Detected smart_watch (0.55) at [191,0,394,311]
+2025-11-30 13:59:42,440 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:42,691 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:42,842 - [cam1] Detected smart_watch (0.53) at [185,0,393,300]
+2025-11-30 13:59:42,961 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:43,103 - [cam1] Detected smart_watch (0.53) at [184,0,393,314]
+2025-11-30 13:59:43,266 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:43,532 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:43,788 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:43,933 - [cam1] Detected smart_watch (0.59) at [181,0,393,310]
+2025-11-30 13:59:44,050 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:44,303 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:44,559 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:44,700 - [cam1] Detected smart_watch (0.55) at [181,0,389,309]
+2025-11-30 13:59:44,811 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:45,077 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:45,330 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:45,584 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:45,734 - [cam1] Detected smart_watch (0.60) at [181,0,391,309]
+2025-11-30 13:59:45,851 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:46,114 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:46,394 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:46,548 - [cam1] Detected smart_watch (0.55) at [181,0,393,290]
+2025-11-30 13:59:46,673 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:46,827 - [cam1] Detected smart_watch (0.64) at [177,0,391,310]
+2025-11-30 13:59:46,939 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:47,081 - [cam1] Detected smart_watch (0.64) at [179,0,392,307]
+2025-11-30 13:59:47,196 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:47,445 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:47,701 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:47,978 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:48,140 - [cam1] Detected smart_watch (0.59) at [172,0,388,314]
+2025-11-30 13:59:48,255 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:48,509 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:48,681 - [cam1] Detected smart_watch (0.54) at [172,0,385,311]
+2025-11-30 13:59:48,824 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:48,998 - [cam1] Detected smart_watch (0.57) at [169,0,383,308]
+2025-11-30 13:59:49,184 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:49,457 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:49,739 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:50,003 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:50,262 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:50,449 - [cam1] Detected smart_watch (0.60) at [168,0,391,318]
+2025-11-30 13:59:50,571 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:50,836 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:50,984 - [cam1] Detected smart_watch (0.56) at [171,0,381,312]
+2025-11-30 13:59:51,104 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:51,256 - [cam1] Detected smart_watch (0.52) at [165,0,382,305]
+2025-11-30 13:59:51,374 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:51,579 - [cam1] Detected smart_watch (0.61) at [164,0,381,310]
+2025-11-30 13:59:51,694 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:51,835 - [cam1] Detected smart_watch (0.61) at [165,0,378,312]
+2025-11-30 13:59:51,950 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:52,100 - [cam1] Detected smart_watch (0.61) at [162,0,381,315]
+2025-11-30 13:59:52,215 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:52,364 - [cam1] Detected smart_watch (0.61) at [162,0,381,312]
+2025-11-30 13:59:52,483 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:52,633 - [cam1] Detected smart_watch (0.60) at [164,0,379,312]
+2025-11-30 13:59:52,760 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:53,061 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:53,238 - [cam1] Detected smart_watch (0.50) at [164,0,377,309]
+2025-11-30 13:59:53,426 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:53,712 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:54,005 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:54,286 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:54,543 - [cam1] Pose label: facing_camera
+2025-11-30 13:59:54,810 - [cam1] Pose label: looking_down
+2025-11-30 13:59:55,102 - [cam1] Pose label: looking_down
+2025-11-30 13:59:55,374 - [cam1] Pose label: looking_down
+2025-11-30 13:59:55,662 - [cam1] Pose label: looking_down
+2025-11-30 13:59:55,938 - [cam1] Pose label: looking_down
+2025-11-30 13:59:56,234 - [cam1] Pose label: looking_down
+2025-11-30 13:59:56,527 - [cam1] Pose label: looking_down
+2025-11-30 13:59:56,860 - [cam1] Pose label: looking_down
+2025-11-30 13:59:56,860 - [cam1] Pose label: looking_left
+2025-11-30 13:59:57,277 - [cam1] Pose label: looking_down
+2025-11-30 13:59:57,913 - [cam1] Pose label: looking_down
+2025-11-30 13:59:58,180 - [cam1] Pose label: looking_down
+2025-11-30 13:59:58,180 - [cam1] Pose label: looking_left
+2025-11-30 13:59:58,469 - [cam1] Pose label: looking_down
+2025-11-30 13:59:58,740 - [cam1] Pose label: looking_down
+2025-11-30 13:59:58,987 - [cam1] Pose label: looking_down
+2025-11-30 13:59:59,262 - [cam1] Pose label: looking_down
+2025-11-30 13:59:59,533 - [cam1] Pose label: looking_down
+2025-11-30 13:59:59,801 - [cam1] Pose label: looking_down
+2025-11-30 14:00:00,163 - [cam1] Pose label: looking_down
+2025-11-30 14:00:00,481 - [cam1] Pose label: looking_down
+2025-11-30 14:00:00,900 - [cam1] Pose label: looking_down
+2025-11-30 14:00:01,214 - [cam1] Pose label: looking_down
+2025-11-30 14:00:01,515 - [cam1] Pose label: looking_down
+2025-11-30 14:00:01,790 - [cam1] Pose label: looking_down
+2025-11-30 14:00:02,080 - [cam1] Pose label: looking_down
+2025-11-30 14:00:02,356 - [cam1] Pose label: looking_down
+2025-11-30 14:00:02,681 - [cam1] Pose label: looking_down
+2025-11-30 14:00:03,045 - [cam1] Pose label: looking_down
+2025-11-30 14:00:03,422 - [cam1] Pose label: looking_down
+2025-11-30 14:00:03,775 - [cam1] Pose label: looking_down
+2025-11-30 14:00:04,048 - [cam1] Pose label: looking_down
+2025-11-30 14:00:04,358 - [cam1] Pose label: looking_down
+2025-11-30 14:00:04,640 - [cam1] Pose label: looking_down
+2025-11-30 14:00:04,922 - [cam1] Pose label: looking_down
+2025-11-30 14:00:05,196 - [cam1] Pose label: looking_down
+2025-11-30 14:00:05,526 - [cam1] Pose label: looking_down
+2025-11-30 14:00:05,848 - [cam1] Pose label: looking_down
+2025-11-30 14:00:06,155 - [cam1] Pose label: looking_down
+2025-11-30 14:00:06,434 - [cam1] Pose label: looking_down
+2025-11-30 14:00:06,823 - [cam1] Pose label: looking_down
+2025-11-30 14:00:07,139 - [cam1] Pose label: looking_down
+2025-11-30 14:00:07,507 - [cam1] Pose label: looking_down
+2025-11-30 14:00:07,800 - [cam1] Pose label: looking_down
+2025-11-30 14:00:08,187 - [cam1] Pose label: looking_down
+2025-11-30 14:00:08,458 - [cam1] Pose label: looking_down
+2025-11-30 14:00:08,727 - [cam1] Pose label: looking_down
+2025-11-30 14:00:08,980 - [cam1] Pose label: looking_down
+2025-11-30 14:00:09,323 - [cam1] Pose label: looking_down
+2025-11-30 14:00:09,651 - [cam1] Pose label: looking_down
+2025-11-30 14:00:09,935 - [cam1] Pose label: looking_down
+2025-11-30 14:00:10,227 - [cam1] Pose label: looking_down
+2025-11-30 14:00:10,512 - [cam1] Pose label: looking_down
+2025-11-30 14:00:10,789 - [cam1] Pose label: looking_down
+2025-11-30 14:00:10,789 - [cam1] Pose label: looking_left
+2025-11-30 14:00:11,050 - [cam1] Pose label: looking_down
+2025-11-30 14:00:11,299 - [cam1] Pose label: looking_down
+2025-11-30 14:00:11,299 - [cam1] Pose label: looking_left
+2025-11-30 14:00:11,556 - [cam1] Pose label: looking_down
+2025-11-30 14:00:11,816 - [cam1] Pose label: looking_down
+2025-11-30 14:00:12,075 - [cam1] Pose label: looking_down
+2025-11-30 14:00:12,334 - [cam1] Pose label: looking_down
+2025-11-30 14:00:12,594 - [cam1] Pose label: looking_down
+2025-11-30 14:00:12,861 - [cam1] Pose label: looking_down
+2025-11-30 14:00:13,135 - [cam1] Pose label: looking_down
+2025-11-30 14:00:13,394 - [cam1] Pose label: looking_down
+2025-11-30 14:00:13,646 - [cam1] Pose label: looking_down
+2025-11-30 14:00:13,917 - [cam1] Pose label: looking_down
+2025-11-30 14:00:14,197 - [cam1] Pose label: looking_down
+2025-11-30 14:00:14,503 - [cam1] Pose label: looking_down
+2025-11-30 14:00:14,791 - [cam1] Pose label: looking_down
+2025-11-30 14:00:15,048 - [cam1] Pose label: looking_down
+2025-11-30 14:00:15,310 - [cam1] Pose label: looking_down
+2025-11-30 14:00:15,597 - [cam1] Pose label: looking_down
+2025-11-30 14:00:15,598 - [cam1] Pose label: looking_down
+2025-11-30 14:00:15,599 - [cam1] Pose label: looking_down
+2025-11-30 14:00:15,901 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:16,164 - [cam1] Pose label: looking_down
+2025-11-30 14:00:16,415 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:16,720 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:16,974 - [cam1] Pose label: looking_down
+2025-11-30 14:00:17,235 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:17,493 - [cam1] Pose label: looking_down
+2025-11-30 14:00:17,750 - [cam1] Pose label: looking_down
+2025-11-30 14:00:18,011 - [cam1] Pose label: looking_down
+2025-11-30 14:00:18,299 - [cam1] Pose label: looking_down
+2025-11-30 14:00:18,585 - [cam1] Pose label: looking_down
+2025-11-30 14:00:18,849 - [cam1] Pose label: looking_down
+2025-11-30 14:00:19,101 - [cam1] Pose label: looking_down
+2025-11-30 14:00:19,355 - [cam1] Pose label: looking_down
+2025-11-30 14:00:19,618 - [cam1] Pose label: looking_down
+2025-11-30 14:00:19,877 - [cam1] Pose label: looking_down
+2025-11-30 14:00:20,130 - [cam1] Pose label: looking_down
+2025-11-30 14:00:20,130 - [cam1] Pose label: looking_left
+2025-11-30 14:00:20,396 - [cam1] Pose label: looking_down
+2025-11-30 14:00:20,670 - [cam1] Pose label: looking_down
+2025-11-30 14:00:20,922 - [cam1] Pose label: looking_down
+2025-11-30 14:00:21,177 - [cam1] Pose label: looking_down
+2025-11-30 14:00:21,453 - [cam1] Pose label: looking_down
+2025-11-30 14:00:21,700 - [cam1] Pose label: looking_down
+2025-11-30 14:00:21,955 - [cam1] Pose label: looking_down
+2025-11-30 14:00:22,230 - [cam1] Pose label: looking_down
+2025-11-30 14:00:22,483 - [cam1] Pose label: looking_down
+2025-11-30 14:00:22,770 - [cam1] Pose label: looking_down
+2025-11-30 14:00:23,041 - [cam1] Pose label: looking_down
+2025-11-30 14:00:23,202 - [cam1] Detected smart_watch (0.53) at [85,0,539,479]
+2025-11-30 14:00:23,333 - [cam1] Pose label: looking_down
+2025-11-30 14:00:23,501 - [cam1] Detected smart_watch (0.51) at [87,0,536,479]
+2025-11-30 14:00:23,634 - [cam1] Pose label: looking_down
+2025-11-30 14:00:23,810 - [cam1] Detected smart_watch (0.61) at [90,0,535,479]
+2025-11-30 14:00:23,931 - [cam1] Pose label: looking_down
+2025-11-30 14:00:24,081 - [cam1] Detected smart_watch (0.59) at [95,0,519,478]
+2025-11-30 14:00:24,200 - [cam1] Pose label: looking_down
+2025-11-30 14:00:24,340 - [cam1] Detected smart_watch (0.58) at [95,0,515,479]
+2025-11-30 14:00:24,458 - [cam1] Pose label: looking_down
+2025-11-30 14:00:24,611 - [cam1] Detected smart_watch (0.59) at [95,0,511,479]
+2025-11-30 14:00:24,729 - [cam1] Pose label: looking_down
+2025-11-30 14:00:25,038 - [cam1] Pose label: looking_down
+2025-11-30 14:00:25,295 - [cam1] Pose label: looking_down
+2025-11-30 14:00:25,546 - [cam1] Pose label: looking_down
+2025-11-30 14:00:25,814 - [cam1] Pose label: looking_down
+2025-11-30 14:00:26,069 - [cam1] Pose label: looking_down
+2025-11-30 14:00:26,324 - [cam1] Pose label: looking_down
+2025-11-30 14:00:26,581 - [cam1] Pose label: looking_down
+2025-11-30 14:00:26,832 - [cam1] Pose label: looking_down
+2025-11-30 14:00:27,092 - [cam1] Pose label: looking_down
+2025-11-30 14:00:27,348 - [cam1] Pose label: looking_down
+2025-11-30 14:00:27,599 - [cam1] Pose label: looking_down
+2025-11-30 14:00:27,846 - [cam1] Pose label: looking_down
+2025-11-30 14:00:28,094 - [cam1] Pose label: looking_down
+2025-11-30 14:00:28,368 - [cam1] Pose label: looking_down
+2025-11-30 14:00:28,643 - [cam1] Pose label: looking_down
+2025-11-30 14:00:28,790 - [cam1] Detected smart_watch (0.61) at [98,0,406,479]
+2025-11-30 14:00:28,906 - [cam1] Pose label: looking_down
+2025-11-30 14:00:28,907 - [cam1] Pose label: looking_down
+2025-11-30 14:00:29,176 - [cam1] Pose label: looking_down
+2025-11-30 14:00:29,439 - [cam1] Pose label: looking_down
+2025-11-30 14:00:29,695 - [cam1] Pose label: looking_down
+2025-11-30 14:00:29,963 - [cam1] Pose label: looking_down
+2025-11-30 14:00:30,215 - [cam1] Pose label: looking_down
+2025-11-30 14:00:30,475 - [cam1] Pose label: looking_down
+2025-11-30 14:00:30,742 - [cam1] Pose label: looking_down
+2025-11-30 14:00:30,990 - [cam1] Pose label: looking_down
+2025-11-30 14:00:31,248 - [cam1] Pose label: looking_down
+2025-11-30 14:00:31,507 - [cam1] Pose label: looking_down
+2025-11-30 14:00:31,765 - [cam1] Pose label: looking_down
+2025-11-30 14:00:32,038 - [cam1] Pose label: looking_down
+2025-11-30 14:00:32,309 - [cam1] Pose label: looking_down
+2025-11-30 14:00:32,566 - [cam1] Pose label: looking_down
+2025-11-30 14:00:32,865 - [cam1] Pose label: looking_down
+2025-11-30 14:00:33,125 - [cam1] Pose label: looking_down
+2025-11-30 14:00:33,389 - [cam1] Pose label: looking_down
+2025-11-30 14:00:33,653 - [cam1] Pose label: looking_down
+2025-11-30 14:00:33,902 - [cam1] Pose label: looking_down
+2025-11-30 14:00:34,164 - [cam1] Pose label: looking_down
+2025-11-30 14:00:34,427 - [cam1] Pose label: looking_down
+2025-11-30 14:00:34,680 - [cam1] Pose label: looking_down
+2025-11-30 14:00:34,928 - [cam1] Pose label: looking_down
+2025-11-30 14:00:35,088 - [cam1] Detected smart_watch (0.54) at [140,0,515,478]
+2025-11-30 14:00:35,210 - [cam1] Pose label: looking_down
+2025-11-30 14:00:35,210 - [cam1] Pose label: looking_right
+2025-11-30 14:00:35,475 - [cam1] Pose label: looking_down
+2025-11-30 14:00:35,727 - [cam1] Pose label: looking_down
+2025-11-30 14:00:35,992 - [cam1] Pose label: looking_down
+2025-11-30 14:00:36,245 - [cam1] Pose label: looking_down
+2025-11-30 14:00:36,494 - [cam1] Pose label: looking_down
+2025-11-30 14:00:36,755 - [cam1] Pose label: looking_down
+2025-11-30 14:00:37,013 - [cam1] Pose label: looking_down
+2025-11-30 14:00:37,280 - [cam1] Pose label: looking_down
+2025-11-30 14:00:37,540 - [cam1] Pose label: looking_down
+2025-11-30 14:00:37,798 - [cam1] Pose label: looking_down
+2025-11-30 14:00:38,062 - [cam1] Pose label: looking_down
+2025-11-30 14:00:38,332 - [cam1] Pose label: looking_down
+2025-11-30 14:00:38,585 - [cam1] Pose label: looking_down
+2025-11-30 14:00:38,840 - [cam1] Pose label: looking_down
+2025-11-30 14:00:39,095 - [cam1] Pose label: looking_down
+2025-11-30 14:00:39,352 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:39,616 - [cam1] Pose label: looking_down
+2025-11-30 14:00:39,887 - [cam1] Pose label: looking_down
+2025-11-30 14:00:40,150 - [cam1] Pose label: looking_down
+2025-11-30 14:00:40,407 - [cam1] Pose label: looking_down
+2025-11-30 14:00:40,667 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:40,981 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:41,240 - [cam1] Pose label: looking_down
+2025-11-30 14:00:41,496 - [cam1] Pose label: looking_down
+2025-11-30 14:00:41,750 - [cam1] Pose label: looking_down
+2025-11-30 14:00:42,008 - [cam1] Pose label: looking_down
+2025-11-30 14:00:42,272 - [cam1] Pose label: looking_down
+2025-11-30 14:00:42,530 - [cam1] Pose label: looking_down
+2025-11-30 14:00:42,798 - [cam1] Pose label: looking_down
+2025-11-30 14:00:43,056 - [cam1] Pose label: looking_down
+2025-11-30 14:00:43,316 - [cam1] Pose label: looking_down
+2025-11-30 14:00:43,575 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:43,733 - [cam1] Detected smart_watch (0.51) at [121,46,640,479]
+2025-11-30 14:00:43,849 - [cam1] Pose label: looking_down
+2025-11-30 14:00:44,104 - [cam1] Pose label: looking_down
+2025-11-30 14:00:44,365 - [cam1] Pose label: looking_down
+2025-11-30 14:00:44,630 - [cam1] Pose label: looking_down
+2025-11-30 14:00:44,884 - [cam1] Pose label: looking_down
+2025-11-30 14:00:45,140 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:45,289 - [cam1] Detected phone (0.53) at [300,164,497,233]
+2025-11-30 14:00:45,289 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:00:45,790 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:00:46,402 - [cam1] Pose label: looking_down
+2025-11-30 14:00:46,651 - [cam1] Pose label: looking_down
+2025-11-30 14:00:46,895 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:47,147 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:47,401 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:47,650 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:47,905 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:48,159 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:48,411 - [cam1] Pose label: looking_down
+2025-11-30 14:00:48,670 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:48,937 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:49,190 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:49,451 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:49,771 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:50,035 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:50,295 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:50,556 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:50,812 - [cam1] Pose label: looking_down
+2025-11-30 14:00:51,073 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:51,322 - [cam1] Pose label: looking_down
+2025-11-30 14:00:51,574 - [cam1] Pose label: looking_down
+2025-11-30 14:00:51,832 - [cam1] Pose label: looking_down
+2025-11-30 14:00:52,089 - [cam1] Pose label: looking_down
+2025-11-30 14:00:52,342 - [cam1] Pose label: looking_down
+2025-11-30 14:00:52,598 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:52,856 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:53,123 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:53,386 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:53,638 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:53,900 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:54,163 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:54,416 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:54,673 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:54,935 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:55,192 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:55,447 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:55,706 - [cam1] Pose label: facing_camera
+2025-11-30 14:00:55,965 - [cam1] Pose label: looking_down
+2025-11-30 14:00:56,225 - [cam1] Pose label: looking_down
+2025-11-30 14:00:56,479 - [cam1] Pose label: looking_down
+2025-11-30 14:00:56,739 - [cam1] Pose label: looking_down
+2025-11-30 14:00:56,998 - [cam1] Pose label: looking_down
+2025-11-30 14:00:57,268 - [cam1] Pose label: looking_down
+2025-11-30 14:00:57,530 - [cam1] Pose label: looking_down
+2025-11-30 14:00:57,835 - [cam1] Pose label: looking_down
+2025-11-30 14:00:58,104 - [cam1] Pose label: looking_down
+2025-11-30 14:00:58,366 - [cam1] Pose label: looking_down
+2025-11-30 14:00:58,629 - [cam1] Pose label: looking_down
+2025-11-30 14:00:58,888 - [cam1] Pose label: looking_down
+2025-11-30 14:00:59,142 - [cam1] Pose label: looking_down
+2025-11-30 14:00:59,407 - [cam1] Pose label: looking_down
+2025-11-30 14:00:59,664 - [cam1] Pose label: looking_down
+2025-11-30 14:00:59,936 - [cam1] Pose label: looking_down
+2025-11-30 14:01:00,228 - [cam1] Pose label: looking_down
+2025-11-30 14:01:00,493 - [cam1] Pose label: looking_down
+2025-11-30 14:01:00,765 - [cam1] Pose label: looking_down
+2025-11-30 14:01:01,025 - [cam1] Pose label: looking_down
+2025-11-30 14:01:01,289 - [cam1] Pose label: looking_down
+2025-11-30 14:01:01,548 - [cam1] Pose label: looking_down
+2025-11-30 14:01:01,803 - [cam1] Pose label: looking_down
+2025-11-30 14:01:02,069 - [cam1] Pose label: looking_down
+2025-11-30 14:01:02,324 - [cam1] Pose label: looking_down
+2025-11-30 14:01:02,585 - [cam1] Pose label: looking_down
+2025-11-30 14:01:02,845 - [cam1] Pose label: looking_down
+2025-11-30 14:01:03,106 - [cam1] Pose label: looking_down
+2025-11-30 14:01:03,362 - [cam1] Pose label: looking_down
+2025-11-30 14:01:03,625 - [cam1] Pose label: looking_down
+2025-11-30 14:01:03,910 - [cam1] Pose label: looking_down
+2025-11-30 14:01:04,183 - [cam1] Pose label: looking_down
+2025-11-30 14:01:04,439 - [cam1] Pose label: looking_down
+2025-11-30 14:01:04,702 - [cam1] Pose label: looking_down
+2025-11-30 14:01:04,956 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:05,223 - [cam1] Pose label: looking_down
+2025-11-30 14:01:05,481 - [cam1] Pose label: looking_down
+2025-11-30 14:01:05,778 - [cam1] Pose label: looking_down
+2025-11-30 14:01:06,039 - [cam1] Pose label: looking_down
+2025-11-30 14:01:06,296 - [cam1] Pose label: looking_down
+2025-11-30 14:01:06,548 - [cam1] Pose label: looking_down
+2025-11-30 14:01:06,803 - [cam1] Pose label: looking_down
+2025-11-30 14:01:06,959 - [cam1] Detected phone (0.53) at [230,69,377,273]
+2025-11-30 14:01:06,959 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:01:07,460 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:01:08,070 - [cam1] Pose label: looking_down
+2025-11-30 14:01:08,070 - [cam1] Pose label: looking_down
+2025-11-30 14:01:08,324 - [cam1] Pose label: looking_down
+2025-11-30 14:01:08,588 - [cam1] Pose label: looking_down
+2025-11-30 14:01:08,832 - [cam1] Pose label: looking_down
+2025-11-30 14:01:09,096 - [cam1] Pose label: looking_down
+2025-11-30 14:01:09,353 - [cam1] Pose label: looking_down
+2025-11-30 14:01:09,616 - [cam1] Pose label: looking_down
+2025-11-30 14:01:09,866 - [cam1] Pose label: looking_down
+2025-11-30 14:01:10,148 - [cam1] Pose label: looking_down
+2025-11-30 14:01:10,406 - [cam1] Pose label: looking_down
+2025-11-30 14:01:10,664 - [cam1] Pose label: looking_down
+2025-11-30 14:01:10,921 - [cam1] Pose label: looking_down
+2025-11-30 14:01:11,173 - [cam1] Pose label: looking_down
+2025-11-30 14:01:11,434 - [cam1] Pose label: looking_down
+2025-11-30 14:01:11,692 - [cam1] Pose label: looking_down
+2025-11-30 14:01:11,952 - [cam1] Pose label: looking_down
+2025-11-30 14:01:12,212 - [cam1] Pose label: looking_down
+2025-11-30 14:01:12,465 - [cam1] Pose label: looking_down
+2025-11-30 14:01:12,726 - [cam1] Pose label: looking_down
+2025-11-30 14:01:12,986 - [cam1] Pose label: looking_down
+2025-11-30 14:01:13,247 - [cam1] Pose label: looking_down
+2025-11-30 14:01:13,506 - [cam1] Pose label: looking_down
+2025-11-30 14:01:13,774 - [cam1] Pose label: looking_down
+2025-11-30 14:01:14,028 - [cam1] Pose label: looking_down
+2025-11-30 14:01:14,287 - [cam1] Pose label: looking_down
+2025-11-30 14:01:14,590 - [cam1] Pose label: looking_down
+2025-11-30 14:01:14,849 - [cam1] Pose label: looking_down
+2025-11-30 14:01:15,113 - [cam1] Pose label: looking_down
+2025-11-30 14:01:15,379 - [cam1] Pose label: looking_down
+2025-11-30 14:01:15,647 - [cam1] Pose label: looking_down
+2025-11-30 14:01:15,900 - [cam1] Pose label: looking_down
+2025-11-30 14:01:16,159 - [cam1] Pose label: looking_down
+2025-11-30 14:01:16,418 - [cam1] Pose label: looking_down
+2025-11-30 14:01:16,681 - [cam1] Pose label: looking_down
+2025-11-30 14:01:16,944 - [cam1] Pose label: looking_down
+2025-11-30 14:01:17,210 - [cam1] Pose label: looking_down
+2025-11-30 14:01:17,369 - [cam1] Detected smart_watch (0.51) at [59,0,462,478]
+2025-11-30 14:01:17,486 - [cam1] Pose label: looking_down
+2025-11-30 14:01:17,487 - [cam1] Pose label: looking_down
+2025-11-30 14:01:17,766 - [cam1] Pose label: looking_down
+2025-11-30 14:01:18,033 - [cam1] Pose label: looking_down
+2025-11-30 14:01:18,334 - [cam1] Pose label: looking_down
+2025-11-30 14:01:18,592 - [cam1] Pose label: looking_down
+2025-11-30 14:01:18,857 - [cam1] Pose label: looking_down
+2025-11-30 14:01:19,116 - [cam1] Pose label: looking_down
+2025-11-30 14:01:19,261 - [cam1] Detected smart_watch (0.66) at [135,0,364,309]
+2025-11-30 14:01:19,384 - [cam1] Pose label: looking_down
+2025-11-30 14:01:19,644 - [cam1] Pose label: looking_down
+2025-11-30 14:01:19,907 - [cam1] Pose label: looking_down
+2025-11-30 14:01:20,170 - [cam1] Pose label: looking_down
+2025-11-30 14:01:20,435 - [cam1] Pose label: looking_down
+2025-11-30 14:01:20,701 - [cam1] Pose label: looking_down
+2025-11-30 14:01:20,964 - [cam1] Pose label: looking_down
+2025-11-30 14:01:21,232 - [cam1] Pose label: looking_down
+2025-11-30 14:01:21,494 - [cam1] Pose label: looking_down
+2025-11-30 14:01:21,756 - [cam1] Pose label: looking_down
+2025-11-30 14:01:22,018 - [cam1] Pose label: looking_down
+2025-11-30 14:01:22,279 - [cam1] Pose label: looking_down
+2025-11-30 14:01:22,590 - [cam1] Pose label: looking_down
+2025-11-30 14:01:22,843 - [cam1] Pose label: looking_down
+2025-11-30 14:01:23,114 - [cam1] Pose label: looking_down
+2025-11-30 14:01:23,376 - [cam1] Pose label: looking_down
+2025-11-30 14:01:23,639 - [cam1] Pose label: looking_down
+2025-11-30 14:01:23,897 - [cam1] Pose label: looking_down
+2025-11-30 14:01:24,159 - [cam1] Pose label: looking_down
+2025-11-30 14:01:24,427 - [cam1] Pose label: looking_down
+2025-11-30 14:01:24,684 - [cam1] Pose label: looking_down
+2025-11-30 14:01:24,927 - [cam1] Pose label: looking_down
+2025-11-30 14:01:25,195 - [cam1] Pose label: looking_down
+2025-11-30 14:01:25,463 - [cam1] Pose label: looking_down
+2025-11-30 14:01:25,717 - [cam1] Pose label: looking_down
+2025-11-30 14:01:25,978 - [cam1] Pose label: looking_down
+2025-11-30 14:01:26,240 - [cam1] Pose label: looking_down
+2025-11-30 14:01:26,508 - [cam1] Pose label: looking_down
+2025-11-30 14:01:26,765 - [cam1] Pose label: looking_down
+2025-11-30 14:01:27,034 - [cam1] Pose label: looking_down
+2025-11-30 14:01:27,297 - [cam1] Pose label: looking_down
+2025-11-30 14:01:27,552 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:27,818 - [cam1] Pose label: looking_down
+2025-11-30 14:01:28,084 - [cam1] Pose label: looking_down
+2025-11-30 14:01:28,342 - [cam1] Pose label: looking_down
+2025-11-30 14:01:28,599 - [cam1] Pose label: looking_down
+2025-11-30 14:01:28,749 - [cam1] Detected phone (0.69) at [1,142,576,480]
+2025-11-30 14:01:28,750 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:01:29,251 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:01:29,856 - [cam1] Pose label: looking_down
+2025-11-30 14:01:29,856 - [cam1] Pose label: looking_left
+2025-11-30 14:01:29,999 - [cam1] Detected phone (0.80) at [5,150,564,480]
+2025-11-30 14:01:30,125 - [cam1] Pose label: looking_down
+2025-11-30 14:01:30,125 - [cam1] Pose label: looking_down
+2025-11-30 14:01:30,285 - [cam1] Detected phone (0.71) at [5,137,564,480]
+2025-11-30 14:01:30,404 - [cam1] Pose label: looking_down
+2025-11-30 14:01:30,552 - [cam1] Detected phone (0.64) at [4,136,565,480]
+2025-11-30 14:01:30,660 - [cam1] Pose label: looking_down
+2025-11-30 14:01:30,799 - [cam1] Detected phone (0.54) at [3,136,564,480]
+2025-11-30 14:01:30,913 - [cam1] Pose label: looking_down
+2025-11-30 14:01:31,109 - [cam1] Detected phone (0.51) at [4,141,564,480]
+2025-11-30 14:01:31,228 - [cam1] Pose label: looking_down
+2025-11-30 14:01:31,229 - [cam1] Pose label: looking_down
+2025-11-30 14:01:31,383 - [cam1] Detected phone (0.52) at [4,138,565,480]
+2025-11-30 14:01:31,500 - [cam1] Pose label: looking_down
+2025-11-30 14:01:31,500 - [cam1] Pose label: looking_down
+2025-11-30 14:01:31,650 - [cam1] Detected phone (0.59) at [4,143,565,480]
+2025-11-30 14:01:31,766 - [cam1] Pose label: looking_down
+2025-11-30 14:01:31,766 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:32,029 - [cam1] Pose label: looking_down
+2025-11-30 14:01:32,289 - [cam1] Pose label: looking_down
+2025-11-30 14:01:32,546 - [cam1] Pose label: looking_down
+2025-11-30 14:01:32,813 - [cam1] Pose label: looking_down
+2025-11-30 14:01:33,072 - [cam1] Pose label: looking_down
+2025-11-30 14:01:33,339 - [cam1] Pose label: looking_down
+2025-11-30 14:01:33,598 - [cam1] Pose label: looking_down
+2025-11-30 14:01:33,861 - [cam1] Pose label: looking_down
+2025-11-30 14:01:34,123 - [cam1] Pose label: looking_down
+2025-11-30 14:01:34,403 - [cam1] Pose label: looking_down
+2025-11-30 14:01:34,667 - [cam1] Pose label: looking_down
+2025-11-30 14:01:34,817 - [cam1] Detected phone (0.54) at [1,178,565,478]
+2025-11-30 14:01:34,937 - [cam1] Pose label: looking_down
+2025-11-30 14:01:34,937 - [cam1] Pose label: looking_down
+2025-11-30 14:01:35,204 - [cam1] Pose label: looking_down
+2025-11-30 14:01:35,473 - [cam1] Pose label: looking_down
+2025-11-30 14:01:35,737 - [cam1] Pose label: looking_down
+2025-11-30 14:01:35,994 - [cam1] Pose label: looking_down
+2025-11-30 14:01:36,254 - [cam1] Pose label: looking_down
+2025-11-30 14:01:36,520 - [cam1] Pose label: looking_down
+2025-11-30 14:01:36,790 - [cam1] Pose label: looking_down
+2025-11-30 14:01:37,049 - [cam1] Pose label: looking_down
+2025-11-30 14:01:37,315 - [cam1] Pose label: looking_down
+2025-11-30 14:01:37,576 - [cam1] Pose label: looking_down
+2025-11-30 14:01:37,835 - [cam1] Pose label: looking_down
+2025-11-30 14:01:38,095 - [cam1] Pose label: looking_down
+2025-11-30 14:01:38,350 - [cam1] Pose label: looking_down
+2025-11-30 14:01:38,623 - [cam1] Pose label: looking_down
+2025-11-30 14:01:38,931 - [cam1] Pose label: looking_down
+2025-11-30 14:01:39,200 - [cam1] Pose label: looking_down
+2025-11-30 14:01:39,471 - [cam1] Pose label: looking_down
+2025-11-30 14:01:39,732 - [cam1] Pose label: looking_down
+2025-11-30 14:01:39,997 - [cam1] Pose label: looking_down
+2025-11-30 14:01:40,138 - [cam1] Detected phone (0.57) at [7,142,548,480]
+2025-11-30 14:01:40,138 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:01:40,639 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:01:41,247 - [cam1] Pose label: looking_down
+2025-11-30 14:01:41,248 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:41,502 - [cam1] Pose label: looking_down
+2025-11-30 14:01:41,644 - [cam1] Detected phone (0.60) at [21,220,540,479]
+2025-11-30 14:01:41,762 - [cam1] Pose label: looking_down
+2025-11-30 14:01:42,019 - [cam1] Pose label: looking_down
+2025-11-30 14:01:42,169 - [cam1] Detected phone (0.56) at [19,220,539,479]
+2025-11-30 14:01:42,277 - [cam1] Pose label: looking_down
+2025-11-30 14:01:42,427 - [cam1] Detected phone (0.75) at [15,223,537,479]
+2025-11-30 14:01:42,542 - [cam1] Pose label: looking_down
+2025-11-30 14:01:42,702 - [cam1] Detected phone (0.55) at [16,221,538,479]
+2025-11-30 14:01:42,822 - [cam1] Pose label: looking_down
+2025-11-30 14:01:42,823 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:42,965 - [cam1] Detected phone (0.67) at [13,223,538,479]
+2025-11-30 14:01:43,091 - [cam1] Pose label: looking_down
+2025-11-30 14:01:43,234 - [cam1] Detected phone (0.78) at [12,223,538,479]
+2025-11-30 14:01:43,351 - [cam1] Pose label: looking_down
+2025-11-30 14:01:43,352 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:43,516 - [cam1] Detected phone (0.54) at [12,218,537,479]
+2025-11-30 14:01:43,632 - [cam1] Pose label: looking_down
+2025-11-30 14:01:43,632 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:43,912 - [cam1] Pose label: looking_down
+2025-11-30 14:01:44,061 - [cam1] Detected phone (0.63) at [22,223,536,479]
+2025-11-30 14:01:44,193 - [cam1] Pose label: looking_down
+2025-11-30 14:01:44,386 - [cam1] Detected phone (0.60) at [16,222,537,479]
+2025-11-30 14:01:44,555 - [cam1] Pose label: looking_down
+2025-11-30 14:01:44,556 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:44,738 - [cam1] Detected phone (0.62) at [15,220,536,479]
+2025-11-30 14:01:44,886 - [cam1] Pose label: looking_down
+2025-11-30 14:01:44,886 - [cam1] Pose label: looking_down
+2025-11-30 14:01:45,143 - [cam1] Detected phone (0.68) at [18,223,535,479]
+2025-11-30 14:01:45,349 - [cam1] Pose label: looking_down
+2025-11-30 14:01:45,349 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:45,573 - [cam1] Detected phone (0.52) at [14,223,535,479]
+2025-11-30 14:01:45,694 - [cam1] Pose label: looking_down
+2025-11-30 14:01:45,694 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:45,855 - [cam1] Detected phone (0.65) at [15,221,534,479]
+2025-11-30 14:01:45,970 - [cam1] Pose label: looking_down
+2025-11-30 14:01:45,970 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:46,128 - [cam1] Detected phone (0.58) at [16,223,536,478]
+2025-11-30 14:01:46,246 - [cam1] Pose label: looking_down
+2025-11-30 14:01:46,246 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:46,383 - [cam1] Detected phone (0.71) at [14,223,536,479]
+2025-11-30 14:01:46,513 - [cam1] Pose label: looking_down
+2025-11-30 14:01:46,514 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:46,764 - [cam1] Pose label: looking_down
+2025-11-30 14:01:46,912 - [cam1] Detected phone (0.80) at [17,222,545,479]
+2025-11-30 14:01:47,029 - [cam1] Pose label: looking_down
+2025-11-30 14:01:47,029 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:47,181 - [cam1] Detected phone (0.66) at [15,217,547,478]
+2025-11-30 14:01:47,302 - [cam1] Pose label: looking_down
+2025-11-30 14:01:47,466 - [cam1] Detected phone (0.56) at [3,203,548,478]
+2025-11-30 14:01:47,595 - [cam1] Pose label: looking_down
+2025-11-30 14:01:47,863 - [cam1] Pose label: looking_down
+2025-11-30 14:01:48,145 - [cam1] Pose label: looking_down
+2025-11-30 14:01:48,488 - [cam1] Pose label: looking_down
+2025-11-30 14:01:48,775 - [cam1] Pose label: looking_down
+2025-11-30 14:01:49,059 - [cam1] Pose label: looking_down
+2025-11-30 14:01:49,376 - [cam1] Pose label: looking_down
+2025-11-30 14:01:49,699 - [cam1] Pose label: looking_down
+2025-11-30 14:01:49,967 - [cam1] Pose label: looking_down
+2025-11-30 14:01:50,349 - [cam1] Pose label: looking_down
+2025-11-30 14:01:50,864 - [cam1] Pose label: looking_down
+2025-11-30 14:01:51,241 - [cam1] Pose label: looking_down
+2025-11-30 14:01:51,632 - [cam1] Pose label: looking_down
+2025-11-30 14:01:52,005 - [cam1] Pose label: looking_down
+2025-11-30 14:01:52,397 - [cam1] Pose label: looking_down
+2025-11-30 14:01:52,763 - [cam1] Pose label: looking_down
+2025-11-30 14:01:53,047 - [cam1] Pose label: looking_down
+2025-11-30 14:01:53,443 - [cam1] Pose label: looking_down
+2025-11-30 14:01:53,751 - [cam1] Pose label: looking_down
+2025-11-30 14:01:54,052 - [cam1] Pose label: looking_down
+2025-11-30 14:01:54,401 - [cam1] Pose label: looking_down
+2025-11-30 14:01:54,718 - [cam1] Pose label: looking_down
+2025-11-30 14:01:54,990 - [cam1] Pose label: looking_down
+2025-11-30 14:01:55,281 - [cam1] Pose label: looking_down
+2025-11-30 14:01:55,557 - [cam1] Pose label: looking_down
+2025-11-30 14:01:55,712 - [cam1] Detected phone (0.72) at [3,180,559,480]
+2025-11-30 14:01:55,712 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:01:56,213 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:01:56,819 - [cam1] Pose label: looking_down
+2025-11-30 14:01:56,966 - [cam1] Detected phone (0.84) at [2,177,556,480]
+2025-11-30 14:01:57,091 - [cam1] Pose label: looking_down
+2025-11-30 14:01:57,239 - [cam1] Detected phone (0.78) at [4,159,558,480]
+2025-11-30 14:01:57,364 - [cam1] Pose label: looking_down
+2025-11-30 14:01:57,619 - [cam1] Pose label: looking_down
+2025-11-30 14:01:57,819 - [cam1] Detected phone (0.62) at [10,144,564,480]
+2025-11-30 14:01:57,935 - [cam1] Pose label: looking_down
+2025-11-30 14:01:58,191 - [cam1] Pose label: looking_down
+2025-11-30 14:01:58,451 - [cam1] Pose label: looking_down
+2025-11-30 14:01:58,727 - [cam1] Pose label: looking_down
+2025-11-30 14:01:59,009 - [cam1] Pose label: looking_down
+2025-11-30 14:01:59,285 - [cam1] Pose label: looking_down
+2025-11-30 14:01:59,436 - [cam1] Detected phone (0.75) at [3,178,557,480]
+2025-11-30 14:01:59,560 - [cam1] Pose label: looking_down
+2025-11-30 14:01:59,560 - [cam1] Pose label: facing_camera
+2025-11-30 14:01:59,735 - [cam1] Detected phone (0.73) at [3,172,556,480]
+2025-11-30 14:01:59,863 - [cam1] Pose label: looking_down
+2025-11-30 14:02:00,164 - [cam1] Pose label: looking_down
+2025-11-30 14:02:00,447 - [cam1] Pose label: looking_down
+2025-11-30 14:02:00,716 - [cam1] Pose label: looking_down
+2025-11-30 14:02:01,024 - [cam1] Pose label: looking_down
+2025-11-30 14:02:01,319 - [cam1] Pose label: looking_down
+2025-11-30 14:02:01,641 - [cam1] Pose label: looking_down
+2025-11-30 14:02:01,815 - [cam1] Detected phone (0.75) at [2,181,555,480]
+2025-11-30 14:02:01,995 - [cam1] Pose label: looking_down
+2025-11-30 14:02:01,996 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:02,210 - [cam1] Detected phone (0.80) at [2,193,555,480]
+2025-11-30 14:02:02,359 - [cam1] Pose label: looking_down
+2025-11-30 14:02:02,545 - [cam1] Detected phone (0.68) at [3,178,558,480]
+2025-11-30 14:02:02,688 - [cam1] Pose label: looking_down
+2025-11-30 14:02:02,689 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:02,872 - [cam1] Detected phone (0.73) at [2,182,556,480]
+2025-11-30 14:02:03,018 - [cam1] Pose label: looking_down
+2025-11-30 14:02:03,019 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:03,288 - [cam1] Pose label: looking_down
+2025-11-30 14:02:03,432 - [cam1] Detected phone (0.59) at [1,187,556,480]
+2025-11-30 14:02:03,558 - [cam1] Pose label: looking_down
+2025-11-30 14:02:03,697 - [cam1] Detected phone (0.62) at [2,190,558,480]
+2025-11-30 14:02:03,811 - [cam1] Pose label: looking_down
+2025-11-30 14:02:03,812 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:03,956 - [cam1] Detected phone (0.73) at [2,187,556,480]
+2025-11-30 14:02:04,076 - [cam1] Pose label: looking_down
+2025-11-30 14:02:04,226 - [cam1] Detected phone (0.60) at [2,194,557,480]
+2025-11-30 14:02:04,347 - [cam1] Pose label: looking_down
+2025-11-30 14:02:04,347 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:04,479 - [cam1] Detected phone (0.62) at [1,188,556,480]
+2025-11-30 14:02:04,612 - [cam1] Pose label: looking_down
+2025-11-30 14:02:04,769 - [cam1] Detected phone (0.73) at [2,180,556,480]
+2025-11-30 14:02:04,886 - [cam1] Pose label: looking_down
+2025-11-30 14:02:05,037 - [cam1] Detected phone (0.70) at [1,184,558,480]
+2025-11-30 14:02:05,150 - [cam1] Pose label: looking_down
+2025-11-30 14:02:05,301 - [cam1] Detected phone (0.77) at [2,183,555,480]
+2025-11-30 14:02:05,428 - [cam1] Pose label: looking_down
+2025-11-30 14:02:05,428 - [cam1] Pose label: looking_down
+2025-11-30 14:02:05,583 - [cam1] Detected phone (0.55) at [2,176,553,480]
+2025-11-30 14:02:05,730 - [cam1] Pose label: looking_down
+2025-11-30 14:02:05,928 - [cam1] Detected phone (0.71) at [1,184,556,480]
+2025-11-30 14:02:05,928 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:02:06,429 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:02:07,045 - [cam1] Pose label: looking_down
+2025-11-30 14:02:07,316 - [cam1] Pose label: looking_down
+2025-11-30 14:02:07,633 - [cam1] Pose label: looking_down
+2025-11-30 14:02:07,796 - [cam1] Detected phone (0.65) at [2,180,555,480]
+2025-11-30 14:02:07,921 - [cam1] Pose label: looking_down
+2025-11-30 14:02:08,080 - [cam1] Detected phone (0.63) at [1,182,555,480]
+2025-11-30 14:02:08,204 - [cam1] Pose label: looking_down
+2025-11-30 14:02:08,205 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:08,375 - [cam1] Detected phone (0.57) at [1,192,554,480]
+2025-11-30 14:02:08,491 - [cam1] Pose label: looking_down
+2025-11-30 14:02:08,642 - [cam1] Detected phone (0.54) at [2,179,558,480]
+2025-11-30 14:02:08,761 - [cam1] Pose label: looking_down
+2025-11-30 14:02:08,921 - [cam1] Detected phone (0.70) at [1,190,556,480]
+2025-11-30 14:02:09,044 - [cam1] Pose label: looking_down
+2025-11-30 14:02:09,044 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:09,207 - [cam1] Detected phone (0.76) at [1,197,554,480]
+2025-11-30 14:02:09,324 - [cam1] Pose label: looking_down
+2025-11-30 14:02:09,325 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:09,491 - [cam1] Detected phone (0.77) at [1,194,554,480]
+2025-11-30 14:02:09,614 - [cam1] Pose label: looking_down
+2025-11-30 14:02:09,796 - [cam1] Detected phone (0.74) at [1,200,554,480]
+2025-11-30 14:02:09,937 - [cam1] Pose label: looking_down
+2025-11-30 14:02:10,155 - [cam1] Detected phone (0.79) at [1,198,555,480]
+2025-11-30 14:02:10,339 - [cam1] Pose label: looking_down
+2025-11-30 14:02:10,340 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:10,495 - [cam1] Detected phone (0.64) at [1,184,557,480]
+2025-11-30 14:02:10,619 - [cam1] Pose label: looking_down
+2025-11-30 14:02:10,895 - [cam1] Pose label: looking_down
+2025-11-30 14:02:11,173 - [cam1] Pose label: looking_down
+2025-11-30 14:02:11,336 - [cam1] Detected phone (0.53) at [1,202,556,479]
+2025-11-30 14:02:11,499 - [cam1] Pose label: looking_down
+2025-11-30 14:02:11,500 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:11,664 - [cam1] Detected phone (0.71) at [1,194,552,480]
+2025-11-30 14:02:11,816 - [cam1] Pose label: looking_down
+2025-11-30 14:02:11,817 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:11,987 - [cam1] Detected phone (0.77) at [1,194,551,480]
+2025-11-30 14:02:12,118 - [cam1] Pose label: looking_down
+2025-11-30 14:02:12,266 - [cam1] Detected phone (0.73) at [0,196,553,480]
+2025-11-30 14:02:12,392 - [cam1] Pose label: looking_down
+2025-11-30 14:02:12,545 - [cam1] Detected phone (0.61) at [0,191,551,480]
+2025-11-30 14:02:12,665 - [cam1] Pose label: looking_down
+2025-11-30 14:02:12,815 - [cam1] Detected phone (0.55) at [0,192,550,480]
+2025-11-30 14:02:12,935 - [cam1] Pose label: looking_down
+2025-11-30 14:02:13,138 - [cam1] Detected phone (0.63) at [1,189,550,480]
+2025-11-30 14:02:13,286 - [cam1] Pose label: looking_down
+2025-11-30 14:02:13,287 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:13,516 - [cam1] Detected phone (0.75) at [1,203,555,480]
+2025-11-30 14:02:13,674 - [cam1] Pose label: looking_down
+2025-11-30 14:02:13,876 - [cam1] Detected phone (0.66) at [1,197,554,480]
+2025-11-30 14:02:14,008 - [cam1] Pose label: looking_down
+2025-11-30 14:02:14,009 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:14,335 - [cam1] Pose label: looking_down
+2025-11-30 14:02:14,498 - [cam1] Detected phone (0.63) at [1,200,552,480]
+2025-11-30 14:02:14,637 - [cam1] Pose label: looking_down
+2025-11-30 14:02:14,955 - [cam1] Pose label: looking_down
+2025-11-30 14:02:15,206 - [cam1] Detected phone (0.53) at [1,200,555,480]
+2025-11-30 14:02:15,350 - [cam1] Pose label: looking_down
+2025-11-30 14:02:15,526 - [cam1] Detected phone (0.73) at [0,204,551,480]
+2025-11-30 14:02:15,656 - [cam1] Pose label: looking_down
+2025-11-30 14:02:15,920 - [cam1] Pose label: looking_down
+2025-11-30 14:02:16,249 - [cam1] Pose label: looking_down
+2025-11-30 14:02:16,440 - [cam1] Detected phone (0.61) at [1,201,551,480]
+2025-11-30 14:02:16,440 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:02:16,941 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:02:17,592 - [cam1] Pose label: looking_down
+2025-11-30 14:02:17,779 - [cam1] Detected phone (0.60) at [1,199,553,480]
+2025-11-30 14:02:17,933 - [cam1] Pose label: looking_down
+2025-11-30 14:02:18,140 - [cam1] Detected phone (0.54) at [1,190,551,480]
+2025-11-30 14:02:18,382 - [cam1] Pose label: looking_down
+2025-11-30 14:02:18,382 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:18,687 - [cam1] Pose label: looking_down
+2025-11-30 14:02:18,967 - [cam1] Pose label: looking_down
+2025-11-30 14:02:19,293 - [cam1] Pose label: looking_down
+2025-11-30 14:02:19,656 - [cam1] Pose label: looking_down
+2025-11-30 14:02:19,896 - [cam1] Detected phone (0.70) at [1,200,549,480]
+2025-11-30 14:02:20,028 - [cam1] Pose label: looking_down
+2025-11-30 14:02:20,196 - [cam1] Detected phone (0.53) at [1,201,551,480]
+2025-11-30 14:02:20,319 - [cam1] Pose label: looking_down
+2025-11-30 14:02:20,506 - [cam1] Detected phone (0.58) at [1,205,553,480]
+2025-11-30 14:02:20,643 - [cam1] Pose label: looking_down
+2025-11-30 14:02:20,644 - [cam1] Pose label: facing_camera
+2025-11-30 14:02:20,942 - [cam1] Pose label: looking_down
+2025-11-30 14:02:21,249 - [cam1] Pose label: looking_down
+2025-11-30 14:02:21,473 - [cam1] Detected phone (0.61) at [1,194,553,480]
+2025-11-30 14:02:21,617 - [cam1] Pose label: looking_down
+2025-11-30 14:02:21,907 - [cam1] Pose label: looking_down
+2025-11-30 14:02:22,182 - [cam1] Pose label: looking_down
+2025-11-30 14:02:22,450 - [cam1] Pose label: looking_down
+2025-11-30 14:02:22,743 - [cam1] Pose label: looking_down
+2025-11-30 14:02:23,014 - [cam1] Pose label: looking_down
+2025-11-30 14:02:23,285 - [cam1] Pose label: looking_down
+2025-11-30 14:02:23,622 - [cam1] Pose label: looking_down
+2025-11-30 14:02:23,929 - [cam1] Pose label: looking_down
+2025-11-30 14:02:24,187 - [cam1] Pose label: looking_down
+2025-11-30 14:02:24,485 - [cam1] Pose label: looking_down
+2025-11-30 14:02:24,769 - [cam1] Pose label: looking_down
+2025-11-30 14:02:25,123 - [cam1] Pose label: looking_down
+2025-11-30 14:02:25,536 - [cam1] Pose label: looking_down
+2025-11-30 14:02:25,980 - [cam1] Pose label: looking_down
+2025-11-30 14:02:26,265 - [cam1] Pose label: looking_down
+2025-11-30 14:02:26,533 - [cam1] Pose label: looking_down
+2025-11-30 14:02:26,800 - [cam1] Pose label: looking_down
+2025-11-30 14:02:27,066 - [cam1] Pose label: looking_down
+2025-11-30 14:02:27,318 - [cam1] Pose label: looking_down
+2025-11-30 14:02:27,594 - [cam1] Pose label: looking_down
+2025-11-30 14:02:27,874 - [cam1] Pose label: looking_down
+2025-11-30 14:02:28,284 - [cam1] Pose label: looking_down
+2025-11-30 14:02:28,609 - [cam1] Pose label: looking_down
+2025-11-30 14:02:28,943 - [cam1] Pose label: looking_down
+2025-11-30 14:02:29,197 - [cam1] Pose label: looking_down
+2025-11-30 14:02:29,457 - [cam1] Pose label: looking_down
+2025-11-30 14:02:29,736 - [cam1] Pose label: looking_down
+2025-11-30 14:02:30,052 - [cam1] Pose label: looking_down
+2025-11-30 14:02:30,411 - [cam1] Pose label: looking_down
+2025-11-30 14:02:30,871 - [cam1] Pose label: looking_down
+2025-11-30 14:02:31,202 - [cam1] Pose label: looking_down
+2025-11-30 14:02:31,498 - [cam1] Pose label: looking_down
+2025-11-30 14:02:31,814 - [cam1] Pose label: looking_down
+2025-11-30 14:02:32,114 - [cam1] Pose label: looking_down
+2025-11-30 14:02:32,436 - [cam1] Pose label: looking_down
+2025-11-30 14:02:32,724 - [cam1] Pose label: looking_down
+2025-11-30 14:02:33,101 - [cam1] Pose label: looking_down
+2025-11-30 14:02:33,404 - [cam1] Pose label: looking_down
+2025-11-30 14:02:33,676 - [cam1] Pose label: looking_down
+2025-11-30 14:02:33,952 - [cam1] Pose label: looking_down
+2025-11-30 14:02:34,225 - [cam1] Pose label: looking_down
+2025-11-30 14:02:34,532 - [cam1] Pose label: looking_down
+2025-11-30 14:02:34,851 - [cam1] Pose label: looking_down
+2025-11-30 14:02:35,138 - [cam1] Pose label: looking_down
+2025-11-30 14:02:35,394 - [cam1] Pose label: looking_down
+2025-11-30 14:02:35,672 - [cam1] Pose label: looking_down
+2025-11-30 14:02:35,826 - [cam1] Detected phone (0.65) at [138,74,344,347]
+2025-11-30 14:02:35,826 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:02:36,327 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:02:36,939 - [cam1] Pose label: looking_down
+2025-11-30 14:02:37,082 - [cam1] Detected smart_watch (0.64) at [96,97,459,410]
+2025-11-30 14:02:37,194 - [cam1] Pose label: looking_down
+2025-11-30 14:02:37,195 - [cam1] Pose label: looking_right
+2025-11-30 14:02:37,355 - [cam1] Detected smart_watch (0.54) at [96,99,461,409]
+2025-11-30 14:02:37,468 - [cam1] Pose label: looking_down
+2025-11-30 14:02:37,722 - [cam1] Pose label: looking_down
+2025-11-30 14:02:37,867 - [cam1] Detected smart_watch (0.59) at [85,97,464,418]
+2025-11-30 14:02:37,979 - [cam1] Pose label: looking_down
+2025-11-30 14:02:38,142 - [cam1] Detected smart_watch (0.58) at [98,100,458,410]
+2025-11-30 14:02:38,258 - [cam1] Pose label: looking_down
+2025-11-30 14:02:38,258 - [cam1] Pose label: looking_down
+2025-11-30 14:02:38,406 - [cam1] Detected smart_watch (0.57) at [87,100,452,412]
+2025-11-30 14:02:38,531 - [cam1] Pose label: looking_down
+2025-11-30 14:02:38,692 - [cam1] Detected smart_watch (0.50) at [98,100,456,411]
+2025-11-30 14:02:38,820 - [cam1] Pose label: looking_down
+2025-11-30 14:02:38,984 - [cam1] Detected smart_watch (0.65) at [92,101,451,408]
+2025-11-30 14:02:39,140 - [cam1] Pose label: looking_down
+2025-11-30 14:02:39,365 - [cam1] Detected smart_watch (0.58) at [88,101,450,407]
+2025-11-30 14:02:39,507 - [cam1] Pose label: looking_down
+2025-11-30 14:02:39,678 - [cam1] Detected smart_watch (0.57) at [100,102,450,406]
+2025-11-30 14:02:39,835 - [cam1] Pose label: looking_down
+2025-11-30 14:02:40,113 - [cam1] Detected smart_watch (0.59) at [84,102,449,410]
+2025-11-30 14:02:40,331 - [cam1] Pose label: looking_down
+2025-11-30 14:02:40,526 - [cam1] Detected smart_watch (0.69) at [93,100,448,411]
+2025-11-30 14:02:40,676 - [cam1] Pose label: looking_down
+2025-11-30 14:02:40,944 - [cam1] Pose label: looking_down
+2025-11-30 14:02:41,205 - [cam1] Pose label: looking_down
+2025-11-30 14:02:41,484 - [cam1] Pose label: looking_down
+2025-11-30 14:02:41,753 - [cam1] Pose label: looking_down
+2025-11-30 14:02:42,033 - [cam1] Pose label: looking_down
+2025-11-30 14:02:42,364 - [cam1] Pose label: looking_down
+2025-11-30 14:02:42,666 - [cam1] Pose label: looking_down
+2025-11-30 14:02:42,984 - [cam1] Pose label: looking_down
+2025-11-30 14:02:43,266 - [cam1] Pose label: looking_down
+2025-11-30 14:02:43,538 - [cam1] Pose label: looking_down
+2025-11-30 14:02:43,814 - [cam1] Pose label: looking_down
+2025-11-30 14:02:44,094 - [cam1] Pose label: looking_down
+2025-11-30 14:02:44,411 - [cam1] Pose label: looking_down
+2025-11-30 14:02:44,855 - [cam1] Pose label: looking_down
+2025-11-30 14:02:45,297 - [cam1] Pose label: looking_down
+2025-11-30 14:02:45,571 - [cam1] Pose label: looking_down
+2025-11-30 14:02:45,934 - [cam1] Pose label: looking_down
+2025-11-30 14:02:46,253 - [cam1] Pose label: looking_down
+2025-11-30 14:02:46,644 - [cam1] Pose label: looking_down
+2025-11-30 14:02:46,924 - [cam1] Pose label: looking_down
+2025-11-30 14:02:47,184 - [cam1] Pose label: looking_down
+2025-11-30 14:02:47,442 - [cam1] Pose label: looking_down
+2025-11-30 14:02:47,698 - [cam1] Pose label: looking_down
+2025-11-30 14:02:47,966 - [cam1] Pose label: looking_down
+2025-11-30 14:02:48,232 - [cam1] Pose label: looking_down
+2025-11-30 14:02:48,498 - [cam1] Pose label: looking_down
+2025-11-30 14:02:48,769 - [cam1] Pose label: looking_down
+2025-11-30 14:02:48,914 - [cam1] Detected phone (0.58) at [255,71,491,402]
+2025-11-30 14:02:48,914 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:02:49,415 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:02:50,025 - [cam1] Pose label: looking_down
+2025-11-30 14:02:50,172 - [cam1] Detected smart_watch (0.64) at [189,187,331,346]
+2025-11-30 14:02:50,293 - [cam1] Pose label: looking_down
+2025-11-30 14:02:50,434 - [cam1] Detected smart_watch (0.62) at [124,99,434,368]
+2025-11-30 14:02:50,552 - [cam1] Pose label: looking_down
+2025-11-30 14:02:50,820 - [cam1] Pose label: looking_down
+2025-11-30 14:02:51,063 - [cam1] Pose label: looking_down
+2025-11-30 14:02:51,326 - [cam1] Pose label: looking_down
+2025-11-30 14:02:51,599 - [cam1] Pose label: looking_down
+2025-11-30 14:02:51,879 - [cam1] Pose label: looking_down
+2025-11-30 14:02:52,142 - [cam1] Pose label: looking_down
+2025-11-30 14:02:52,441 - [cam1] Pose label: looking_down
+2025-11-30 14:02:52,713 - [cam1] Pose label: looking_down
+2025-11-30 14:02:52,975 - [cam1] Pose label: looking_down
+2025-11-30 14:02:53,225 - [cam1] Pose label: looking_down
+2025-11-30 14:02:53,493 - [cam1] Pose label: looking_down
+2025-11-30 14:02:53,774 - [cam1] Pose label: looking_down
+2025-11-30 14:02:53,929 - [cam1] Detected smart_watch (0.66) at [32,95,430,478]
+2025-11-30 14:02:54,064 - [cam1] Pose label: looking_down
+2025-11-30 14:02:54,064 - [cam1] Pose label: looking_right
+2025-11-30 14:02:54,228 - [cam1] Detected smart_watch (0.65) at [87,93,429,476]
+2025-11-30 14:02:54,354 - [cam1] Pose label: looking_down
+2025-11-30 14:02:54,355 - [cam1] Pose label: looking_down
+2025-11-30 14:02:54,512 - [cam1] Detected smart_watch (0.81) at [67,94,429,478]
+2025-11-30 14:02:54,637 - [cam1] Pose label: looking_down
+2025-11-30 14:02:54,638 - [cam1] Pose label: looking_right
+2025-11-30 14:02:54,810 - [cam1] Detected smart_watch (0.80) at [70,95,430,477]
+2025-11-30 14:02:54,928 - [cam1] Pose label: looking_down
+2025-11-30 14:02:54,928 - [cam1] Pose label: looking_right
+2025-11-30 14:02:55,085 - [cam1] Detected smart_watch (0.78) at [67,95,426,476]
+2025-11-30 14:02:55,203 - [cam1] Pose label: looking_down
+2025-11-30 14:02:55,204 - [cam1] Pose label: looking_right
+2025-11-30 14:02:55,374 - [cam1] Detected smart_watch (0.76) at [65,96,427,477]
+2025-11-30 14:02:55,540 - [cam1] Pose label: looking_down
+2025-11-30 14:02:55,540 - [cam1] Pose label: looking_right
+2025-11-30 14:02:55,743 - [cam1] Detected smart_watch (0.72) at [66,96,424,477]
+2025-11-30 14:02:55,888 - [cam1] Pose label: looking_down
+2025-11-30 14:02:55,889 - [cam1] Pose label: looking_right
+2025-11-30 14:02:56,121 - [cam1] Detected smart_watch (0.62) at [76,93,425,477]
+2025-11-30 14:02:56,280 - [cam1] Pose label: looking_down
+2025-11-30 14:02:56,526 - [cam1] Detected smart_watch (0.74) at [64,95,424,476]
+2025-11-30 14:02:56,662 - [cam1] Pose label: looking_down
+2025-11-30 14:02:56,663 - [cam1] Pose label: looking_right
+2025-11-30 14:02:56,967 - [cam1] Pose label: looking_down
+2025-11-30 14:02:57,244 - [cam1] Pose label: looking_down
+2025-11-30 14:02:57,523 - [cam1] Pose label: looking_down
+2025-11-30 14:02:57,799 - [cam1] Pose label: looking_down
+2025-11-30 14:02:58,102 - [cam1] Pose label: looking_down
+2025-11-30 14:02:58,415 - [cam1] Pose label: looking_down
+2025-11-30 14:02:58,715 - [cam1] Pose label: looking_down
+2025-11-30 14:02:58,993 - [cam1] Pose label: looking_down
+2025-11-30 14:02:59,356 - [cam1] Pose label: looking_down
+2025-11-30 14:02:59,836 - [cam1] Pose label: looking_down
+2025-11-30 14:03:00,270 - [cam1] Pose label: looking_down
+2025-11-30 14:03:00,613 - [cam1] Pose label: looking_down
+2025-11-30 14:03:00,970 - [cam1] Pose label: looking_down
+2025-11-30 14:03:01,350 - [cam1] Pose label: looking_down
+2025-11-30 14:03:01,622 - [cam1] Pose label: looking_down
+2025-11-30 14:03:01,936 - [cam1] Pose label: looking_down
+2025-11-30 14:03:02,122 - [cam1] Detected phone (0.69) at [263,63,489,399]
+2025-11-30 14:03:02,122 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:03:02,623 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:03:03,222 - [cam1] Pose label: looking_down
+2025-11-30 14:03:03,223 - [cam1] Pose label: looking_down
+2025-11-30 14:03:03,473 - [cam1] Pose label: looking_down
+2025-11-30 14:03:03,736 - [cam1] Pose label: looking_down
+2025-11-30 14:03:04,004 - [cam1] Pose label: looking_down
+2025-11-30 14:03:04,279 - [cam1] Pose label: looking_down
+2025-11-30 14:03:04,548 - [cam1] Pose label: looking_down
+2025-11-30 14:03:04,809 - [cam1] Pose label: looking_down
+2025-11-30 14:03:05,088 - [cam1] Pose label: looking_down
+2025-11-30 14:03:05,353 - [cam1] Pose label: looking_down
+2025-11-30 14:03:05,625 - [cam1] Pose label: looking_down
+2025-11-30 14:03:05,899 - [cam1] Pose label: looking_down
+2025-11-30 14:03:06,158 - [cam1] Pose label: looking_down
+2025-11-30 14:03:06,432 - [cam1] Pose label: looking_down
+2025-11-30 14:03:06,723 - [cam1] Pose label: looking_down
+2025-11-30 14:03:07,005 - [cam1] Pose label: looking_down
+2025-11-30 14:03:07,275 - [cam1] Pose label: looking_down
+2025-11-30 14:03:07,519 - [cam1] Pose label: looking_down
+2025-11-30 14:03:07,800 - [cam1] Pose label: looking_down
+2025-11-30 14:03:08,076 - [cam1] Pose label: looking_down
+2025-11-30 14:03:08,347 - [cam1] Pose label: looking_down
+2025-11-30 14:03:08,644 - [cam1] Pose label: looking_down
+2025-11-30 14:03:08,939 - [cam1] Pose label: looking_down
+2025-11-30 14:03:09,110 - [cam1] Detected smart_watch (0.60) at [223,91,422,391]
+2025-11-30 14:03:09,246 - [cam1] Pose label: looking_down
+2025-11-30 14:03:09,551 - [cam1] Pose label: looking_down
+2025-11-30 14:03:09,826 - [cam1] Pose label: looking_down
+2025-11-30 14:03:10,091 - [cam1] Pose label: looking_down
+2025-11-30 14:03:10,359 - [cam1] Pose label: facing_camera
+2025-11-30 14:03:10,629 - [cam1] Pose label: looking_down
+2025-11-30 14:03:10,889 - [cam1] Pose label: looking_down
+2025-11-30 14:03:11,204 - [cam1] Pose label: looking_down
+2025-11-30 14:03:11,467 - [cam1] Pose label: looking_down
+2025-11-30 14:03:11,724 - [cam1] Pose label: looking_down
+2025-11-30 14:03:11,990 - [cam1] Pose label: looking_down
+2025-11-30 14:03:12,248 - [cam1] Pose label: looking_down
+2025-11-30 14:03:12,508 - [cam1] Pose label: looking_down
+2025-11-30 14:03:12,781 - [cam1] Pose label: looking_down
+2025-11-30 14:03:13,047 - [cam1] Pose label: looking_down
+2025-11-30 14:03:13,310 - [cam1] Pose label: looking_down
+2025-11-30 14:03:13,584 - [cam1] Pose label: looking_down
+2025-11-30 14:03:13,850 - [cam1] Pose label: looking_down
+2025-11-30 14:03:14,121 - [cam1] Pose label: looking_down
+2025-11-30 14:03:14,395 - [cam1] Pose label: looking_down
+2025-11-30 14:03:14,660 - [cam1] Pose label: looking_down
+2025-11-30 14:03:14,925 - [cam1] Pose label: looking_down
+2025-11-30 14:03:15,190 - [cam1] Pose label: looking_down
+2025-11-30 14:03:15,488 - [cam1] Pose label: looking_down
+2025-11-30 14:03:15,660 - [cam1] Detected smart_watch (0.85) at [289,42,509,383]
+2025-11-30 14:03:15,779 - [cam1] Pose label: facing_camera
+2025-11-30 14:03:15,927 - [cam1] Detected smart_watch (0.81) at [296,35,521,384]
+2025-11-30 14:03:16,050 - [cam1] Pose label: facing_camera
+2025-11-30 14:03:16,323 - [cam1] Pose label: looking_down
+2025-11-30 14:03:16,612 - [cam1] Pose label: looking_down
+2025-11-30 14:03:16,879 - [cam1] Pose label: looking_down
+2025-11-30 14:03:17,150 - [cam1] Pose label: looking_down
+2025-11-30 14:03:17,425 - [cam1] Pose label: looking_down
+2025-11-30 14:03:17,716 - [cam1] Pose label: looking_down
+2025-11-30 14:03:18,017 - [cam1] Pose label: looking_down
+2025-11-30 14:03:18,322 - [cam1] Pose label: looking_down
+2025-11-30 14:03:18,483 - [cam1] Detected phone (0.60) at [211,142,328,391]
+2025-11-30 14:03:18,483 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:03:18,984 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:03:19,587 - [cam1] Pose label: looking_down
+2025-11-30 14:03:19,845 - [cam1] Pose label: looking_down
+2025-11-30 14:03:19,845 - [cam1] Pose label: looking_down
+2025-11-30 14:03:20,128 - [cam1] Pose label: looking_down
+2025-11-30 14:03:20,128 - [cam1] Pose label: looking_down
+2025-11-30 14:03:20,387 - [cam1] Pose label: looking_down
+2025-11-30 14:03:20,692 - [cam1] Pose label: looking_down
+2025-11-30 14:03:20,692 - [cam1] Pose label: facing_camera
+2025-11-30 14:03:20,972 - [cam1] Pose label: looking_down
+2025-11-30 14:03:21,225 - [cam1] Pose label: looking_down
+2025-11-30 14:03:21,226 - [cam1] Pose label: facing_camera
+2025-11-30 14:03:21,504 - [cam1] Pose label: looking_down
+2025-11-30 14:03:21,748 - [cam1] Pose label: looking_down
+2025-11-30 14:03:22,015 - [cam1] Pose label: looking_down
+2025-11-30 14:03:22,278 - [cam1] Pose label: looking_down
+2025-11-30 14:03:22,545 - [cam1] Pose label: looking_down
+2025-11-30 14:03:22,810 - [cam1] Pose label: looking_down
+2025-11-30 14:03:23,080 - [cam1] Pose label: looking_down
+2025-11-30 14:03:23,354 - [cam1] Pose label: looking_down
+2025-11-30 14:03:23,606 - [cam1] Pose label: looking_down
+2025-11-30 14:03:23,760 - [cam1] Detected phone (0.56) at [161,55,322,405]
+2025-11-30 14:03:23,879 - [cam1] Pose label: looking_down
+2025-11-30 14:03:24,036 - [cam1] Detected phone (0.60) at [160,50,321,383]
+2025-11-30 14:03:24,157 - [cam1] Pose label: looking_down
+2025-11-30 14:03:24,311 - [cam1] Detected phone (0.52) at [177,43,308,342]
+2025-11-30 14:03:24,434 - [cam1] Pose label: looking_down
+2025-11-30 14:03:24,569 - [cam1] Detected phone (0.61) at [159,39,317,376]
+2025-11-30 14:03:24,689 - [cam1] Pose label: looking_down
+2025-11-30 14:03:24,853 - [cam1] Detected phone (0.60) at [158,39,319,375]
+2025-11-30 14:03:24,976 - [cam1] Pose label: looking_down
+2025-11-30 14:03:25,239 - [cam1] Pose label: looking_down
+2025-11-30 14:03:25,396 - [cam1] Detected phone (0.50) at [156,40,318,381]
+2025-11-30 14:03:25,522 - [cam1] Pose label: looking_down
+2025-11-30 14:03:25,523 - [cam1] Pose label: looking_down
+2025-11-30 14:03:25,714 - [cam1] Detected phone (0.57) at [155,42,318,374]
+2025-11-30 14:03:25,870 - [cam1] Pose label: looking_down
+2025-11-30 14:03:25,871 - [cam1] Pose label: looking_down
+2025-11-30 14:03:26,057 - [cam1] Detected phone (0.58) at [158,46,318,381]
+2025-11-30 14:03:26,193 - [cam1] Pose label: looking_down
+2025-11-30 14:03:26,434 - [cam1] Detected phone (0.76) at [161,47,320,381]
+2025-11-30 14:03:26,615 - [cam1] Pose label: looking_down
+2025-11-30 14:03:26,846 - [cam1] Detected phone (0.56) at [159,47,318,380]
+2025-11-30 14:03:27,007 - [cam1] Pose label: looking_down
+2025-11-30 14:03:27,307 - [cam1] Pose label: looking_down
+2025-11-30 14:03:27,308 - [cam1] Pose label: looking_down
+2025-11-30 14:03:27,589 - [cam1] Pose label: looking_down
+2025-11-30 14:03:27,589 - [cam1] Pose label: facing_camera
+2025-11-30 14:03:27,855 - [cam1] Pose label: looking_down
+2025-11-30 14:03:28,112 - [cam1] Pose label: looking_down
+2025-11-30 14:03:28,389 - [cam1] Pose label: looking_down
+2025-11-30 14:03:28,670 - [cam1] Pose label: looking_down
+2025-11-30 14:03:28,934 - [cam1] Pose label: looking_down
+2025-11-30 14:03:29,267 - [cam1] Pose label: looking_down
+2025-11-30 14:03:29,415 - [cam1] Detected phone (0.50) at [207,265,398,362]
+2025-11-30 14:03:29,416 - [SIM] Sending SMS to +639XXXXXXXXX: Alert! Detected phone on cam1
+2025-11-30 14:03:29,917 - [SIM] Sending SMS to +639YYYYYYYYY: Alert! Detected phone on cam1
+2025-11-30 14:03:30,522 - [cam1] Pose label: looking_down
+2025-11-30 14:03:30,787 - [cam1] Pose label: looking_down
+2025-11-30 14:03:31,051 - [cam1] Pose label: looking_down
+2025-11-30 14:03:31,292 - [cam1] Pose label: looking_down
+2025-11-30 14:03:31,558 - [cam1] Pose label: looking_down
+2025-11-30 14:03:31,817 - [cam1] Pose label: looking_down
+2025-11-30 14:03:32,080 - [cam1] Pose label: looking_down
+2025-11-30 14:03:32,366 - [cam1] Pose label: looking_down
+2025-11-30 14:03:32,633 - [cam1] Pose label: looking_down
+2025-11-30 14:03:32,927 - [cam1] Pose label: looking_down
+2025-11-30 14:03:33,191 - [cam1] Pose label: looking_down
+2025-11-30 14:03:33,466 - [cam1] Pose label: looking_down
+2025-11-30 14:03:33,734 - [cam1] Pose label: looking_down
+2025-11-30 14:03:34,044 - [cam1] Pose label: looking_down
+2025-11-30 14:03:34,352 - [cam1] Pose label: looking_down
+2025-11-30 14:03:34,705 - [cam1] Pose label: looking_down
+2025-11-30 14:03:35,183 - [cam1] Pose label: looking_down
+2025-11-30 14:03:35,614 - [cam1] Pose label: looking_down
+2025-11-30 14:03:35,891 - [cam1] Pose label: looking_down
+2025-11-30 14:03:36,165 - [cam1] Pose label: looking_down
+2025-11-30 14:03:36,548 - [cam1] Pose label: looking_down
+2025-11-30 14:03:36,988 - [cam1] Pose label: looking_down
+2025-11-30 14:03:37,287 - [cam1] Pose label: looking_down
+2025-11-30 14:03:37,562 - [cam1] Pose label: looking_down
+2025-11-30 14:03:37,838 - [cam1] Pose label: looking_down
+2025-11-30 14:03:38,121 - [cam1] Pose label: looking_down
+2025-11-30 14:03:38,440 - [cam1] Pose label: looking_down
+2025-11-30 14:03:38,735 - [cam1] Pose label: looking_down
+2025-11-30 14:03:39,094 - [cam1] Pose label: looking_down
+2025-11-30 14:03:39,461 - [cam1] Pose label: looking_down
+2025-11-30 14:03:39,739 - [cam1] Pose label: looking_down
+2025-11-30 14:03:40,042 - [cam1] Pose label: looking_down
+2025-11-30 14:03:40,316 - [cam1] Pose label: looking_down
+2025-11-30 14:03:40,596 - [cam1] Pose label: looking_down
+2025-11-30 14:03:40,873 - [cam1] Pose label: looking_down
+2025-11-30 14:03:41,146 - [cam1] Pose label: looking_down
+2025-11-30 14:03:41,441 - [cam1] Pose label: looking_down
+2025-11-30 14:03:41,728 - [cam1] Pose label: looking_down
+2025-11-30 14:03:42,025 - [cam1] Pose label: looking_down
+2025-11-30 14:03:42,376 - [cam1] Pose label: looking_down
+2025-11-30 14:03:42,706 - [cam1] Pose label: looking_down
+2025-11-30 14:03:43,015 - [cam1] Pose label: looking_down
+2025-11-30 14:03:43,318 - [cam1] Pose label: looking_down
+2025-11-30 14:03:43,638 - [cam1] Pose label: looking_down
+2025-11-30 14:03:43,916 - [cam1] Pose label: looking_down
+2025-11-30 14:03:44,190 - [cam1] Pose label: looking_down
+2025-11-30 14:03:44,452 - [cam1] Pose label: looking_down
+2025-11-30 14:03:44,453 - [cam1] Pose label: looking_down
+2025-11-30 14:03:44,735 - [cam1] Pose label: looking_down
+2025-11-30 14:03:45,015 - [cam1] Pose label: looking_down
+2025-11-30 14:03:45,419 - [cam1] Pose label: looking_down
+2025-11-30 14:03:45,757 - [cam1] Pose label: looking_down
+2025-11-30 14:03:46,041 - [cam1] Pose label: looking_down
+2025-11-30 14:03:46,368 - [cam1] Pose label: looking_down
+2025-11-30 14:03:46,716 - [cam1] Pose label: looking_down
+2025-11-30 14:03:47,016 - [cam1] Pose label: looking_down
+2025-11-30 14:03:47,301 - [cam1] Pose label: looking_down
+2025-11-30 14:03:47,625 - [cam1] Pose label: looking_down
+2025-11-30 14:03:47,914 - [cam1] Pose label: looking_down
+2025-11-30 14:03:48,241 - [cam1] Pose label: looking_down
+2025-11-30 14:03:48,586 - [cam1] Pose label: looking_down
+2025-11-30 14:03:48,953 - [cam1] Pose label: looking_down
+2025-11-30 14:03:49,226 - [cam1] Pose label: looking_down
+2025-11-30 14:03:49,539 - [cam1] Pose label: looking_down
+2025-11-30 14:03:49,854 - [cam1] Pose label: looking_down
+2025-11-30 14:03:50,164 - [cam1] Pose label: looking_down
+2025-11-30 14:03:50,527 - [cam1] Pose label: looking_down
+2025-11-30 14:03:50,909 - [cam1] Pose label: looking_down
+2025-11-30 14:03:51,189 - [cam1] Pose label: looking_down
+2025-11-30 14:03:51,488 - [cam1] Pose label: looking_down
+2025-11-30 14:03:51,806 - [cam1] Pose label: looking_down
+2025-11-30 14:03:52,087 - [cam1] Pose label: looking_down
+2025-11-30 14:03:52,380 - [cam1] Pose label: looking_down
+2025-11-30 14:03:52,669 - [cam1] Pose label: looking_down
+2025-11-30 14:03:52,984 - [cam1] Pose label: looking_down
+2025-11-30 14:03:53,334 - [cam1] Pose label: looking_down
+2025-11-30 14:03:53,631 - [cam1] Pose label: looking_down
+2025-11-30 14:03:53,902 - [cam1] Pose label: looking_down
+2025-11-30 14:03:54,231 - [cam1] Pose label: looking_down
+2025-11-30 14:03:54,521 - [cam1] Pose label: looking_down
+2025-11-30 14:03:54,840 - [cam1] Pose label: looking_down
+2025-11-30 14:03:55,116 - [cam1] Pose label: looking_down
+2025-11-30 14:03:55,387 - [cam1] Pose label: looking_down
+2025-11-30 14:03:55,698 - [cam1] Pose label: looking_down
+2025-11-30 14:03:56,015 - [cam1] Pose label: looking_down
+2025-11-30 14:03:56,322 - [cam1] Pose label: looking_down
+2025-11-30 14:03:56,610 - [cam1] Pose label: looking_down
+2025-11-30 14:03:56,894 - [cam1] Pose label: looking_down
+2025-11-30 14:03:57,163 - [cam1] Pose label: looking_down
+2025-11-30 14:03:57,458 - [cam1] Pose label: looking_down
+2025-11-30 14:03:57,731 - [cam1] Pose label: looking_down
+2025-11-30 14:03:58,229 - [cam1] Pose label: looking_down
+2025-11-30 14:03:58,550 - [cam1] Pose label: looking_down
+2025-11-30 14:03:58,864 - [cam1] Pose label: looking_down
+2025-11-30 14:03:59,148 - [cam1] Pose label: looking_down
+2025-11-30 14:03:59,467 - [cam1] Pose label: looking_down
+2025-11-30 14:03:59,748 - [cam1] Pose label: looking_down
+2025-11-30 14:04:00,055 - [cam1] Pose label: looking_down
+2025-11-30 14:04:00,372 - [cam1] Pose label: looking_down
+2025-11-30 14:04:00,727 - [cam1] Pose label: looking_down
+2025-11-30 14:04:01,063 - [cam1] Pose label: looking_down
+2025-11-30 14:04:01,367 - [cam1] Pose label: looking_down
+2025-11-30 14:04:01,662 - [cam1] Pose label: looking_down
+2025-11-30 14:04:01,977 - [cam1] Pose label: looking_down
+2025-11-30 14:04:02,290 - [cam1] Pose label: looking_down
+2025-11-30 14:04:02,573 - [cam1] Pose label: looking_down
+2025-11-30 14:04:02,855 - [cam1] Pose label: looking_down
+2025-11-30 14:04:03,138 - [cam1] Pose label: looking_down
+2025-11-30 14:04:03,408 - [cam1] Pose label: looking_down
+2025-11-30 14:04:03,716 - [cam1] Pose label: looking_down
+2025-11-30 14:04:03,997 - [cam1] Pose label: looking_down
+2025-11-30 14:04:04,278 - [cam1] Pose label: looking_down
+2025-11-30 14:04:04,539 - [cam1] Pose label: looking_down
+2025-11-30 14:04:04,802 - [cam1] Pose label: looking_down
+2025-11-30 14:04:05,060 - [cam1] Pose label: looking_down
+2025-11-30 14:04:05,360 - [cam1] Pose label: looking_down
+2025-11-30 14:04:05,648 - [cam1] Pose label: looking_down
+2025-11-30 14:04:05,971 - [cam1] Pose label: looking_down
+2025-11-30 14:04:06,395 - [cam1] Pose label: looking_down
+2025-11-30 14:04:06,717 - [cam1] Pose label: looking_down
+2025-11-30 14:04:07,037 - [cam1] Pose label: looking_down
