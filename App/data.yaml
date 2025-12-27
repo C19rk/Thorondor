@@ -1,9 +1,9 @@
-train: ../data/train/images
-val: ../data/valid/images
-test: ../data/test/images
+train: data/train/images
+val: data/valid/images
+test: data/test/images
 
 nc: 4
-names: ['calculator', 'phone', 'smart_watch', 'watch']
+names: ["calculator", "phone", "smart_watch", "watch"]
 
 roboflow:
   workspace: mglibunao-workspace
