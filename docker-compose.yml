@@ -1,3 +1,24 @@
 services:
-  backend:
-    build: ./
+  system:
+    build: ./system
+    ports:
+      - "5000:5000"
+    working_dir: /app
+    command: ["python", "app.py"]
+    volumes:
+      - ./machine_learning/runs:/app/machine_learning/runs
+
+  system_wc:
+    build: ./system
+    ports:
+      - "5001:5000"
+    working_dir: /app
+    command: ["python", "wcapp.py"]
+    volumes:
+      - ./machine_learning/runs:/app/machine_learning/runs
+
+  machine_learning:
+    build: ./machine_learning
+    command: ["python", "train.py", "train_desk.py", "train_pose.py"]
+    volumes:
+      - ./machine_learning/runs:/app/machine_learning/runs
