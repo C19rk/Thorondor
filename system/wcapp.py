@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template_string, jsonify, request
+from flask import Flask, Response, render_template_string, jsonify
 from core.vision import generate_frames
 from core.config import FRAME_HEIGHT, FRAME_WIDTH, LOG_FILE
 from core.record_video import VideoRecorder
@@ -6,9 +6,15 @@ import cv2, threading, time, atexit, os
 
 app = Flask(__name__)
 
+# -----------------------------
+# Recorder
+# -----------------------------
 recorder = VideoRecorder(fps=15, width=FRAME_WIDTH, height=FRAME_HEIGHT)
 atexit.register(recorder.stop)
 
+# -----------------------------
+# Camera Setup
+# -----------------------------
 CAMERA_SOURCES = {"cam1": 0}
 frames = {name: None for name in CAMERA_SOURCES.keys()}
 
@@ -28,6 +34,9 @@ def capture_frames(cam_name, src):
 for name, src in CAMERA_SOURCES.items():
     threading.Thread(target=capture_frames, args=(name, src), daemon=True).start()
 
+# -----------------------------
+# Log Streaming
+# -----------------------------
 def follow(logfile):
     logfile.seek(0,2)
     while True:
@@ -37,6 +46,9 @@ def follow(logfile):
             continue
         yield f"data: {line}\n\n"
 
+# -----------------------------
+# Routes
+# -----------------------------
 @app.route('/set_dir', methods=['POST'])
 def set_dir():
     path = recorder.set_directory_popup()
@@ -52,7 +64,7 @@ def start_record():
 @app.route('/stop_record')
 def stop_record():
     recorder.stop()
-    return jsonify({"status": "Stopped"})
+    return jsonify({"status": "Stop requested"})
 
 @app.route('/')
 def index():
@@ -66,19 +78,14 @@ def index():
             .video { flex: 2; padding: 10px; position: relative; }
             .log { flex: 1; padding: 10px; background-color: #f0f0f0; overflow-y: scroll; border-left: 2px solid #ccc; }
             img { width: 100%; height: auto; border: 1px solid #333; }
-            
-            .overlay {
-                position: absolute; top: 20px; right: 20px;
-                background: rgba(255,255,255,0.9); padding: 10px;
-                border: 1px solid #000; display: flex; gap: 5px; align-items: center;
-            }
+            .overlay { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 10px; border: 1px solid #000; display: flex; gap: 5px; align-items: center; }
             .btn { cursor: pointer; border: 1px solid #000; padding: 5px 10px; font-weight: bold; }
             .rec-btn { background: red; color: white; display: block; }
             .stop-btn { background: white; color: black; display: none; }
-            
-            /* Blinking Recording Label */
             #status { color: red; font-weight: bold; display: none; margin-right: 10px; animation: blinker 1s linear infinite; }
             @keyframes blinker { 50% { opacity: 0; } }
+            #progress { width: 100%; background: #ccc; height: 10px; display: none; margin-top: 5px; }
+            #progressBar { width: 0%; height: 100%; background: green; }
         </style>
     </head>
     <body>
@@ -90,6 +97,7 @@ def index():
                     <button id="startB" class="btn rec-btn" onclick="doRec('start')">RECORD</button>
                     <button id="stopB" class="btn stop-btn" onclick="doRec('stop')">STOP</button>
                 </div>
+                <div id="progress"><div id="progressBar"></div></div>
                 <img id="videoStream" src="/video/cam1">
             </div>
             <div class="log">
@@ -104,20 +112,41 @@ def index():
                 .then(data => { if(data.path) alert("Saving to: " + data.path); });
             }
 
+            let progressInterval = null;
+
             function doRec(action) {
-                // UI updates IMMEDIATELY so you see the change
                 let isStart = (action === 'start');
-                
                 fetch('/' + action + '_record')
-                .then(response => {
-                    if (response.ok) {
-                        document.getElementById('startB').style.display = isStart ? 'none' : 'block';
-                        document.getElementById('stopB').style.display = isStart ? 'block' : 'none';
-                        document.getElementById('status').style.display = isStart ? 'inline' : 'none';
-                        console.log("Recording " + action + "ed");
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('startB').style.display = isStart ? 'none' : 'block';
+                    document.getElementById('stopB').style.display = isStart ? 'block' : 'none';
+                    document.getElementById('status').style.display = isStart ? 'inline' : 'none';
+
+                    if(!isStart) {
+                        // Start progress bar
+                        let bar = document.getElementById('progress');
+                        let inner = document.getElementById('progressBar');
+                        bar.style.display = 'block';
+                        inner.style.width = '0%';
+
+                        progressInterval = setInterval(() => {
+                            fetch('/record_progress')
+                            .then(r=>r.json())
+                            .then(p=>{
+                                inner.style.width = p.percent + '%';
+                                if(p.done){
+                                    clearInterval(progressInterval);
+                                    bar.style.display = 'none';
+                                    alert("Video Saved ✅");
+                                }
+                            });
+                        }, 500);
+                    } else if(progressInterval){
+                        clearInterval(progressInterval);
+                        document.getElementById('progress').style.display = 'none';
                     }
-                })
-                .catch(err => alert("Server error: " + err));
+                });
             }
 
             var evtSource = new EventSource("/log_stream");
@@ -139,8 +168,24 @@ def video(cam_name):
 
 @app.route('/log_stream')
 def log_stream():
-    if not os.path.exists(LOG_FILE): open(LOG_FILE, 'w').close()
+    if not os.path.exists(LOG_FILE):
+        open(LOG_FILE,'w').close()
     return Response(follow(open(LOG_FILE,"r")), mimetype="text/event-stream")
 
+# -----------------------------
+# Progress Route
+# -----------------------------
+@app.route('/record_progress')
+def record_progress():
+    if recorder.saving:
+        qsize = recorder.frame_queue.qsize()
+        total = recorder.frame_queue.maxsize
+        percent = int((1 - qsize/total)*100)
+        return jsonify({"percent": percent, "done": False})
+    return jsonify({"percent": 100, "done": True})
+
+# -----------------------------
+# Run
+# -----------------------------
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=5000, threaded=True)
