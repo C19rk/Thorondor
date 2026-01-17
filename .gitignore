@@ -1,0 +1,14 @@
+# AI System paths dir
+machine_learning/yolo/venv/
+# root dir
+venv
+guide.txt
+# . dirs
+.310venv
+.vscode
+# Unused files
+machine_learning/unused/
+system/unused/
+# Logs
+system/detections.log
+system/detections.csv
