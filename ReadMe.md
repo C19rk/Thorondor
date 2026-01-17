@@ -13,5 +13,7 @@ pip install -r requirements.txt
 # This app is using flask, here's how to run:
 
 flask --app wcapp.py run
-========or========
+
+### or
+
 flask --app wcapp run --host 0.0.0.0 --port=5000
