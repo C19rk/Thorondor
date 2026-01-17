@@ -15,6 +15,8 @@ class VideoRecorder:
         self.recording = False       # True while accepting new frames
         self.saving = False          # True while writing queued frames
         self.output_dir = os.path.normpath("recordings")
+        # CREATE THE DIRECTORY ON INIT
+        os.makedirs(self.output_dir, exist_ok=True)
         self.filename = None
         self.frame_queue = queue.Queue(maxsize=max_queue)
         self.worker = None
@@ -38,6 +40,8 @@ class VideoRecorder:
             return
         self.recording = True
         self.out = None
+        # ENSURE DIRECTORY EXISTS BEFORE RECORDING
+        os.makedirs(self.output_dir, exist_ok=True)
         with self.frame_queue.mutex:
             self.frame_queue.queue.clear()
         self.worker = threading.Thread(target=self._record_worker, daemon=True)
@@ -46,6 +50,9 @@ class VideoRecorder:
 
     def _record_worker(self):
         self.saving = True
+        start_time = None
+        frame_count = 0
+        
         while self.recording or not self.frame_queue.empty():
             try:
                 frame = self.frame_queue.get(timeout=0.1)
@@ -61,22 +68,32 @@ class VideoRecorder:
                 ts = datetime.now().strftime("%Y%m%d_%H%M%S")
                 self.filename = os.path.join(self.output_dir, f"recording_{ts}.mp4")
                 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                self.out = cv2.VideoWriter(self.filename, fourcc, self.fps, (self.width, self.height))
+                # Use a fixed real-time FPS (15 FPS for smooth playback)
+                self.out = cv2.VideoWriter(self.filename, fourcc, 15.0, (self.width, self.height))
                 if not self.out.isOpened():
                     print("[ERROR] Could not open VideoWriter")
                     self.recording = False
                     self.saving = False
                     return
+                start_time = datetime.now().timestamp()
                 print(f"[SUCCESS] Recording started: {self.filename}")
 
             if (frame.shape[1], frame.shape[0]) != (self.width, self.height):
                 frame = cv2.resize(frame, (self.width, self.height))
             self.out.write(frame)
+            frame_count += 1
 
         # Finished writing all queued frames
         if self.out:
             self.out.release()
             self.out = None
+        
+        # Calculate actual recording stats
+        if start_time:
+            duration = datetime.now().timestamp() - start_time
+            actual_fps = frame_count / duration if duration > 0 else 0
+            print(f"[INFO] Recorded {frame_count} frames in {duration:.1f}s ({actual_fps:.2f} FPS)")
+        
         self.saving = False
         print(f"[INFO] Recording fully stopped and saved: {self.filename}")
 

@@ -26,7 +26,6 @@ last_behavior_state = {}     # per camera
 last_object_state = {}       # per camera
 frame_count = 0
 
-
 # --------------------------------------------------
 # BEHAVIOR CLASSIFICATION
 # --------------------------------------------------
@@ -114,7 +113,8 @@ def generate_frames(cam_name, frames_override=None, recorder=None):
         # FRAME SKIP
         # ------------------------------
         if frame_count % 2 != 0:
-            if recorder:
+            # Always write to recorder if it's recording, regardless of AI processing
+            if recorder and recorder.recording:
                 recorder.write(frame)
 
             ret, buffer = cv2.imencode(".jpg", frame)
@@ -127,7 +127,7 @@ def generate_frames(cam_name, frames_override=None, recorder=None):
             continue
 
         # ------------------------------
-        # AI INFERENCE
+        # AI INFERENCE (always run, even when recording)
         # ------------------------------
         results = yolo.predict(frame, imgsz=320, conf=YOLO_CONF_THRESHOLD, verbose=False)
         desk_results = yolo_desk.predict(frame, imgsz=320, conf=YOLO_DESK_CONF_THRESHOLD, verbose=False)
@@ -218,20 +218,15 @@ def generate_frames(cam_name, frames_override=None, recorder=None):
                                 behavior,
                                 ""
                             ])
+                            
 
         # ------------------------------
         # RECORD + STREAM
         # ------------------------------
-        if recorder:
+        # Write processed frame with bounding boxes to recorder
+        if recorder and recorder.recording:
             recorder.write(frame)
 
         ret, buffer = cv2.imencode(".jpg", frame)
-        if not ret:
-            continue
-
-        yield (
-            b"--frame\r\n"
-            b"Content-Type: image/jpeg\r\n\r\n" +
-            buffer.tobytes() +
-            b"\r\n"
-        )
+        if not ret: continue
+        yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + buffer.tobytes() + b"\r\n"
