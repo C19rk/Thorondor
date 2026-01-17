@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Argus - Multi-Camera Detection</title>
+    <style>
+      body {
+        font-family: monospace;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        display: flex;
+        height: 100vh;
+      }
+      .video {
+        flex: 2;
+        padding: 10px;
+        position: relative;
+      }
+      .log {
+        flex: 1;
+        padding: 10px;
+        background-color: #f0f0f0;
+        overflow-y: scroll;
+        border-left: 2px solid #ccc;
+      }
+      img {
+        width: 100%;
+        height: auto;
+        border: 1px solid #333;
+      }
+      .camera-buttons {
+        margin-bottom: 10px;
+      }
+      .camera-buttons button {
+        margin-right: 10px;
+        padding: 8px 16px;
+        cursor: pointer;
+        border: 1px solid #000;
+        font-weight: bold;
+        background: #2196f3;
+        color: white;
+      }
+      .overlay {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border: 1px solid #000;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        cursor: pointer;
+        border: 1px solid #000;
+        padding: 5px 10px;
+        font-weight: bold;
+      }
+      .rec-btn {
+        background: red;
+        color: white;
+        display: block;
+      }
+      .rec-btn:disabled {
+        background: #ccc;
+        color: #666;
+        cursor: not-allowed;
+      }
+      .stop-btn {
+        background: white;
+        color: black;
+        display: none;
+      }
+      .log-rec-btn {
+        background: #4caf50;
+        color: white;
+        display: block;
+      }
+      .log-rec-btn:disabled {
+        background: #ccc;
+        color: #666;
+        cursor: not-allowed;
+      }
+      .log-stop-btn {
+        background: white;
+        color: black;
+        display: none;
+      }
+      #status {
+        color: red;
+        font-weight: bold;
+        display: none;
+        margin-right: 10px;
+        animation: blinker 1s linear infinite;
+      }
+      @keyframes blinker {
+        50% {
+          opacity: 0;
+        }
+      }
+      #progress {
+        width: 100%;
+        background: #ccc;
+        height: 10px;
+        display: none;
+        margin-top: 5px;
+        position: relative;
+      }
+      #progressBar {
+        width: 0%;
+        height: 100%;
+        background: green;
+      }
+      #progressText {
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        color: #000;
+        display: none;
+      }
+      #saveWarning {
+        background: #ff9800;
+        color: white;
+        padding: 10px;
+        font-weight: bold;
+        text-align: center;
+        display: none;
+        margin-top: 10px;
+        border: 2px solid #f57c00;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="video">
+        <h2>Live Multi-Camera <span id="status">● REC</span></h2>
+        <div class="camera-buttons">
+          {% for cam in cams %}
+          <button onclick="switchCam('{{cam}}')">{{cam}}</button>
+          {% endfor %}
+        </div>
+        <div class="overlay">
+          <button
+            class="btn"
+            onclick="saveDir()"
+            style="background: #1877f2; color: white"
+          >
+            SET VIDEO DIR
+          </button>
+          <button
+            id="startB"
+            class="btn rec-btn"
+            onclick="doRec('start')"
+            disabled
+          >
+            RECORD VIDEO
+          </button>
+          <button id="stopB" class="btn stop-btn" onclick="doRec('stop')">
+            STOP VIDEO
+          </button>
+          <br style="width: 100%" />
+          <button
+            class="btn"
+            onclick="saveLogDir()"
+            style="background: #9c27b0; color: white"
+          >
+            SET LOG DIR
+          </button>
+          <button
+            id="startLogB"
+            class="btn log-rec-btn"
+            onclick="doLogRec('start')"
+            disabled
+          >
+            RECORD LOG
+          </button>
+          <button
+            id="stopLogB"
+            class="btn log-stop-btn"
+            onclick="doLogRec('stop')"
+          >
+            STOP LOG
+          </button>
+        </div>
+        <div id="progress"><div id="progressBar"></div></div>
+        <div id="progressText">0%</div>
+        <div id="saveWarning">⚠️ SAVING VIDEO - DO NOT CLOSE APP ⚠️</div>
+        <img id="videoStream" src="/video/{{default_cam}}" />
+      </div>
+      <div class="log">
+        <h2>Live Detection Log</h2>
+        <div id="log"></div>
+      </div>
+    </div>
+    <script>
+      function switchCam(camName) {
+        document.getElementById("videoStream").src = "/video/" + camName;
+      }
+
+      function saveDir() {
+        fetch("/set_dir", { method: "POST" })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.path) {
+              alert("Saving videos to: " + data.path);
+              document.getElementById("startB").disabled = false;
+            }
+          });
+      }
+
+      function saveLogDir() {
+        fetch("/set_log_dir", { method: "POST" })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.path) {
+              alert("Saving logs to: " + data.path);
+              document.getElementById("startLogB").disabled = false;
+            }
+          });
+      }
+
+      let progressInterval = null;
+
+      function doRec(action) {
+        let isStart = action === "start";
+        fetch("/" + action + "_record")
+          .then((response) => {
+            if (!response.ok) {
+              alert("⚠️ Please click SET VIDEO DIR first!");
+              return;
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (!data) return;
+            document.getElementById("startB").style.display = isStart
+              ? "none"
+              : "block";
+            document.getElementById("stopB").style.display = isStart
+              ? "block"
+              : "none";
+            document.getElementById("status").style.display = isStart
+              ? "inline"
+              : "none";
+
+            if (!isStart) {
+              document.getElementById("startB").disabled = true;
+
+              let bar = document.getElementById("progress");
+              let inner = document.getElementById("progressBar");
+              let text = document.getElementById("progressText");
+              let warning = document.getElementById("saveWarning");
+
+              bar.style.display = "block";
+              text.style.display = "block";
+              warning.style.display = "block";
+              inner.style.width = "0%";
+              text.textContent = "0%";
+
+              progressInterval = setInterval(() => {
+                fetch("/record_progress")
+                  .then((r) => r.json())
+                  .then((p) => {
+                    inner.style.width = p.percent + "%";
+                    text.textContent = p.percent + "%";
+                    if (p.done) {
+                      clearInterval(progressInterval);
+                      bar.style.display = "none";
+                      text.style.display = "none";
+                      warning.style.display = "none";
+                      document.getElementById("startB").disabled = false;
+                      alert("Video Saved ✅");
+                    }
+                  });
+              }, 500);
+            } else if (progressInterval) {
+              clearInterval(progressInterval);
+              document.getElementById("progress").style.display = "none";
+              document.getElementById("progressText").style.display = "none";
+              document.getElementById("saveWarning").style.display = "none";
+            }
+          });
+      }
+
+      function doLogRec(action) {
+        let isStart = action === "start";
+        fetch("/" + action + "_log_record")
+          .then((response) => {
+            if (!response.ok) {
+              alert("⚠️ Please click SET LOG DIR first!");
+              return;
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (!data) return;
+            document.getElementById("startLogB").style.display = isStart
+              ? "none"
+              : "block";
+            document.getElementById("stopLogB").style.display = isStart
+              ? "block"
+              : "none";
+
+            if (isStart) {
+              alert("Log recording started! 📝");
+            } else {
+              alert("Log saved! ✅");
+            }
+          });
+      }
+
+      var evtSource = new EventSource("/log_stream");
+      var logDiv = document.getElementById("log");
+      evtSource.onmessage = function (e) {
+        logDiv.innerHTML += e.data + "<br>";
+        logDiv.scrollTop = logDiv.scrollHeight;
+      };
+    </script>
+  </body>
+</html>
