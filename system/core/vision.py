@@ -1,4 +1,4 @@
-import cv2, time, logging, csv
+import cv2, time, csv
 import numpy as np
 from datetime import datetime
 
@@ -18,8 +18,14 @@ from core.config import (
 )
 from core.gsm import gsm
 
+# ------------------------------
+# STATE MEMORY
+# ------------------------------
 last_alert_time = {}
+last_behavior_state = {}     # per camera
+last_object_state = {}       # per camera
 frame_count = 0
+
 
 # --------------------------------------------------
 # BEHAVIOR CLASSIFICATION
@@ -32,36 +38,32 @@ def classify_behavior(keypoints):
         l_sh, r_sh = keypoints[5], keypoints[6]
         l_wrist, r_wrist = keypoints[9], keypoints[10]
 
-        # PHONE
         if np.linalg.norm(l_wrist - l_ear) < 55 or np.linalg.norm(r_wrist - r_ear) < 55:
-            return "phone"
+            return "Phone Use"
 
-        # TALKING
         eye_mid_y = (l_eye[1] + r_eye[1]) / 2
         eye_dist = np.linalg.norm(l_eye - r_eye)
         face_stretch = abs(nose[1] - eye_mid_y)
         if face_stretch > eye_dist * 0.75:
-            return "talking"
+            return "Talking"
 
-        # LOOKING AWAY
         ear_dist = np.linalg.norm(l_ear - r_ear)
         if abs(nose[0] - l_ear[0]) < ear_dist * 0.2 or abs(nose[0] - r_ear[0]) < ear_dist * 0.2:
-            return "looking_away"
+            return "Looking Away"
 
-        # HEAD DOWN
         avg_sh_y = (l_sh[1] + r_sh[1]) / 2
         if nose[1] > avg_sh_y - 5:
-            return "head_down"
+            return "Head Down"
 
-        return "normal"
+        return "Normal"
     except:
-        return "normal"
+        return "Normal"
 
 
 # --------------------------------------------------
 # DRAW SKELETON
 # --------------------------------------------------
-def draw_skeleton(frame, keypoints, color=(0, 255, 0)):
+def draw_skeleton(frame, keypoints):
     connections = [
         (0,1),(0,2),(1,3),(2,4),
         (0,5),(0,6),(5,7),(7,9),
@@ -71,17 +73,16 @@ def draw_skeleton(frame, keypoints, color=(0, 255, 0)):
     ]
 
     behavior = classify_behavior(keypoints)
-    status_color = (0, 0, 255) if behavior != "normal" else (0, 255, 0)
+    color = (0, 0, 255) if behavior != "Normal" else (0, 255, 0)
 
     cv2.putText(
         frame,
-        behavior.upper(),
-        (int(keypoints[0][0]) - 30, int(keypoints[0][1]) - 40),
+        behavior,
+        (int(keypoints[0][0]) - 40, int(keypoints[0][1]) - 40),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.7,
-        status_color,
-        2,
-        cv2.LINE_AA
+        color,
+        2
     )
 
     for i, j in connections:
@@ -90,6 +91,8 @@ def draw_skeleton(frame, keypoints, color=(0, 255, 0)):
             pt2 = tuple(keypoints[j].astype(int))
             if pt1 != (0, 0) and pt2 != (0, 0):
                 cv2.line(frame, pt1, pt2, color, 2)
+
+    return behavior
 
 
 # --------------------------------------------------
@@ -108,11 +111,12 @@ def generate_frames(cam_name, frames_override=None, recorder=None):
         frame_count += 1
 
         # ------------------------------
-        # FRAME SKIP (NO POSE REDRAW)
+        # FRAME SKIP
         # ------------------------------
         if frame_count % 2 != 0:
             if recorder:
                 recorder.write(frame)
+
             ret, buffer = cv2.imencode(".jpg", frame)
             yield (
                 b"--frame\r\n"
@@ -125,84 +129,95 @@ def generate_frames(cam_name, frames_override=None, recorder=None):
         # ------------------------------
         # AI INFERENCE
         # ------------------------------
-        results = yolo.predict(
-            frame,
-            imgsz=320,
-            conf=YOLO_CONF_THRESHOLD,
-            verbose=False
-        )
+        results = yolo.predict(frame, imgsz=320, conf=YOLO_CONF_THRESHOLD, verbose=False)
+        desk_results = yolo_desk.predict(frame, imgsz=320, conf=YOLO_DESK_CONF_THRESHOLD, verbose=False)
+        pose_results = pose_model.predict(frame, imgsz=320, conf=POSE_CONF_THRESHOLD, verbose=False)
 
-        desk_results = yolo_desk.predict(
-            frame,
-            imgsz=320,
-            conf=YOLO_DESK_CONF_THRESHOLD,
-            verbose=False
-        )
+        # ==================================================
+        # OBJECT DETECTION (STATE CHANGE)
+        # ==================================================
+        current_objects = set()
 
-        pose_results = pose_model.predict(
-            frame,
-            imgsz=320,
-            conf=POSE_CONF_THRESHOLD,
-            verbose=False
-        )
-
-        # ------------------------------
-        # YOLO OBJECT DETECTION
-        # ------------------------------
         for r in results:
             for box in r.boxes:
                 cls = int(box.cls[0].item())
-                label = yolo.names[cls]
-                conf = float(box.conf[0].item())
+                label = yolo.names[cls].capitalize()
                 x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
 
-                color = (255, 0, 0) if label == "person" else (0, 255, 255)
-                cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-                cv2.putText(
-                    frame,
-                    label,
-                    (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    color,
-                    2
-                )
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                cv2.putText(frame, label, (x1, y1 - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
-                timestamp_now = datetime.now().strftime("%H:%M:%S")
-                log_msg = f"[{timestamp_now}] {cam_name}: {label.upper()} detected ({conf:.2f})"
+                current_objects.add(label)
 
-                with open(LOG_FILE, "a") as f:
-                    f.write(log_msg + "\n")
+        prev_objects = last_object_state.get(cam_name, set())
 
-                with open(CSV_FILE, "a", newline="") as f:
-                    csv.writer(f).writerow([datetime.now(), cam_name, label, conf])
+        for obj in current_objects - prev_objects:
+            timestamp = datetime.now()
 
-                if label in SUSPICIOUS_LABELS:
-                    alert_key = f"{cam_name}_{label}"
-                    now = time.time()
-                    if alert_key not in last_alert_time or now - last_alert_time[alert_key] > ALERT_COOLDOWN:
-                        for number in PHONE_NUMBERS:
-                            gsm.send_sms(number, f"ALERT: {label} on {cam_name}")
-                        last_alert_time[alert_key] = now
+            with open(LOG_FILE, "a") as f:
+                f.write(f"[{timestamp.strftime('%H:%M:%S')}] {cam_name}: Object Detected: {obj}\n")
 
-        # ------------------------------
-        # DESK DETECTION
-        # ------------------------------
+            with open(CSV_FILE, "a", newline="") as f:
+                csv.writer(f).writerow([timestamp, cam_name, "Object Detected", obj, ""])
+
+            if obj.lower() in SUSPICIOUS_LABELS:
+                alert_key = f"{cam_name}_{obj}"
+                now = time.time()
+                if alert_key not in last_alert_time or now - last_alert_time[alert_key] > ALERT_COOLDOWN:
+                    for number in PHONE_NUMBERS:
+                        gsm.send_sms(number, f"ALERT: {obj} detected on {cam_name}")
+                    last_alert_time[alert_key] = now
+
+        for obj in prev_objects - current_objects:
+            timestamp = datetime.now()
+
+            with open(LOG_FILE, "a") as f:
+                f.write(f"[{timestamp.strftime('%H:%M:%S')}] {cam_name}: Object Left: {obj}\n")
+
+            with open(CSV_FILE, "a", newline="") as f:
+                csv.writer(f).writerow([timestamp, cam_name, "Object Left", obj, ""])
+
+        last_object_state[cam_name] = current_objects
+
+        # ==================================================
+        # DESK (VISUAL ONLY)
+        # ==================================================
         for r in desk_results:
             for box in r.boxes:
                 x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 128, 255), 2)
 
-        # ------------------------------
-        # POSE (NO PERSISTENCE, NO GHOSTS)
-        # ------------------------------
+        # ==================================================
+        # BEHAVIOR (STATE CHANGE)
+        # ==================================================
         for r in pose_results:
             if hasattr(r, "keypoints") and r.keypoints is not None:
-                kpts_data = r.keypoints.xy.cpu().numpy()
+                for person_kpts in r.keypoints.xy.cpu().numpy():
+                    if len(person_kpts) == 0:
+                        continue
 
-                for person_kpts in kpts_data:
-                    if len(person_kpts) > 0:
-                        draw_skeleton(frame, person_kpts)
+                    behavior = draw_skeleton(frame, person_kpts)
+                    prev_behavior = last_behavior_state.get(cam_name, "Normal")
+
+                    if behavior != prev_behavior:
+                        last_behavior_state[cam_name] = behavior
+                        timestamp = datetime.now()
+
+                        with open(LOG_FILE, "a") as f:
+                            f.write(
+                                f"[{timestamp.strftime('%H:%M:%S')}] "
+                                f"{cam_name}: Behavior Changed: {behavior}\n"
+                            )
+
+                        with open(CSV_FILE, "a", newline="") as f:
+                            csv.writer(f).writerow([
+                                timestamp,
+                                cam_name,
+                                "Behavior Changed",
+                                behavior,
+                                ""
+                            ])
 
         # ------------------------------
         # RECORD + STREAM
