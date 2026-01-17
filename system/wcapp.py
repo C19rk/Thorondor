@@ -1,16 +1,24 @@
-from flask import Flask, Response, render_template_string, jsonify
+from flask import Flask, Response, render_template, jsonify
 from core.vision import generate_frames
 from core.config import FRAME_HEIGHT, FRAME_WIDTH, LOG_FILE
 from core.record_video import VideoRecorder
+from core.record_logs import LogRecorder
 import cv2, threading, time, atexit, os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='screens')
 
 # -----------------------------
 # Recorder
 # -----------------------------
 recorder = VideoRecorder(fps=15, width=FRAME_WIDTH, height=FRAME_HEIGHT)
+recorder.directory_set = False
 atexit.register(recorder.stop)
+
+# -----------------------------
+# Log Recorder
+# -----------------------------
+log_recorder = LogRecorder()
+atexit.register(log_recorder.stop)
 
 # -----------------------------
 # Camera Setup
@@ -44,20 +52,29 @@ def follow(logfile):
         if not line:
             time.sleep(0.1)
             continue
+        if log_recorder.recording:
+            log_recorder.write(line.strip())
         yield f"data: {line}\n\n"
 
 # -----------------------------
 # Routes
 # -----------------------------
+@app.route('/')
+def index():
+    return render_template('wcapp.html')
+
 @app.route('/set_dir', methods=['POST'])
 def set_dir():
     path = recorder.set_directory_popup()
     if path:
+        recorder.directory_set = True
         return jsonify({"status": "success", "path": path})
     return jsonify({"status": "cancelled"}), 200
 
 @app.route('/start_record')
 def start_record():
+    if not hasattr(recorder, 'directory_set') or not recorder.directory_set:
+        return jsonify({"status": "error", "message": "Please set directory first"}), 400
     recorder.start()
     return jsonify({"status": "Started"})
 
@@ -66,100 +83,24 @@ def stop_record():
     recorder.stop()
     return jsonify({"status": "Stop requested"})
 
-@app.route('/')
-def index():
-    html = """
-    <html>
-    <head>
-        <title>Argus Webcam</title>
-        <style>
-            body { font-family: monospace; margin:0; padding:0; }
-            .container { display: flex; height: 100vh; }
-            .video { flex: 2; padding: 10px; position: relative; }
-            .log { flex: 1; padding: 10px; background-color: #f0f0f0; overflow-y: scroll; border-left: 2px solid #ccc; }
-            img { width: 100%; height: auto; border: 1px solid #333; }
-            .overlay { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 10px; border: 1px solid #000; display: flex; gap: 5px; align-items: center; }
-            .btn { cursor: pointer; border: 1px solid #000; padding: 5px 10px; font-weight: bold; }
-            .rec-btn { background: red; color: white; display: block; }
-            .stop-btn { background: white; color: black; display: none; }
-            #status { color: red; font-weight: bold; display: none; margin-right: 10px; animation: blinker 1s linear infinite; }
-            @keyframes blinker { 50% { opacity: 0; } }
-            #progress { width: 100%; background: #ccc; height: 10px; display: none; margin-top: 5px; }
-            #progressBar { width: 0%; height: 100%; background: green; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="video">
-                <h2>Live Webcam <span id="status">● REC</span></h2>
-                <div class="overlay">
-                    <button class="btn" onclick="saveDir()" style="background: #1877f2; color: white;">SET DIR</button>
-                    <button id="startB" class="btn rec-btn" onclick="doRec('start')">RECORD</button>
-                    <button id="stopB" class="btn stop-btn" onclick="doRec('stop')">STOP</button>
-                </div>
-                <div id="progress"><div id="progressBar"></div></div>
-                <img id="videoStream" src="/video/cam1">
-            </div>
-            <div class="log">
-                <h2>Live Detection Log</h2>
-                <div id="log"></div>
-            </div>
-        </div>
-        <script>
-            function saveDir() {
-                fetch('/set_dir', { method: 'POST' })
-                .then(r => r.json())
-                .then(data => { if(data.path) alert("Saving to: " + data.path); });
-            }
+@app.route('/set_log_dir', methods=['POST'])
+def set_log_dir():
+    path = log_recorder.set_directory_popup()
+    if path:
+        return jsonify({"status": "success", "path": path})
+    return jsonify({"status": "cancelled"}), 200
 
-            let progressInterval = null;
+@app.route('/start_log_record')
+def start_log_record():
+    if not log_recorder.directory_set:
+        return jsonify({"status": "error", "message": "Please set log directory first"}), 400
+    log_recorder.start()
+    return jsonify({"status": "Started"})
 
-            function doRec(action) {
-                let isStart = (action === 'start');
-                fetch('/' + action + '_record')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('startB').style.display = isStart ? 'none' : 'block';
-                    document.getElementById('stopB').style.display = isStart ? 'block' : 'none';
-                    document.getElementById('status').style.display = isStart ? 'inline' : 'none';
-
-                    if(!isStart) {
-                        // Start progress bar
-                        let bar = document.getElementById('progress');
-                        let inner = document.getElementById('progressBar');
-                        bar.style.display = 'block';
-                        inner.style.width = '0%';
-
-                        progressInterval = setInterval(() => {
-                            fetch('/record_progress')
-                            .then(r=>r.json())
-                            .then(p=>{
-                                inner.style.width = p.percent + '%';
-                                if(p.done){
-                                    clearInterval(progressInterval);
-                                    bar.style.display = 'none';
-                                    alert("Video Saved ✅");
-                                }
-                            });
-                        }, 500);
-                    } else if(progressInterval){
-                        clearInterval(progressInterval);
-                        document.getElementById('progress').style.display = 'none';
-                    }
-                });
-            }
-
-            var evtSource = new EventSource("/log_stream");
-            var logDiv = document.getElementById("log");
-            evtSource.onmessage = function(e){
-                logDiv.innerHTML += e.data + "<br>";
-                logDiv.scrollTop = logDiv.scrollHeight;
-            }
-        </script>
-    </body>
-    </html>
-    """
-    return render_template_string(html)
+@app.route('/stop_log_record')
+def stop_log_record():
+    log_recorder.stop()
+    return jsonify({"status": "Stop requested"})
 
 @app.route('/video/<cam_name>')
 def video(cam_name):
@@ -172,9 +113,6 @@ def log_stream():
         open(LOG_FILE,'w').close()
     return Response(follow(open(LOG_FILE,"r")), mimetype="text/event-stream")
 
-# -----------------------------
-# Progress Route
-# -----------------------------
 @app.route('/record_progress')
 def record_progress():
     if recorder.saving:
