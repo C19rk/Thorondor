@@ -5,7 +5,7 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))  # absolute path to App folder
     data_yaml_path = os.path.join(base_dir, 'desk_data.yaml')
 
-    model = YOLO(os.path.join(base_dir, 'yolov10n.pt'))
+    model = YOLO(os.path.join(base_dir, 'yolov9t.pt'))
 
     model.train(
         data=data_yaml_path,          # Use absolute path here
