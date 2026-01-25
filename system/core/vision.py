@@ -180,13 +180,84 @@ def generate_frames(cam_name, frames_override=None, recorder=None):
 
         last_object_state[cam_name] = current_objects
 
+                # ==================================================
+        # DESK DETECTION (STATEFUL, like object detection)
         # ==================================================
-        # DESK (VISUAL ONLY)
-        # ==================================================
+        current_desks = set()
+
+        # collect person boxes to avoid detecting humans as desks
+        person_boxes = []
+        for r in pose_results:
+            if hasattr(r, "boxes") and r.boxes is not None:
+                for box in r.boxes:
+                    px1, py1, px2, py2 = map(int, box.xyxy[0].tolist())
+                    person_boxes.append((px1, py1, px2, py2))
+
         for r in desk_results:
             for box in r.boxes:
+                cls = int(box.cls[0].item())
+                label = yolo_desk.names.get(cls, "").lower()
+                if label != "desk":
+                    continue
+
                 x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
+                w = x2 - x1
+                h = y2 - y1
+
+                # reject human-shaped boxes
+                if h / (w + 1e-6) > 0.85:
+                    continue
+
+                # reject boxes overlapping with people
+                overlaps_person = False
+                for px1, py1, px2, py2 in person_boxes:
+                    ix1 = max(x1, px1)
+                    iy1 = max(y1, py1)
+                    ix2 = min(x2, px2)
+                    iy2 = min(y2, py2)
+                    if ix1 < ix2 and iy1 < iy2:
+                        overlaps_person = True
+                        break
+
+                if overlaps_person:
+                    continue
+
+                # valid desk
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 128, 255), 2)
+                cv2.putText(
+                    frame,
+                    "Desk",
+                    (x1, y1 - 8),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.6,
+                    (0, 128, 255),
+                    2
+                )
+
+                current_desks.add(f"{x1}_{y1}_{x2}_{y2}")  # unique desk ID
+
+        # compare with previous state
+        prev_desks = last_object_state.get(f"{cam_name}_desk", set())
+
+        # new desks
+        for desk in current_desks - prev_desks:
+            timestamp = datetime.now()
+            with open(LOG_FILE, "a") as f:
+                f.write(f"[{timestamp.strftime('%H:%M:%S')}] {cam_name}: Desk Detected: {desk}\n")
+            with open(CSV_FILE, "a", newline="") as f:
+                csv.writer(f).writerow([timestamp, cam_name, "Desk Detected", desk, ""])
+
+        # desks removed
+        for desk in prev_desks - current_desks:
+            timestamp = datetime.now()
+            with open(LOG_FILE, "a") as f:
+                f.write(f"[{timestamp.strftime('%H:%M:%S')}] {cam_name}: Desk Left: {desk}\n")
+            with open(CSV_FILE, "a", newline="") as f:
+                csv.writer(f).writerow([timestamp, cam_name, "Desk Left", desk, ""])
+
+        # update state
+        last_object_state[f"{cam_name}_desk"] = current_desks
+
 
         # ==================================================
         # BEHAVIOR (STATE CHANGE)
