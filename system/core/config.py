@@ -17,7 +17,7 @@ FRAME_HEIGHT = 480
 
 # === MODELS ===
 YOLO_MODEL_PATH = "../machine_learning/runs/aidetection7/weights/best.pt"
-YOLO_DESK_MODEL_PATH = "../machine_learning/runs/aidetectiondesk5/weights/best.pt"
+YOLO_DESK_MODEL_PATH = "../machine_learning/runs/aidetectiondesk6/weights/best.pt"
 POSE_MODEL_PATH = "../machine_learning/yolo11n-pose.pt"
 
 # === THRESHOLDS ===
