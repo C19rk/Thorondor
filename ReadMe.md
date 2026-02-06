@@ -3,12 +3,12 @@
 ### For machine_learning
 
 cd machine_learning, then:
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 ### For system
 
 cd system, then:
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 # This app is using flask, here's how to run:
 
