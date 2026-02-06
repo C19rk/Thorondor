@@ -25,8 +25,8 @@ git checkout .
 
 ### For individual folders like machine_learning
 
-git checkout origin/main -- ./machine_learning
+git checkout origin/main -- ./machine_learning/
 
 ### For system
 
-git checkout origin/main -- ./system
+git checkout origin/main -- ./system/
