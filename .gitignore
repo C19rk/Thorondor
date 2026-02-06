@@ -12,3 +12,8 @@ system/unused/
 # Logs
 system/detections.log
 system/detections.csv
+# cache
+__pycache__/
+system/__pycache__/
+machine_learning/yolo/__pycache__/
+system/core/__pycache__/
