@@ -6,7 +6,7 @@ def main():
 
     # Train
     model.train(
-        data="datapose.yaml",   # dataset YAML
+        data="data_pose.yaml",   # dataset YAML
         epochs=100,
         imgsz=640,
         batch=16,

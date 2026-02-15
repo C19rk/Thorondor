@@ -12,12 +12,12 @@ CAMERA_SOURCES = {
 }
 
 # --- resolution settings ---
-FRAME_WIDTH = 640
-FRAME_HEIGHT = 480
+FRAME_WIDTH = 1080
+FRAME_HEIGHT = 720
 
 # === MODELS ===
 YOLO_MODEL_PATH = "../machine_learning/runs/aidetection7/weights/best.pt"
-YOLO_DESK_MODEL_PATH = "../machine_learning/runs/aidetectiondesk6/weights/best.pt"
+YOLO_DESK_MODEL_PATH = "../machine_learning/runs/aidetectiondesk7/weights/best.pt"
 POSE_MODEL_PATH = "../machine_learning/yolo11n-pose.pt"
 
 # === THRESHOLDS ===

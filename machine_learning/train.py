@@ -9,10 +9,12 @@ def main():
 
     model.train(
         data=data_yaml_path,          # Use absolute path here
-        epochs=30,
+        epochs=100,
         imgsz=640,
 #        optimizer="SGD",
         batch=8,
+        mosaic=1.0,
+        mixup=0.1,
         project=os.path.join(base_dir, 'runs'),  # Optional: output relative to App
         name="aidetection"
     )

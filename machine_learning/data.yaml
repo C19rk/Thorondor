@@ -3,11 +3,4 @@ val: data/valid/images
 test: data/test/images
 
 nc: 4
-names: ["calculator", "phone", "smart_watch", "watch"]
-
-roboflow:
-  workspace: mglibunao-workspace
-  project: argus-dataset
-  version: 5
-  license: CC BY 4.0
-  url: https://universe.roboflow.com/mglibunao-workspace/argus-dataset/dataset/5
+names: ["phone", "calculator", "smartwatch", "watch"]
