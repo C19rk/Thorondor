@@ -9,6 +9,13 @@ simply go to "system" folder.
 
 
 
+__________________________Caution!!__________________________
+When training data, you might want to watch out for the data's label IDs. To update the IDs,
+simply run change.py in "change id". Ensure that test, train, and valid folder's label's IDs
+are fully updated not just one folder.
+
+
+
 __________________________Install requirements on both folders__________________________
 
 ============= For machine_learning =============

@@ -4,6 +4,10 @@
 
 ### To train the AI, go to "machine_learning" folder and to check the working app after training simply go to "system" folder.
 
+# Caution!!
+
+## When training data, you might want to watch out for the data's label IDs. To update the IDs, simply run **change.py** in "change id". Ensure that _test_, _train_, and _valid_ folder's **label's IDs** are fully updated not just one folder.
+
 # Install requirements on both folders
 
 ### For machine_learning
