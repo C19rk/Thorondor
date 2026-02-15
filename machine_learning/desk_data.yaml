@@ -1,0 +1,6 @@
+train: desk_data/train/images
+val: desk_data/valid/images
+test: desk_data/test/images
+
+nc: 1
+names: ["armchair"]

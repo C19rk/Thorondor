@@ -16,7 +16,7 @@ def main():
         mosaic=1.0,
         mixup=0.1,
         project=os.path.join(base_dir, 'runs'),  # Optional: output relative to App
-        name="aidetection"
+        name="argus_object_detection"
     )
 
 if __name__ == "__main__":

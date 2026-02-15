@@ -13,8 +13,10 @@ def main():
         imgsz=640,
 #        optimizer="SGD",
         batch=8,
+        mosaic=1.0,
+        mixup=0.1,
         project=os.path.join(base_dir, 'runs'),  # Optional: output relative to App
-        name="aidetectiondesk"
+        name="argus_desk_detection"
     )
 
 if __name__ == "__main__":
