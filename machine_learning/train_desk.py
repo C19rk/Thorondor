@@ -9,7 +9,7 @@ def main():
 
     model.train(
         data=data_yaml_path,          # Use absolute path here
-        epochs=30,
+        epochs=100,
         imgsz=640,
 #        optimizer="SGD",
         batch=8,
