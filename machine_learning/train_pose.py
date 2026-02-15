@@ -1,18 +1,24 @@
 from ultralytics import YOLO
+import os
 
 def main():
-    # Load a pretrained YOLOv8 pose model
-    model = YOLO("yolov9t-pose.pt")  # change to s/m/l if you have more GPU
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    yaml_path = os.path.join(base_dir, "data_pose.yaml")
 
-    # Train
+    model = YOLO("yolov8n-pose.pt")
+
     model.train(
-        data="data_pose.yaml",   # dataset YAML
-        epochs=100,
-        imgsz=640,
-        batch=16,
-        device=0,             # GPU 0; set to "cpu" if no GPU
-        project="runs/pose",  # where to save runs
-        name="aidestimation"
+        data=yaml_path,        
+        epochs=100,            
+        imgsz=640,             
+        batch=-1,              
+        device=0,              # GPU 0; set to "cpu" if no GPU
+        patience=20,           
+        project="runs/pose",   
+        name="argus_pose_estimation", 
+        exist_ok=True,         
+        plots=True             
     )
 
 if __name__ == "__main__":
