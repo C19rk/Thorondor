@@ -1,7 +1,7 @@
 import os
 
 # Change directory here depending on the location
-LABELS_FOLDER = "data/valid/labels/"
+LABELS_FOLDER = "data/train/labels/"
 
 def main():
     new_char = input("Enter a new first character: ").strip()
