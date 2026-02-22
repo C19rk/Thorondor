@@ -25,6 +25,8 @@ system/core/__pycache__/
 # Ignore docker files as they are unnecessary for the project
 Dockerfile
 docker-compose.yml
+# Ignore extracted frames
+system/extracted_frames/
 
 
 # ==========Ignore for now!==========

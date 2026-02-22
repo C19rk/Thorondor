@@ -21,7 +21,7 @@ frames = {name: deque(maxlen=1) for name in CAMERA_SOURCES.keys()}
 
 # Extra grab() calls to flush stale RTSP buffer before retrieve().
 # 2 works for stream2 (15fps). Use 3 for stream1 (25fps).
-DRAIN_GRABS = 2
+DRAIN_GRABS = 3
 
 
 def _open_rtsp(src: str) -> cv2.VideoCapture:
