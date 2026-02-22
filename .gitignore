@@ -22,6 +22,9 @@ machine_learning/__pycache__/
 system/__pycache__/
 system/core/detections/__pycache__/
 system/core/__pycache__/
+# Ignore docker files as they are unnecessary for the project
+Dockerfile
+docker-compose.yml
 
 
 # ==========Ignore for now!==========
