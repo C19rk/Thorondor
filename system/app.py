@@ -101,11 +101,8 @@ async def lifespan(app: FastAPI):
     if actual_fps <= 0 or actual_fps > 120:
         actual_fps = 15.0
     cap_init.release()
-    print(f"[INFO] Detected Stream FPS: {actual_fps}. Syncing recorders...")
-
     recorder, log_recorder = init_recorders(fps=actual_fps)
 
-    print("[INFO] Pre-warming AI workers for all cameras...")
     warm_events = []
     for cam_name in CAMERA_SOURCES:
         ev = threading.Event()
@@ -125,7 +122,6 @@ async def lifespan(app: FastAPI):
 
     for ev in warm_events:
         ev.wait(timeout=10)
-    print("[INFO] AI workers warmed up — starting camera loops")
 
     for cam_name in CAMERA_SOURCES:
         threading.Thread(
@@ -147,6 +143,11 @@ async def lifespan(app: FastAPI):
                 "X-Accel-Buffering": "no",
             }
         )
+
+    print("\n" + "─" * 44)
+    print("  Argus is running!")
+    print("  Open in browser: http://localhost:5000")
+    print("─" * 44 + "\n")
 
     yield
 

@@ -119,48 +119,48 @@ def _ensure_desk_thread(cam_name):
         t.start()
         globals()[key] = t
 
-# ── FPS / timing tracker ─────────────────────────────────────────────────────
-_frame_times      = {}
-_fps_log_interval = 5.0
-_timing_accum     = {}
+# # ── FPS / timing tracker ─────────────────────────────────────────────────────
+# _frame_times      = {}
+# _fps_log_interval = 5.0
+# _timing_accum     = {}
 
-def _log_timings(cam_name, timings):
-    if cam_name not in _timing_accum:
-        _timing_accum[cam_name] = []
-    _timing_accum[cam_name].append(timings)
+# def _log_timings(cam_name, timings):
+#     if cam_name not in _timing_accum:
+#         _timing_accum[cam_name] = []
+#     _timing_accum[cam_name].append(timings)
 
-    now = time.time()
-    if cam_name not in _frame_times:
-        _frame_times[cam_name] = now
-        return
+#     now = time.time()
+#     if cam_name not in _frame_times:
+#         _frame_times[cam_name] = now
+#         return
 
-    elapsed = now - _frame_times[cam_name]
-    if elapsed < _fps_log_interval:
-        return
+#     elapsed = now - _frame_times[cam_name]
+#     if elapsed < _fps_log_interval:
+#         return
 
-    samples = _timing_accum[cam_name]
-    n   = len(samples)
-    fps = n / elapsed
+#     samples = _timing_accum[cam_name]
+#     n   = len(samples)
+#     fps = n / elapsed
 
-    def avg(key):
-        return sum(s[key] for s in samples) / n * 1000
+#     def avg(key):
+#         return sum(s[key] for s in samples) / n * 1000
 
-    print(
-        f"\n[PERF] [{cam_name}] last {elapsed:.1f}s | "
-        f"FPS: {fps:.1f} | "
-        f"pose: {avg('pose'):.0f}ms | "
-        f"obj: {avg('obj'):.0f}ms | "
-        f"desk: {avg('desk'):.0f}ms | "
-        f"overlay: {avg('overlay'):.0f}ms | "
-        f"total: {avg('total'):.0f}ms | "
-        f"infer_skip: {INFERENCE_EVERY_N_FRAMES - 1}/{INFERENCE_EVERY_N_FRAMES} frames"
-    )
+#     print(
+#         f"\n[PERF] [{cam_name}] last {elapsed:.1f}s | "
+#         f"FPS: {fps:.1f} | "
+#         f"pose: {avg('pose'):.0f}ms | "
+#         f"obj: {avg('obj'):.0f}ms | "
+#         f"desk: {avg('desk'):.0f}ms | "
+#         f"overlay: {avg('overlay'):.0f}ms | "
+#         f"total: {avg('total'):.0f}ms | "
+#         f"infer_skip: {INFERENCE_EVERY_N_FRAMES - 1}/{INFERENCE_EVERY_N_FRAMES} frames"
+#     )
 
-    _frame_times[cam_name] = now
-    _timing_accum[cam_name] = []
+#     _frame_times[cam_name] = now
+#     _timing_accum[cam_name] = []
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# # ─────────────────────────────────────────────────────────────────────────────
 
 def run_ai_pipeline(cam_name, frame):
     try:
@@ -227,14 +227,14 @@ def run_ai_pipeline(cam_name, frame):
         if on_frame_ready:
             on_frame_ready(cam_name)
 
-        t_total = time.perf_counter() - t0
-        _log_timings(cam_name, {
-            "pose":    t_pose,
-            "obj":     t_obj,
-            "desk":    t_desk,
-            "overlay": t_overlay,
-            "total":   t_total,
-        })
+        # t_total = time.perf_counter() - t0
+        # _log_timings(cam_name, {
+        #     "pose":    t_pose,
+        #     "obj":     t_obj,
+        #     "desk":    t_desk,
+        #     "overlay": t_overlay,
+        #     "total":   t_total,
+        # })
 
         return canvas
 

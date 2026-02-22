@@ -76,12 +76,7 @@ def _open_cap(src, backend):
 # Capture thread
 # ─────────────────────────────────────────────
 def capture_frames(cam_name, src, backend, fps):
-    if sys.platform == "win32":
-        cap = cv2.VideoCapture(src, cv2.CAP_DSHOW)
-        if not cap.isOpened():
-            cap = _open_cap(src, backend)
-    else:
-        cap = _open_cap(src, backend)
+    cap = _open_cap(src, backend)
 
     cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
     cap.set(cv2.CAP_PROP_FRAME_WIDTH,  FRAME_WIDTH)
@@ -134,29 +129,38 @@ def ai_processing_loop(cam_name):
 # ─────────────────────────────────────────────
 # MJPEG frame generator
 # ─────────────────────────────────────────────
+MJPEG_JPEG_QUALITY = 65
+
 def mjpeg_generator(cam_name):
-    """Yield annotated frames as a multipart MJPEG stream."""
-    last_id = None
-    blank   = np.zeros((FRAME_HEIGHT, FRAME_WIDTH, 3), dtype=np.uint8)
+    last_id     = None
+    blank       = np.zeros((FRAME_HEIGHT, FRAME_WIDTH, 3), dtype=np.uint8)
     cv2.putText(blank, "Waiting for camera...",
                 (30, FRAME_HEIGHT // 2), cv2.FONT_HERSHEY_SIMPLEX,
                 0.8, (255, 255, 255), 2)
-    _, blank_jpg = cv2.imencode(".jpg", blank, [cv2.IMWRITE_JPEG_QUALITY, 85])
+    _, blank_jpg = cv2.imencode(".jpg", blank, [cv2.IMWRITE_JPEG_QUALITY, MJPEG_JPEG_QUALITY])
     blank_bytes  = blank_jpg.tobytes()
 
     while True:
         frame = latest_annotated.get(cam_name)
 
         if frame is None:
-            payload = blank_bytes
-        else:
-            fid = id(frame)
-            if fid == last_id:
-                time.sleep(0.005)
-                continue
-            last_id = fid
-            ok, jpg = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
-            payload  = jpg.tobytes() if ok else blank_bytes
+            yield (
+                b"--frame\r\n"
+                b"Content-Type: image/jpeg\r\n\r\n" +
+                blank_bytes +
+                b"\r\n"
+            )
+            time.sleep(0.033)
+            continue
+
+        fid = id(frame)
+        if fid == last_id:
+            time.sleep(0.001)
+            continue
+
+        last_id = fid
+        ok, jpg = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, MJPEG_JPEG_QUALITY])
+        payload  = jpg.tobytes() if ok else blank_bytes
 
         yield (
             b"--frame\r\n"
@@ -188,8 +192,6 @@ async def lifespan(app: FastAPI):
     if actual_fps <= 0 or actual_fps > 120:
         actual_fps = 30.0
     cap_init.release()
-    print(f"[INFO] Hardware FPS detected: {actual_fps}")
-
     recorder, log_recorder = init_recorders(fps=actual_fps)
 
     # Start capture thread
@@ -200,17 +202,12 @@ async def lifespan(app: FastAPI):
     ).start()
 
     # Wait up to 5s for first frame
-    print("[INFO] Waiting for webcam...")
     for _ in range(50):
         if len(frames.get("cam1", [])) > 0:
-            print("[INFO] Webcam ready.")
             break
         await asyncio.sleep(0.1)
-    else:
-        print("[WARN] Webcam not ready after 5s — continuing anyway.")
 
-    # Pre-warm AI worker on its own thread before streaming
-    print("[INFO] Pre-warming AI worker...")
+    # Pre-warm AI worker
     warm_done = threading.Event()
     def _warm():
         dummy = np.zeros((320, 320, 3), dtype=np.uint8)
@@ -225,7 +222,6 @@ async def lifespan(app: FastAPI):
             warm_done.set()
     threading.Thread(target=_warm, daemon=True).start()
     warm_done.wait(timeout=10)
-    print("[INFO] AI worker warmed up — starting stream")
 
     # Start AI loop
     threading.Thread(
@@ -244,6 +240,11 @@ async def lifespan(app: FastAPI):
             mjpeg_generator("cam1"),
             media_type="multipart/x-mixed-replace; boundary=frame"
         )
+
+    print("\n" + "─" * 44)
+    print("  Argus Webcam is running!")
+    print("  Open in browser: http://localhost:5000")
+    print("─" * 44 + "\n")
 
     yield
 
