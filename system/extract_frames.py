@@ -74,7 +74,7 @@ _HERE              = os.path.dirname(os.path.abspath(__file__))
 _ML_RUNS           = os.path.normpath(os.path.join(_HERE, "..", "machine_learning", "runs"))
 
 DEFAULT_OBJ_MODEL  = os.path.join(_ML_RUNS, "argus_object_detection",  "weights", "best.pt")
-DEFAULT_POSE_MODEL = os.path.join(_ML_RUNS, "argus_pose_estimation",   "weights", "best.pt")
+DEFAULT_POSE_MODEL = os.path.join(_ML_RUNS, "pose", "argus_pose_estimation", "weights", "best.pt")
 DEFAULT_DESK_MODEL = os.path.join(_ML_RUNS, "argus_desk_detection",    "weights", "best.pt")
 
 RECORDINGS_DIR     = os.path.join(_HERE, "recordings")
@@ -208,7 +208,21 @@ def _pick_csv():
 # ─────────────────────────────────────────────────────────────────────────────
 # CSV ground-truth helpers  (object detection only)
 # ─────────────────────────────────────────────────────────────────────────────
+# All event types written by the three detection modules:
+#   object.py  -> "Object Detected", "Object Left"      label=Phone/Calculator/...
+#   desk.py    -> "Desk Detected",   "Desk Left"         label="desk"
+#   pose.py    -> "Behavior Changed"                     label=Cheating/Normal  col4=person_id
+_ALL_EVENTS = {
+    "Object Detected", "Object Left",
+    "Desk Detected",   "Desk Left",
+    "Behavior Changed",
+}
+
 def _load_csv_events(csv_path):
+    """Load every detection event from the session CSV.
+    Returns list of (timestamp, event_type, label, extra) sorted by time.
+    extra = person_id for pose events, inst_id for desk/object (or empty string).
+    """
     events = []
     with open(csv_path, newline="", encoding="utf-8", errors="ignore") as f:
         for row in csv.reader(f):
@@ -217,8 +231,9 @@ def _load_csv_events(csv_path):
                 ts    = datetime.fromisoformat(row[0].strip())
                 event = row[2].strip()
                 label = row[3].strip()
-                if event in ("Object Detected", "Object Left"):
-                    events.append((ts, event, label))
+                extra = row[4].strip() if len(row) > 4 else ""
+                if event in _ALL_EVENTS:
+                    events.append((ts, event, label, extra))
             except (ValueError, IndexError):
                 continue
     events.sort(key=lambda x: x[0])
@@ -226,8 +241,9 @@ def _load_csv_events(csv_path):
 
 
 def _active_labels_at(events, query_time):
+    """Object detection ground truth: set of lower-case labels currently active."""
     active = {}
-    for ts, event, label in events:
+    for ts, event, label, *_ in events:
         if ts > query_time: break
         key = label.lower()
         if event == "Object Detected":
@@ -235,6 +251,32 @@ def _active_labels_at(events, query_time):
         elif event == "Object Left":
             active[key] = max(0, active.get(key, 0) - 1)
     return {lbl for lbl, cnt in active.items() if cnt > 0}
+
+
+def _desk_active_at(events, query_time):
+    """Desk ground truth: True if any desk instance is currently active."""
+    active = 0
+    for ts, event, label, *_ in events:
+        if ts > query_time: break
+        if event == "Desk Detected":
+            active += 1
+        elif event == "Desk Left":
+            active = max(0, active - 1)
+    return active > 0
+
+
+def _cheating_active_at(events, query_time):
+    """Pose ground truth: True if any tracked person is currently labeled Cheating.
+    pose.py logs 'Behavior Changed' every time a person's label changes, so the
+    current label for person P is their most recent 'Behavior Changed' event.
+    """
+    # Track most recent label per person_id
+    person_labels = {}
+    for ts, event, label, extra in events:
+        if ts > query_time: break
+        if event == "Behavior Changed":
+            person_labels[extra] = label.lower()   # extra = "person_N"
+    return any(lbl == "cheating" for lbl in person_labels.values())
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -606,10 +648,12 @@ def run_evaluation(args):
                 # 3. Desk, filtered by person_boxes
                 desk_boxes = _run_desk(desk_model, frame, person_boxes)
 
-                # Object evaluation against CSV ground truth
+                # Evaluate all three models against CSV ground truth
                 if has_labels:
+                    frame_time = vid_start_dt + timedelta(seconds=frame_idx / vid_fps)
+
+                    # ── Object detection ──────────────────────────────────
                     pred_labels = {det[0].lower() for det in obj_dets}
-                    frame_time  = vid_start_dt + timedelta(seconds=frame_idx / vid_fps)
                     gt_labels   = _active_labels_at(events, frame_time)
 
                     for lbl in pred_labels:
@@ -619,12 +663,33 @@ def run_evaluation(args):
                             total_counts[cls_id]["tp"] += 1
                         else:
                             total_counts[cls_id]["fp"] += 1
-
                     for lbl in gt_labels:
                         cls_id = LABEL_TO_ID.get(lbl, -1)
                         if cls_id < 0: continue
                         if lbl not in pred_labels:
                             total_counts[cls_id]["fn"] += 1
+
+                    # ── Desk detection ────────────────────────────────────
+                    if desk_model is not None:
+                        pred_desk = len(desk_boxes) > 0
+                        gt_desk   = _desk_active_at(events, frame_time)
+                        if pred_desk and gt_desk:
+                            total_counts["desk"]["tp"] += 1
+                        elif pred_desk and not gt_desk:
+                            total_counts["desk"]["fp"] += 1
+                        elif not pred_desk and gt_desk:
+                            total_counts["desk"]["fn"] += 1
+
+                    # ── Pose / Cheating detection ─────────────────────────
+                    if pose_model is not None:
+                        pred_cheating = any(d["label"] == "Cheating" for d in pose_dets)
+                        gt_cheating   = _cheating_active_at(events, frame_time)
+                        if pred_cheating and gt_cheating:
+                            total_counts["cheating"]["tp"] += 1
+                        elif pred_cheating and not gt_cheating:
+                            total_counts["cheating"]["fp"] += 1
+                        elif not pred_cheating and gt_cheating:
+                            total_counts["cheating"]["fn"] += 1
 
                 # Draw all three models onto annotated frame
                 if args.save_annotated:
@@ -653,38 +718,54 @@ def run_evaluation(args):
 
     # ── Print evaluation ──────────────────────────────────────────────────────
     print(f"{'='*66}")
-    print("  EVALUATION RESULTS - Argus Object Detection")
+    print("  EVALUATION RESULTS - Argus Detection Suite")
     print(f"{'='*66}")
     print(f"  IoU Threshold   : {args.iou_threshold}")
     print(f"  Conf Threshold  : {args.conf}")
     print(f"  Frames Evaluated: {saved_idx}")
     print(f"  CSV Ground Truth: {os.path.basename(args.csv)}")
     print(f"{'='*66}")
-    print(f"  {'Class':<15} {'TP':>5} {'FP':>5} {'FN':>5}  "
+    print(f"  {'Class':<18} {'TP':>5} {'FP':>5} {'FN':>5}  "
           f"{'Precision':>10} {'Recall':>8} {'F1-Score':>9}")
-    print(f"  {'-'*64}")
+    print(f"  {'-'*67}")
 
     all_tp = all_fp = all_fn = 0
     csv_rows = []
 
-    for cls_id in sorted(OBJECT_LABELS):
-        c          = total_counts[cls_id]
+    def _print_and_collect(label, key, include_in_overall=True):
+        nonlocal all_tp, all_fp, all_fn
+        c          = total_counts[key]
         tp, fp, fn = c["tp"], c["fp"], c["fn"]
-        all_tp    += tp;  all_fp += fp;  all_fn += fn
+        if include_in_overall:
+            all_tp += tp; all_fp += fp; all_fn += fn
         precision  = _div(tp, tp + fp)
         recall     = _div(tp, tp + fn)
         f1         = _div(2 * precision * recall, precision + recall)
-        label      = OBJECT_LABELS[cls_id]
-        print(f"  {label:<15} {tp:>5} {fp:>5} {fn:>5}  "
+        print(f"  {label:<18} {tp:>5} {fp:>5} {fn:>5}  "
               f"{precision:>10.4f} {recall:>8.4f} {f1:>9.4f}")
         csv_rows.append((label, tp, fp, fn, precision, recall, f1))
+
+    # Object detection rows
+    print(f"  -- Object Detection {'─'*47}")
+    for cls_id in sorted(OBJECT_LABELS):
+        _print_and_collect(OBJECT_LABELS[cls_id], cls_id)
+
+    # Desk detection row (only if model was loaded)
+    if desk_model is not None:
+        print(f"  -- Desk Detection {'─'*49}")
+        _print_and_collect("Desk", "desk", include_in_overall=False)
+
+    # Pose / Cheating row (only if model was loaded)
+    if pose_model is not None:
+        print(f"  -- Pose Estimation {'─'*48}")
+        _print_and_collect("Cheating", "cheating", include_in_overall=False)
 
     prec_all = _div(all_tp, all_tp + all_fp)
     rec_all  = _div(all_tp, all_tp + all_fn)
     f1_all   = _div(2 * prec_all * rec_all, prec_all + rec_all)
 
-    print(f"  {'-'*64}")
-    print(f"  {'OVERALL (micro)':<15} {all_tp:>5} {all_fp:>5} {all_fn:>5}  "
+    print(f"  {'-'*67}")
+    print(f"  {'Object OVERALL':>18} {all_tp:>5} {all_fp:>5} {all_fn:>5}  "
           f"{prec_all:>10.4f} {rec_all:>8.4f} {f1_all:>9.4f}")
     print(f"{'='*66}\n")
 
@@ -695,7 +776,7 @@ def run_evaluation(args):
         for row in csv_rows:
             w.writerow([row[0], row[1], row[2], row[3],
                         f"{row[4]:.4f}", f"{row[5]:.4f}", f"{row[6]:.4f}"])
-        w.writerow(["OVERALL", all_tp, all_fp, all_fn,
+        w.writerow(["OBJECT OVERALL", all_tp, all_fp, all_fn,
                     f"{prec_all:.4f}", f"{rec_all:.4f}", f"{f1_all:.4f}"])
     print(f"[INFO] CSV saved to:\n       {csv_out}\n")
 
