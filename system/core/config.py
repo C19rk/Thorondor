@@ -1,6 +1,17 @@
-# === LOGGING/CSV ===
-LOG_FILE = "detections.log"
-CSV_FILE  = "detections.csv"
+import os
+from datetime import datetime
+
+# === DETECTION LOGS ===
+# Each session gets its own timestamped .log and .csv inside detection_logs/.
+# Format: Feb 23, 2026 07-13-33 AM
+_DETECTION_LOGS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "detection_logs")
+os.makedirs(_DETECTION_LOGS_DIR, exist_ok=True)
+
+_now = datetime.now()
+_ts  = f"{_now.strftime('%b')} {_now.day}, {_now.year} {_now.strftime('%I-%M-%S %p')}"
+
+LOG_FILE = os.path.normpath(os.path.join(_DETECTION_LOGS_DIR, f"detections {_ts}.log"))
+CSV_FILE = os.path.normpath(os.path.join(_DETECTION_LOGS_DIR, f"detections {_ts}.csv"))
 
 # === CAMERAS ===
 CAMERA_SOURCES = {

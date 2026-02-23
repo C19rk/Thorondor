@@ -10,8 +10,10 @@ from core.config import FRAME_WIDTH, FRAME_HEIGHT
 
 
 class VideoRecorder:
-    def __init__(self, fps=15.0):
-        self.fps           = fps
+    MAX_FPS = 30.0
+
+    def __init__(self, fps=25.0):
+        self.fps           = min(float(fps), self.MAX_FPS)
         self.recording     = False
         self.finalizing    = False
         self.directory_set = True
@@ -24,8 +26,6 @@ class VideoRecorder:
                 os.path.join(current_dir, "..", "bin", "ffmpeg.exe")
             )
         else:
-            # On Linux/Mac use the system ffmpeg on PATH,
-            # but fall back to a local bin/ffmpeg if present.
             local_ffmpeg = os.path.normpath(
                 os.path.join(current_dir, "..", "bin", "ffmpeg")
             )
@@ -35,7 +35,7 @@ class VideoRecorder:
         self.status_msg    = "Ready"
 
         # Per-camera state — keyed by cam_name
-        self._cameras      = {}   # cam_name -> {proc_ann, proc_raw, ann_path, raw_path, fps_window}
+        self._cameras      = {}
         self._feed_threads = []
 
     def _kill_zombies(self):
@@ -50,15 +50,6 @@ class VideoRecorder:
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
             )
 
-    def _measured_fps(self, fps_window):
-        if len(fps_window) < 2:
-            return self.fps
-        elapsed = fps_window[-1] - fps_window[0]
-        if elapsed <= 0:
-            return self.fps
-        measured = (len(fps_window) - 1) / elapsed
-        return max(1.0, min(measured, self.fps))
-
     def _startupinfo(self):
         """Hide console window on Windows; no-op on Linux/Mac."""
         if platform.system() == "Windows":
@@ -67,14 +58,19 @@ class VideoRecorder:
             return si
         return None
 
-    def _spawn_ffmpeg(self, output_path, width, height):
+    def _spawn_ffmpeg(self, output_path, width, height, input_fps):
+        """
+        Spawns an ffmpeg process that accepts rawvideo on stdin.
+        input_fps: expected input frame rate (used for container header only;
+                   actual frame timing comes from -use_wallclock_as_timestamps).
+        """
         cmd = [
             self.ffmpeg_exe, "-y",
             "-f",        "rawvideo",
             "-vcodec",   "rawvideo",
             "-pix_fmt",  "bgr24",
             "-s",        f"{width}x{height}",
-            "-r",        str(self.fps),
+            "-r",        str(input_fps),
             "-use_wallclock_as_timestamps", "1",
             "-i",        "pipe:0",
             "-c:v",      "libx264",
@@ -99,7 +95,7 @@ class VideoRecorder:
         for _ in range(30):
             ann = latest_annotated.get(cam_name)
             raw = latest_raw.get(cam_name)
-            frame = ann if ann is not None else raw   # safe numpy check — no 'or'
+            frame = ann if ann is not None else raw
             if frame is not None:
                 h, w = frame.shape[:2]
                 print(f"[INFO] Recorder [{cam_name}] frame size: {w}x{h}")
@@ -134,8 +130,10 @@ class VideoRecorder:
                 ann_path = os.path.join(self.output_dir, f"Argus_{safe_name}_{ts}.mp4")
                 raw_path = os.path.join(self.output_dir, f"Argus_{safe_name}_{ts}_raw.mp4")
 
-                proc_ann = self._spawn_ffmpeg(ann_path, w, h)
-                proc_raw = self._spawn_ffmpeg(raw_path, w, h)
+                # Annotated: runs at AI pipeline speed (variable, ≤ camera FPS)
+                # Raw:       runs at full camera FPS (self.fps)
+                proc_ann = self._spawn_ffmpeg(ann_path, w, h, input_fps=self.fps)
+                proc_raw = self._spawn_ffmpeg(raw_path, w, h, input_fps=self.fps)
 
                 time.sleep(0.3)
                 if proc_ann.poll() is not None or proc_raw.poll() is not None:
@@ -143,16 +141,19 @@ class VideoRecorder:
                     continue
 
                 self._cameras[cn] = {
-                    "proc_ann":       proc_ann,
-                    "proc_raw":       proc_raw,
-                    "ann_path":       ann_path,
-                    "raw_path":       raw_path,
-                    "fps_window":     deque(maxlen=30),
-                    "frames_written": 0,
-                    "start_time":     None,
-                    "end_time":       None,
+                    "proc_ann":            proc_ann,
+                    "proc_raw":            proc_raw,
+                    "ann_path":            ann_path,
+                    "raw_path":            raw_path,
+                    "fps_window":          deque(maxlen=30),
+                    "frames_written":      0,
+                    "raw_frames_written":  0,
+                    "start_time":          None,
+                    "end_time":            None,
+                    "raw_start_time":      None,
+                    "raw_end_time":        None,
                 }
-                print(f"[INFO] Recorder [{cn}] ffmpeg started OK")
+                print(f"[INFO] Recorder [{cn}] ffmpeg started OK — ann+raw at up to {self.fps:.0f} fps")
 
             if not self._cameras:
                 self.status_msg = "Failed to start any camera recorder"
@@ -162,9 +163,18 @@ class VideoRecorder:
             self.status_msg = f"Recording {len(self._cameras)} camera(s)..."
 
             for cn in self._cameras:
-                t = threading.Thread(target=self._feed_frames, args=(cn,), daemon=True)
-                t.start()
-                self._feed_threads.append(t)
+                # Annotated feed — gated by AI pipeline output
+                t_ann = threading.Thread(
+                    target=self._feed_annotated, args=(cn,), daemon=True
+                )
+                # Raw feed — reads directly from camera capture deque,
+                # bypassing AI entirely → records at full camera FPS
+                t_raw = threading.Thread(
+                    target=self._feed_raw, args=(cn,), daemon=True
+                )
+                t_ann.start()
+                t_raw.start()
+                self._feed_threads.extend([t_ann, t_raw])
 
         except Exception as e:
             import traceback
@@ -172,57 +182,98 @@ class VideoRecorder:
             traceback.print_exc()
             self.status_msg = f"Error: {e}"
 
-    def _feed_frames(self, cam_name):
-        from core.vision import latest_annotated, latest_raw
+    # ── Annotated feed ────────────────────────────────────────────────────────
+    def _feed_annotated(self, cam_name):
+        """
+        Writes AI-annotated frames to proc_ann.
+        Polls latest_annotated as fast as the AI pipeline produces frames —
+        no artificial sleep throttle so every AI output frame is captured.
+        """
+        from core.vision import latest_annotated
 
-        cam        = self._cameras[cam_name]
-        proc_ann   = cam["proc_ann"]
-        proc_raw   = cam["proc_raw"]
-        fps_window = cam["fps_window"]
-
+        cam            = self._cameras[cam_name]
+        proc_ann       = cam["proc_ann"]
+        fps_window     = cam["fps_window"]
         last_ann_id    = None
-        last_raw_id    = None
-        interval       = 1.0 / self.fps
         frames_written = 0
 
-        print(f"[INFO] Recorder [{cam_name}] feed thread started — watching key '{cam_name}'")
+        print(f"[INFO] Recorder [{cam_name}] annotated feed started")
 
         while self.recording:
-            t_start = time.perf_counter()
-
             annotated = latest_annotated.get(cam_name)
-            raw       = latest_raw.get(cam_name)
 
             if annotated is not None and id(annotated) != last_ann_id:
                 last_ann_id = id(annotated)
+                t_now = time.perf_counter()
                 try:
                     proc_ann.stdin.write(annotated.tobytes())
-                    fps_window.append(t_start)
-                    interval = 1.0 / self._measured_fps(fps_window)
+                    fps_window.append(t_now)
                     if frames_written == 0:
-                        cam["start_time"] = t_start
-                        print(f"[INFO] Recorder [{cam_name}] first frame written: shape={annotated.shape}")
+                        cam["start_time"] = t_now
+                        print(f"[INFO] Recorder [{cam_name}] first annotated frame: shape={annotated.shape}")
                     frames_written += 1
                     cam["frames_written"] = frames_written
-                    cam["end_time"] = t_start
+                    cam["end_time"]       = t_now
                 except Exception as e:
-                    print(f"[ERROR] Recorder [{cam_name}] annotated write failed: {e}")
+                    print(f"[ERROR] Recorder [{cam_name}] annotated write: {e}")
                     break
+            else:
+                # No new frame yet — yield the thread briefly
+                time.sleep(0.001)
 
-            if raw is not None and id(raw) != last_raw_id:
-                last_raw_id = id(raw)
+        print(f"[INFO] Recorder [{cam_name}] annotated feed done. Frames: {frames_written}")
+
+    # ── Raw feed ──────────────────────────────────────────────────────────────
+    def _feed_raw(self, cam_name):
+        """
+        Writes raw camera frames DIRECTLY from the camera capture deque,
+        completely bypassing the AI pipeline. This means the raw recording
+        runs at the camera's native FPS (e.g. 25 fps for Tapo stream1)
+        regardless of how fast pose/object/desk detection runs.
+        """
+        from core.cameras import frames as camera_frames
+
+        cam            = self._cameras[cam_name]
+        proc_raw       = cam["proc_raw"]
+        interval       = 1.0 / self.fps  # target: camera native FPS
+        last_raw_id    = None
+        frames_written = 0
+
+        print(f"[INFO] Recorder [{cam_name}] raw feed started — direct from camera deque @ {self.fps:.0f} fps")
+
+        while self.recording:
+            t_start   = time.perf_counter()
+            cam_deque = camera_frames.get(cam_name)
+
+            if cam_deque:
                 try:
-                    proc_raw.stdin.write(raw.tobytes())
-                except Exception as e:
-                    print(f"[ERROR] Recorder [{cam_name}] raw write failed: {e}")
-                    break
+                    frame = cam_deque[-1]  # latest camera frame
+                except IndexError:
+                    time.sleep(0.005)
+                    continue
+
+                fid = id(frame)
+                if fid != last_raw_id:
+                    last_raw_id = fid
+                    t_now = time.perf_counter()
+                    try:
+                        proc_raw.stdin.write(frame.tobytes())
+                        if frames_written == 0:
+                            cam["raw_start_time"] = t_now
+                            print(f"[INFO] Recorder [{cam_name}] first raw frame: shape={frame.shape}")
+                        frames_written += 1
+                        cam["raw_frames_written"] = frames_written
+                        cam["raw_end_time"]       = t_now
+                    except Exception as e:
+                        print(f"[ERROR] Recorder [{cam_name}] raw write: {e}")
+                        break
 
             elapsed = time.perf_counter() - t_start
             sleep_t = interval - elapsed
-            if sleep_t > 0:
+            if sleep_t > 0.001:
                 time.sleep(sleep_t)
 
-        print(f"[INFO] Recorder [{cam_name}] feed thread done. Frames: {frames_written}")
+        print(f"[INFO] Recorder [{cam_name}] raw feed done. Frames: {frames_written}")
 
     def stop(self):
         if not self.recording:
@@ -250,64 +301,82 @@ class VideoRecorder:
 
         threading.Thread(target=finalize).start()
 
+    def _actual_fps(self, frames_written, start_time, end_time, fallback):
+        """Computes real recorded FPS from measured timing, capped at self.fps."""
+        if frames_written > 1 and start_time and end_time:
+            elapsed = end_time - start_time
+            fps     = round(frames_written / elapsed, 3) if elapsed > 0 else fallback
+            return max(1.0, min(fps, self.fps))
+        return fallback
+
     def _cleanup(self):
         time.sleep(0.5)
         saved = []
+
         for cn, cam in self._cameras.items():
-            frames_written = cam.get("frames_written", 0)
-            start_time     = cam.get("start_time")
-            end_time       = cam.get("end_time")
-            if frames_written > 1 and start_time and end_time:
-                elapsed    = end_time - start_time
-                actual_fps = round(frames_written / elapsed, 3) if elapsed > 0 else self.fps
-                actual_fps = max(1.0, min(actual_fps, self.fps))
-            else:
-                actual_fps = self.fps
-            print(f"[INFO] Recorder [{cn}] actual FPS: {actual_fps:.2f} ({frames_written} frames)")
+            # Annotated: measured from AI pipeline output
+            ann_fps = self._actual_fps(
+                cam.get("frames_written", 0),
+                cam.get("start_time"),
+                cam.get("end_time"),
+                fallback=self.fps,
+            )
+            # Raw: measured from camera deque output (should be ≈ self.fps)
+            raw_fps = self._actual_fps(
+                cam.get("raw_frames_written", 0),
+                cam.get("raw_start_time"),
+                cam.get("raw_end_time"),
+                fallback=self.fps,
+            )
 
-            for path in (cam["ann_path"], cam["raw_path"]):
-                if os.path.exists(path):
-                    size = os.path.getsize(path)
-                    print(f"[INFO] Recorder [{cn}] {os.path.basename(path)} | {size} bytes")
-                    if size < 5000:
-                        print(f"[WARN] Recorder [{cn}] deleting empty file: {os.path.basename(path)}")
-                        os.remove(path)
-                    else:
-                        # Re-stamp PTS with the real measured FPS so playback
-                        # speed exactly matches what the camera delivered.
-                        fixed_path = path.replace(".mp4", "_fixed.mp4")
-                        try:
-                            result = subprocess.run(
-                                [
-                                    self.ffmpeg_exe, "-y",
-                                    "-i",      path,
-                                    "-vf",     f"setpts=N/{actual_fps}/TB",
-                                    "-r",      str(actual_fps),
-                                    "-c:v",    "libx264",
-                                    "-preset", "ultrafast",
-                                    "-pix_fmt","yuv420p",
-                                    fixed_path,
-                                ],
-                                stdout=subprocess.DEVNULL,
-                                stderr=subprocess.DEVNULL,
-                                startupinfo=self._startupinfo(),
-                                timeout=120,
-                            )
-                            if result.returncode == 0 and os.path.exists(fixed_path) and os.path.getsize(fixed_path) > 5000:
-                                os.remove(path)
-                                os.rename(fixed_path, path)
-                                print(f"[INFO] Recorder [{cn}] re-encoded at {actual_fps:.2f} fps: {os.path.basename(path)}")
-                            else:
-                                if os.path.exists(fixed_path):
-                                    os.remove(fixed_path)
-                                print(f"[WARN] Recorder [{cn}] re-encode failed, keeping original: {os.path.basename(path)}")
-                        except Exception as e:
-                            print(f"[WARN] Recorder [{cn}] re-encode error: {e}")
-                        saved.append(os.path.basename(path))
-                else:
+            print(f"[INFO] Recorder [{cn}] annotated FPS: {ann_fps:.2f}  raw FPS: {raw_fps:.2f}")
+
+            for path, fps in ((cam["ann_path"], ann_fps), (cam["raw_path"], raw_fps)):
+                if not os.path.exists(path):
                     print(f"[WARN] Recorder [{cn}] file missing: {path}")
+                    continue
 
-        if saved:
-            self.status_msg = f"Saved {len(saved)} file(s)"
-        else:
-            self.status_msg = "Recording failed (Empty)"
+                size = os.path.getsize(path)
+                print(f"[INFO] Recorder [{cn}] {os.path.basename(path)} | {size} bytes")
+
+                if size < 5000:
+                    print(f"[WARN] Recorder [{cn}] deleting empty file: {os.path.basename(path)}")
+                    os.remove(path)
+                    continue
+
+                # Re-stamp PTS with the real measured FPS so playback speed
+                # exactly matches what the camera/AI delivered.
+                fixed_path = path.replace(".mp4", "_fixed.mp4")
+                try:
+                    result = subprocess.run(
+                        [
+                            self.ffmpeg_exe, "-y",
+                            "-i",       path,
+                            "-vf",      f"setpts=N/{fps}/TB",
+                            "-r",       str(fps),
+                            "-c:v",     "libx264",
+                            "-preset",  "ultrafast",
+                            "-pix_fmt", "yuv420p",
+                            fixed_path,
+                        ],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL,
+                        startupinfo=self._startupinfo(),
+                        timeout=120,
+                    )
+                    if (result.returncode == 0
+                            and os.path.exists(fixed_path)
+                            and os.path.getsize(fixed_path) > 5000):
+                        os.remove(path)
+                        os.rename(fixed_path, path)
+                        print(f"[INFO] Recorder [{cn}] re-encoded at {fps:.2f} fps: {os.path.basename(path)}")
+                    else:
+                        if os.path.exists(fixed_path):
+                            os.remove(fixed_path)
+                        print(f"[WARN] Recorder [{cn}] re-encode failed, keeping original: {os.path.basename(path)}")
+                except Exception as e:
+                    print(f"[WARN] Recorder [{cn}] re-encode error: {e}")
+
+                saved.append(os.path.basename(path))
+
+        self.status_msg = f"Saved {len(saved)} file(s)" if saved else "Recording failed (Empty)"

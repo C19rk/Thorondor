@@ -177,11 +177,8 @@ def mjpeg_generator(cam_name):
 async def lifespan(app: FastAPI):
     global CAMERA_SOURCES, frames, recorder, log_recorder, _cam_backend
 
-    try:
-        open(LOG_FILE, "w").close()
-        open(CSV_FILE, "w").close()
-    except Exception:
-        pass
+    # Detection logs are preserved — each session writes to its own
+    # timestamped file in detection_logs/ (see core/config.py).
 
     cam_idx, _cam_backend = _find_working_camera()
     CAMERA_SOURCES = {"cam1": cam_idx}
