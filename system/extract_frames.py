@@ -433,8 +433,7 @@ def _draw_object(canvas, detections):
 def _generate_pdf(pdf_path, video_name, csv_name, args,
                   csv_rows, all_tp, all_fp, all_fn,
                   prec_all, rec_all, f1_all,
-                  frames_evaluated, eval_start, eval_end,
-                  pose_available, desk_available):
+                  frames_evaluated, eval_start, eval_end):
     if not REPORTLAB_OK:
         print("[WARN] Skipping PDF - reportlab not installed.")
         return
@@ -476,8 +475,6 @@ def _generate_pdf(pdf_path, video_name, csv_name, args,
         ["Frames Evaluated",   str(frames_evaluated)],
         ["Conf Threshold",     str(args.conf)],
         ["IoU Threshold",      str(args.iou_threshold)],
-        ["Pose Model",         "Loaded" if pose_available else "Not found / skipped"],
-        ["Desk Model",         "Loaded" if desk_available else "Not found / skipped"],
     ]
     meta_table = Table(meta_data, colWidths=[2.2*inch, 4.0*inch])
     meta_table.setStyle(TableStyle([
@@ -755,10 +752,9 @@ def run_evaluation(args):
         print(f"  -- Desk Detection {'─'*49}")
         _print_and_collect("Desk", "desk", include_in_overall=False)
 
-    # Pose / Cheating row (only if model was loaded)
-    if pose_model is not None:
-        print(f"  -- Pose Estimation {'─'*48}")
-        _print_and_collect("Cheating", "cheating", include_in_overall=False)
+    # Pose / Cheating row (always shown)
+    print(f"  -- Pose Estimation {'─'*48}")
+    _print_and_collect("Cheating", "cheating", include_in_overall=False)
 
     prec_all = _div(all_tp, all_tp + all_fp)
     rec_all  = _div(all_tp, all_tp + all_fn)
@@ -793,8 +789,6 @@ def run_evaluation(args):
         frames_evaluated = saved_idx,
         eval_start       = eval_start,
         eval_end         = eval_end,
-        pose_available   = pose_model is not None,
-        desk_available   = desk_model is not None,
     )
 
 
