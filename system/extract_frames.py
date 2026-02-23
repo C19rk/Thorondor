@@ -490,13 +490,13 @@ def _generate_pdf(pdf_path, video_name, csv_name, args,
     elements.append(meta_table)
     elements.append(Spacer(1, 0.25 * inch))
 
-    elements.append(Paragraph("Evaluation Results (Object Detection)", heading_style))
+    elements.append(Paragraph("Evaluation Results", heading_style))
     header = ["Class", "TP", "FP", "FN", "Precision", "Recall", "F1-Score"]
     rows   = [header]
     for label, tp, fp, fn, precision, recall, f1 in csv_rows:
         rows.append([label, str(tp), str(fp), str(fn),
                      f"{precision:.4f}", f"{recall:.4f}", f"{f1:.4f}"])
-    rows.append(["OVERALL (micro)", str(all_tp), str(all_fp), str(all_fn),
+    rows.append(["OVERALL", str(all_tp), str(all_fp), str(all_fn),
                  f"{prec_all:.4f}", f"{rec_all:.4f}", f"{f1_all:.4f}"])
 
     col_w = [1.6*inch, 0.6*inch, 0.6*inch, 0.6*inch, 1.0*inch, 0.9*inch, 0.9*inch]
@@ -750,18 +750,18 @@ def run_evaluation(args):
     # Desk detection row (only if model was loaded)
     if desk_model is not None:
         print(f"  -- Desk Detection {'─'*49}")
-        _print_and_collect("Desk", "desk", include_in_overall=False)
+        _print_and_collect("Desk", "desk")
 
     # Pose / Cheating row (always shown)
     print(f"  -- Pose Estimation {'─'*48}")
-    _print_and_collect("Cheating", "cheating", include_in_overall=False)
+    _print_and_collect("Cheating", "cheating")
 
     prec_all = _div(all_tp, all_tp + all_fp)
     rec_all  = _div(all_tp, all_tp + all_fn)
     f1_all   = _div(2 * prec_all * rec_all, prec_all + rec_all)
 
     print(f"  {'-'*67}")
-    print(f"  {'Object OVERALL':>18} {all_tp:>5} {all_fp:>5} {all_fn:>5}  "
+    print(f"  {'OVERALL':>18} {all_tp:>5} {all_fp:>5} {all_fn:>5}  "
           f"{prec_all:>10.4f} {rec_all:>8.4f} {f1_all:>9.4f}")
     print(f"{'='*66}\n")
 
@@ -772,7 +772,7 @@ def run_evaluation(args):
         for row in csv_rows:
             w.writerow([row[0], row[1], row[2], row[3],
                         f"{row[4]:.4f}", f"{row[5]:.4f}", f"{row[6]:.4f}"])
-        w.writerow(["OBJECT OVERALL", all_tp, all_fp, all_fn,
+        w.writerow(["OVERALL", all_tp, all_fp, all_fn,
                     f"{prec_all:.4f}", f"{rec_all:.4f}", f"{f1_all:.4f}"])
     print(f"[INFO] CSV saved to:\n       {csv_out}\n")
 
