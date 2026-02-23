@@ -191,6 +191,11 @@ async def lifespan(app: FastAPI):
     cap_init.release()
     recorder, log_recorder = init_recorders(fps=actual_fps)
 
+    # Tell the recorder where to find raw webcam frames.
+    # This avoids importing core.cameras (which would spin up Tapo RTSP
+    # capture threads even in webcam-only mode).
+    recorder._frames_source = frames
+
     # Start capture thread
     threading.Thread(
         target=capture_frames,

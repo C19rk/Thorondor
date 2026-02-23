@@ -38,6 +38,12 @@ class VideoRecorder:
         self._cameras      = {}
         self._feed_threads = []
 
+        # Optional external frames dict.
+        # wcapp.py sets this to its local webcam frames dict so _feed_raw
+        # doesn't have to import core.cameras (which would start Tapo threads).
+        # app.py leaves it None and _feed_raw falls back to core.cameras.frames.
+        self._frames_source = None
+
     def _kill_zombies(self):
         if platform.system() == "Windows":
             subprocess.run(
@@ -243,7 +249,15 @@ class VideoRecorder:
         runs at the camera's native FPS (e.g. 25 fps for Tapo stream1)
         regardless of how fast pose/object/desk detection runs.
         """
-        from core.cameras import frames as camera_frames
+        # Use the injected frames dict if provided (e.g. wcapp.py webcam mode),
+        # otherwise import and fall back to core.cameras.frames (app.py Tapo mode).
+        # IMPORTANT: the import must stay inside the else-branch so that wcapp.py
+        # never triggers cameras.py's module-level RTSP thread launch loop.
+        if self._frames_source is not None:
+            cam_deque_src = self._frames_source
+        else:
+            from core.cameras import frames as camera_frames
+            cam_deque_src = camera_frames
 
         cam            = self._cameras[cam_name]
         proc_raw       = cam["proc_raw"]
@@ -255,7 +269,7 @@ class VideoRecorder:
 
         while self.recording:
             t_start   = time.perf_counter()
-            cam_deque = camera_frames.get(cam_name)
+            cam_deque = cam_deque_src.get(cam_name)
 
             if cam_deque:
                 try:

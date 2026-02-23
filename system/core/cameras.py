@@ -7,6 +7,11 @@ from core.config import CAMERA_SOURCES, FRAME_WIDTH, FRAME_HEIGHT
 # === Shared frame storage — maxlen=1 keeps only the freshest frame ===
 frames = {name: deque(maxlen=1) for name in CAMERA_SOURCES.keys()}
 
+# Detected native FPS per camera — populated by capture_frames() once the
+# stream header has been parsed.  app.py reads this instead of opening a
+# second RTSP connection just to probe the frame rate.
+detected_fps: dict = {}
+
 # ─────────────────────────────────────────────────────────────────────────────
 # TAPO CONCURRENT CONNECTION LIMIT:
 #   Tapo cameras allow only 1–2 simultaneous RTSP connections per device.
@@ -45,9 +50,21 @@ def capture_frames(cam_name, src):
         )
         return
 
+    # Prime the RTSP demuxer: grab a few frames so the stream header is fully
+    # parsed before asking for FPS.  Without this, cap.get(CAP_PROP_FPS)
+    # returns 0 for RTSP and we'd fall back to the wrong default every time.
+    for _ in range(8):
+        cap.grab()
     stream_fps = cap.get(cv2.CAP_PROP_FPS)
-    if stream_fps <= 0 or stream_fps > 60:
-        stream_fps = 15.0
+    if stream_fps <= 0 or stream_fps > 120:
+        # stream1 = 25 fps, stream2 = 15 fps; default to stream1 as configured.
+        stream_fps = 25.0
+        print(f"[WARN] '{cam_name}' FPS unreadable from stream — defaulting to {stream_fps} fps")
+    else:
+        print(f"[INFO] '{cam_name}' native FPS detected: {stream_fps:.2f}")
+
+    # Store AFTER priming so app.py's wait loop gets the real value, not 0.
+    detected_fps[cam_name] = stream_fps
     frame_interval = 1.0 / stream_fps
     print(f"[INFO] Capture started: '{cam_name}' @ {stream_fps:.1f} fps (drain-grab active)")
 

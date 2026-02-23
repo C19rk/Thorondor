@@ -1,5 +1,8 @@
 """
 extract_frames.py — Argus Object Detection Model Evaluator
+Runs object detection, pose estimation, and desk detection on every
+extracted frame.  Evaluation metrics (TP/FP/FN) are computed for
+object detection only, as that is what the session CSV tracks.
 """
 
 import os
@@ -9,6 +12,7 @@ import csv
 import glob
 import argparse
 import cv2
+import numpy as np
 from datetime import datetime, timedelta
 from collections import defaultdict
 
@@ -29,39 +33,121 @@ except ImportError:
     REPORTLAB_OK = False
     print("[WARN] reportlab not installed — PDF export skipped. Run: pip install reportlab")
 
+# ── Object detection ──────────────────────────────────────────────────────────
 OBJECT_LABELS    = {0: "Phone", 1: "Calculator", 2: "Smartwatch", 3: "Watch"}
 LABEL_TO_ID      = {v.lower(): k for k, v in OBJECT_LABELS.items()}
-CONF_THRESHOLD   = 0.75
-IOU_THRESHOLD    = 0.50
-INFER_W, INFER_H = 320, 180
+OBJ_COLOR        = (0, 225, 255)
+OBJ_TEXT_COLOR   = (0, 140, 255)
+OBJ_CONF         = 0.75
+OBJ_INFER_W      = 320
+OBJ_INFER_H      = 180
 
+# ── Pose estimation ───────────────────────────────────────────────────────────
+POSE_LABELS      = {0: "Cheating", 1: "Normal"}
+POSE_COLORS      = {"Cheating": (0, 0, 255), "Normal": (0, 255, 0)}
+POSE_CONF        = 0.55
+POSE_KPT_CONF    = 0.3
+POSE_INFER_W     = 256
+POSE_INFER_H     = 144
+SKELETON         = [
+    (0, 1), (0, 2), (1, 3), (2, 4),
+    (0, 5), (0, 6), (5, 7), (7, 9),
+    (6, 8), (8, 10),
+    (5, 6),
+    (5, 11), (6, 12), (11, 12),
+    (11, 13), (13, 15),
+    (12, 14), (14, 16),
+]
+
+# ── Desk detection ────────────────────────────────────────────────────────────
+DESK_COLOR       = (255, 0, 0)
+DESK_CONF        = 0.55
+DESK_INFER_W     = 320
+DESK_INFER_H     = 180
+DESK_MIN_AREA    = 1000
+
+# ── Evaluation ────────────────────────────────────────────────────────────────
+IOU_THRESHOLD    = 0.50
+
+# ── Paths ─────────────────────────────────────────────────────────────────────
 _HERE              = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_MODEL      = os.path.normpath(os.path.join(
-    _HERE, "..", "machine_learning", "runs",
-    "argus_object_detection", "weights", "best.pt",
-))
+_ML_RUNS           = os.path.normpath(os.path.join(_HERE, "..", "machine_learning", "runs"))
+
+DEFAULT_OBJ_MODEL  = os.path.join(_ML_RUNS, "argus_object_detection",  "weights", "best.pt")
+DEFAULT_POSE_MODEL = os.path.join(_ML_RUNS, "argus_pose_estimation",   "weights", "best.pt")
+DEFAULT_DESK_MODEL = os.path.join(_ML_RUNS, "argus_desk_detection",    "weights", "best.pt")
+
 RECORDINGS_DIR     = os.path.join(_HERE, "recordings")
 DETECTION_LOGS_DIR = os.path.join(_HERE, "detection_logs")
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────────────────────────────────────
 def _ts_label(dt):
     return f"{dt.strftime('%b')} {dt.day}, {dt.year} {dt.strftime('%I-%M-%S %p')}"
 
 
+def _parse_video_timestamp(video_path):
+    """
+    Extract the recording timestamp from an Argus video filename.
+
+    Handles the format produced by record_video.py:
+        Argus Surveillance Recording - Camera 1 - Feb 23, 2026 10-27-15 AM.mp4
+        Argus Webcam Surveillance Recording - Feb 23, 2026 10-27-15 AM.mp4
+
+    Falls back to the legacy YYYYMMDD_HHMMSS format, then to datetime.now()
+    with a loud warning — a wrong start time makes every frame's ground-truth
+    query land at the wrong moment, silently corrupting TP/FP/FN counts.
+    """
+    stem = os.path.splitext(os.path.basename(video_path))[0]
+
+    # Primary: Argus format  "Feb 23, 2026 10-27-15 AM"
+    argus_re = re.compile(
+        r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+        r"\s+(\d{1,2}),\s+(\d{4})\s+(\d{2}-\d{2}-\d{2})\s+(AM|PM)"
+    )
+    m = argus_re.search(stem)
+    if m:
+        try:
+            return datetime.strptime(m.group(0), "%b %d, %Y %I-%M-%S %p")
+        except ValueError:
+            pass
+
+    # Fallback: legacy YYYYMMDD_HHMMSS format
+    m2 = re.search(r"(\d{8})_(\d{6})", stem)
+    if m2:
+        try:
+            return datetime.strptime(m2.group(1) + m2.group(2), "%Y%m%d%H%M%S")
+        except ValueError:
+            pass
+
+    # Last resort — warn loudly; every frame timestamp will be wrong.
+    print(
+        f"\n[WARN] Could not parse a recording timestamp from:\n"
+        f"       {os.path.basename(video_path)}\n"
+        f"       Ground-truth frame times will be relative to RIGHT NOW.\n"
+        f"       TP/FP/FN counts will be incorrect. Rename the file to include\n"
+        f"       a timestamp like \'Feb 23, 2026 10-27-15 AM\' or \'20260223_102715\'.\n"
+    )
+    return datetime.now()
+
+
 def _make_output_folder(video_path, base_dir):
-    stem  = os.path.splitext(os.path.basename(video_path))[0]
-    match = re.search(r"(\d{8})_(\d{6})", stem)
-    dt    = (datetime.strptime(match.group(1) + match.group(2), "%Y%m%d%H%M%S")
-             if match else datetime.now())
-    path  = os.path.join(base_dir, _ts_label(dt))
-    os.makedirs(path, exist_ok=True)
-    return path, dt
+    dt          = _parse_video_timestamp(video_path)
+    session_dir = os.path.join(base_dir, _ts_label(dt))
+    frames_dir  = os.path.join(session_dir, "frames")
+    os.makedirs(frames_dir, exist_ok=True)
+    return session_dir, frames_dir, dt
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Interactive pickers
+# ─────────────────────────────────────────────────────────────────────────────
 def _pick_video():
     videos = sorted(glob.glob(os.path.join(RECORDINGS_DIR, "*.mp4")))
     print("\n" + "=" * 64)
-    print("  ARGUS - Object Detection Model Evaluator")
+    print("  ARGUS - Object / Pose / Desk Model Evaluator")
     print("=" * 64)
     if not videos:
         print(f"\n  [!] No .mp4 files found in: {RECORDINGS_DIR}")
@@ -91,7 +177,7 @@ def _pick_csv():
     csvs = sorted(glob.glob(os.path.join(DETECTION_LOGS_DIR, "*.csv")), reverse=True)
     print("\n  -- Detection Log (CSV) ----------------------------------------------")
     print("  Pick the session CSV that matches your video recording time.")
-    print("  This is used as ground truth - no manual annotation needed.\n")
+    print("  This is used as ground truth for object detection evaluation.\n")
     if not csvs:
         print(f"  [!] No CSV files found in: {DETECTION_LOGS_DIR}")
         print("\n    [1] Enter path manually\n    [0] Skip\n")
@@ -119,6 +205,9 @@ def _pick_csv():
         print(f"  Enter a number between 0 and {len(csvs)}.")
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# CSV ground-truth helpers  (object detection only)
+# ─────────────────────────────────────────────────────────────────────────────
 def _load_csv_events(csv_path):
     events = []
     with open(csv_path, newline="", encoding="utf-8", errors="ignore") as f:
@@ -148,18 +237,170 @@ def _active_labels_at(events, query_time):
     return {lbl for lbl, cnt in active.items() if cnt > 0}
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Per-frame inference
+# ─────────────────────────────────────────────────────────────────────────────
+def _run_pose(model, frame):
+    """Returns (detections list, person_boxes list).
+    person_boxes is passed to desk detection to filter overlapping boxes."""
+    if model is None:
+        return [], []
+
+    orig_h, orig_w = frame.shape[:2]
+    small   = cv2.resize(frame, (POSE_INFER_W, POSE_INFER_H))
+    scale_x = orig_w / POSE_INFER_W
+    scale_y = orig_h / POSE_INFER_H
+
+    results = model.predict(small, imgsz=256, conf=POSE_CONF, verbose=False)
+
+    detections   = []
+    person_boxes = []
+
+    for r in results:
+        boxes    = r.boxes     if (hasattr(r, "boxes")     and r.boxes     is not None) else []
+        kpts_obj = r.keypoints if (hasattr(r, "keypoints") and r.keypoints is not None) else None
+        kpts_xy   = kpts_obj.xy.cpu().numpy()   if kpts_obj is not None else []
+        kpts_conf = kpts_obj.conf.cpu().numpy() if kpts_obj is not None else []
+
+        for idx, box in enumerate(boxes):
+            cls      = int(box.cls[0].item())
+            conf_val = float(box.conf[0].item())
+            label    = POSE_LABELS.get(cls, f"Class{cls}")
+
+            x1, y1, x2, y2 = box.xyxy[0].tolist()
+            x1 = int(x1 * scale_x); y1 = int(y1 * scale_y)
+            x2 = int(x2 * scale_x); y2 = int(y2 * scale_y)
+
+            kp_xy   = kpts_xy[idx].copy()   if idx < len(kpts_xy)   else np.zeros((17, 2))
+            kp_conf = kpts_conf[idx].copy() if idx < len(kpts_conf) else np.zeros(17)
+            if len(kp_xy):
+                kp_xy[:, 0] *= scale_x
+                kp_xy[:, 1] *= scale_y
+
+            detections.append({
+                "box":       (x1, y1, x2, y2),
+                "label":     label,
+                "conf":      conf_val,
+                "kpts_xy":   kp_xy,
+                "kpts_conf": kp_conf,
+            })
+            person_boxes.append((x1, y1, x2, y2))
+
+    return detections, person_boxes
+
+
+def _draw_pose(canvas, detections):
+    for det in detections:
+        x1, y1, x2, y2 = det["box"]
+        label  = det["label"]
+        color  = POSE_COLORS.get(label, (0, 255, 0))
+        cv2.rectangle(canvas, (x1, y1), (x2, y2), color, 2)
+        cv2.putText(canvas, f"{label} {det['conf']:.2f}", (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+        kp_xy, kp_conf = det["kpts_xy"], det["kpts_conf"]
+        for i, j in SKELETON:
+            if i >= len(kp_xy) or j >= len(kp_xy): continue
+            if kp_conf[i] < POSE_KPT_CONF or kp_conf[j] < POSE_KPT_CONF: continue
+            pt1 = tuple(kp_xy[i].astype(int))
+            pt2 = tuple(kp_xy[j].astype(int))
+            if pt1[0] > 1 and pt1[1] > 1 and pt2[0] > 1 and pt2[1] > 1:
+                cv2.line(canvas, pt1, pt2, color, 2)
+        for kpt, conf in zip(kp_xy, kp_conf):
+            if conf < POSE_KPT_CONF: continue
+            x, y = int(kpt[0]), int(kpt[1])
+            if x > 1 and y > 1:
+                cv2.circle(canvas, (x, y), 3, color, -1)
+
+
+def _run_desk(model, frame, person_boxes):
+    """Returns list of (x1,y1,x2,y2) desk boxes, filtered against person_boxes."""
+    if model is None:
+        return []
+
+    orig_h, orig_w = frame.shape[:2]
+    small   = cv2.resize(frame, (DESK_INFER_W, DESK_INFER_H))
+    scale_x = orig_w / DESK_INFER_W
+    scale_y = orig_h / DESK_INFER_H
+
+    results = model.predict(small, imgsz=320, conf=DESK_CONF, verbose=False)
+
+    boxes = []
+    for r in results:
+        for box in r.boxes:
+            x1, y1, x2, y2 = box.xyxy[0].tolist()
+            x1 = int(x1 * scale_x); y1 = int(y1 * scale_y)
+            x2 = int(x2 * scale_x); y2 = int(y2 * scale_y)
+            area = (x2 - x1) * (y2 - y1)
+            if area < DESK_MIN_AREA:
+                continue
+            overlaps = False
+            for px1, py1, px2, py2 in person_boxes:
+                ix1 = max(x1, px1); iy1 = max(y1, py1)
+                ix2 = min(x2, px2); iy2 = min(y2, py2)
+                if ix1 < ix2 and iy1 < iy2:
+                    if (ix2 - ix1) * (iy2 - iy1) / (area + 1e-6) > 0.6:
+                        overlaps = True
+                        break
+            if not overlaps:
+                boxes.append((x1, y1, x2, y2))
+    return boxes
+
+
+def _draw_desk(canvas, boxes):
+    for x1, y1, x2, y2 in boxes:
+        cv2.rectangle(canvas, (x1, y1), (x2, y2), DESK_COLOR, 2)
+        cv2.putText(canvas, "Desk", (x1, y1 - 8),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, DESK_COLOR, 2)
+
+
+def _run_object(model, frame, conf):
+    """Returns list of (label, (x1,y1,x2,y2), conf_val)."""
+    if model is None:
+        return []
+
+    orig_h, orig_w = frame.shape[:2]
+    small   = cv2.resize(frame, (OBJ_INFER_W, OBJ_INFER_H))
+    scale_x = orig_w / OBJ_INFER_W
+    scale_y = orig_h / OBJ_INFER_H
+
+    results = model.predict(small, imgsz=320, conf=conf, verbose=False)
+
+    detections = []
+    for r in results:
+        for box in r.boxes:
+            cls      = int(box.cls[0].item())
+            conf_val = float(box.conf[0].item())
+            label    = OBJECT_LABELS.get(cls, f"Class{cls}")
+            x1, y1, x2, y2 = box.xyxy[0].tolist()
+            x1 = int(x1 * scale_x); y1 = int(y1 * scale_y)
+            x2 = int(x2 * scale_x); y2 = int(y2 * scale_y)
+            detections.append((label, (x1, y1, x2, y2), conf_val))
+    return detections
+
+
+def _draw_object(canvas, detections):
+    for label, (x1, y1, x2, y2), conf in detections:
+        cv2.rectangle(canvas, (x1, y1), (x2, y2), OBJ_COLOR, 2)
+        cv2.putText(canvas, f"{label} {conf:.2f}", (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.55, OBJ_TEXT_COLOR, 2)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PDF report
+# ─────────────────────────────────────────────────────────────────────────────
 def _generate_pdf(pdf_path, video_name, csv_name, args,
                   csv_rows, all_tp, all_fp, all_fn,
                   prec_all, rec_all, f1_all,
-                  frames_evaluated, eval_start, eval_end):
+                  frames_evaluated, eval_start, eval_end,
+                  pose_available, desk_available):
     if not REPORTLAB_OK:
         print("[WARN] Skipping PDF - reportlab not installed.")
         return
 
-    doc      = SimpleDocTemplate(pdf_path, pagesize=letter,
-                                 rightMargin=72, leftMargin=72,
-                                 topMargin=72, bottomMargin=36)
-    styles   = getSampleStyleSheet()
+    doc       = SimpleDocTemplate(pdf_path, pagesize=letter,
+                                  rightMargin=72, leftMargin=72,
+                                  topMargin=72, bottomMargin=36)
+    styles    = getSampleStyleSheet()
     DARK_BLUE = HexColor("#00008B")
     MID_BLUE  = HexColor("#003580")
 
@@ -193,6 +434,8 @@ def _generate_pdf(pdf_path, video_name, csv_name, args,
         ["Frames Evaluated",   str(frames_evaluated)],
         ["Conf Threshold",     str(args.conf)],
         ["IoU Threshold",      str(args.iou_threshold)],
+        ["Pose Model",         "Loaded" if pose_available else "Not found / skipped"],
+        ["Desk Model",         "Loaded" if desk_available else "Not found / skipped"],
     ]
     meta_table = Table(meta_data, colWidths=[2.2*inch, 4.0*inch])
     meta_table.setStyle(TableStyle([
@@ -208,7 +451,7 @@ def _generate_pdf(pdf_path, video_name, csv_name, args,
     elements.append(meta_table)
     elements.append(Spacer(1, 0.25 * inch))
 
-    elements.append(Paragraph("Evaluation Results", heading_style))
+    elements.append(Paragraph("Evaluation Results (Object Detection)", heading_style))
     header = ["Class", "TP", "FP", "FN", "Precision", "Recall", "F1-Score"]
     rows   = [header]
     for label, tp, fp, fn, precision, recall, f1 in csv_rows:
@@ -256,7 +499,10 @@ def _generate_pdf(pdf_path, video_name, csv_name, args,
         "For each extracted frame, its timestamp was estimated from the video "
         "start time and frame index. The set of objects actively detected "
         "(Object Detected with no subsequent Object Left) at that moment "
-        "was used as the ground truth label set for presence-based TP/FP/FN matching.",
+        "was used as the ground truth label set for presence-based TP/FP/FN matching. "
+        "Pose estimation and desk detection were also run on each frame and "
+        "drawn onto annotated output images, but are not included in the metrics "
+        "above as the CSV does not provide structured ground truth for them.",
         body_style,
     ))
 
@@ -268,6 +514,9 @@ def _div(n, d):
     return n / d if d else 0.0
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Main evaluation loop
+# ─────────────────────────────────────────────────────────────────────────────
 def run_evaluation(args):
     if not os.path.isfile(args.video):
         sys.exit(f"\n[ERROR] Video not found: {args.video}")
@@ -280,15 +529,49 @@ def run_evaluation(args):
     vid_w        = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     vid_h        = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    out_dir, vid_start_dt = _make_output_folder(args.video, args.output_dir)
+    out_dir, frames_dir, vid_start_dt = _make_output_folder(args.video, args.output_dir)
+
+    # ── Load models ───────────────────────────────────────────────────────────
+    obj_model  = None
+    pose_model = None
+    desk_model = None
+
+    if not args.extract_only:
+        if not os.path.isfile(args.model):
+            sys.exit(f"[ERROR] Object model not found:\n        {args.model}")
+        print(f"[INFO] Loading object model  -> {args.model}")
+        obj_model = YOLO(args.model)
+        print(f"[INFO] Object model ready.  Conf={args.conf}  IoU={args.iou_threshold}")
+
+        if os.path.isfile(args.pose_model):
+            print(f"[INFO] Loading pose model    -> {args.pose_model}")
+            pose_model = YOLO(args.pose_model)
+            print(f"[INFO] Pose model ready.")
+        else:
+            print(f"[WARN] Pose model not found — skipping pose estimation.\n"
+                  f"       Expected: {args.pose_model}")
+
+        if os.path.isfile(args.desk_model):
+            print(f"[INFO] Loading desk model    -> {args.desk_model}")
+            desk_model = YOLO(args.desk_model)
+            print(f"[INFO] Desk model ready.")
+        else:
+            print(f"[WARN] Desk model not found — skipping desk detection.\n"
+                  f"       Expected: {args.desk_model}")
 
     print(f"\n{'='*64}")
     print(f"  Video      : {os.path.basename(args.video)}")
+    print(f"  Video start: {vid_start_dt.strftime('%b %d, %Y %I:%M:%S %p')}  "
+          f"(used as t=0 for CSV ground-truth lookup)")
     print(f"  Resolution : {vid_w}x{vid_h}  |  FPS: {vid_fps:.2f}")
     print(f"  Frames     : {total_frames}  |  Step: every {args.step} frame(s)")
-    print(f"  Output     : {out_dir}")
+    print(f"  Frames dir : {frames_dir}")
+    print(f"  Session dir: {out_dir}")
     if args.csv:
         print(f"  CSV log    : {os.path.basename(args.csv)}")
+    print(f"  Models     : obj={'yes' if obj_model else 'skip'}  "
+          f"pose={'yes' if pose_model else 'skip'}  "
+          f"desk={'yes' if desk_model else 'skip'}")
     print(f"{'='*64}\n")
 
     events     = []
@@ -297,14 +580,7 @@ def run_evaluation(args):
         events = _load_csv_events(args.csv)
         print(f"[INFO] Loaded {len(events)} events from CSV.\n")
 
-    model = None
-    if not args.extract_only:
-        if not os.path.isfile(args.model):
-            sys.exit(f"[ERROR] Model weights not found:\n        {args.model}")
-        print(f"[INFO] Loading model -> {args.model}")
-        model = YOLO(args.model)
-        print(f"[INFO] Model ready.  Conf={args.conf}  IoU={args.iou_threshold}\n")
-
+    # ── Frame loop ────────────────────────────────────────────────────────────
     total_counts = defaultdict(lambda: {"tp": 0, "fp": 0, "fn": 0})
     eval_start   = datetime.now()
     frame_idx    = 0
@@ -319,29 +595,22 @@ def run_evaluation(args):
 
         if frame_idx % args.step == 0:
             name = f"{saved_idx:04d}"
-            cv2.imwrite(os.path.join(out_dir, f"{name}.jpg"), frame)
+            cv2.imwrite(os.path.join(frames_dir, f"{name}.jpg"), frame)
 
             if not args.extract_only:
-                small   = cv2.resize(frame, (INFER_W, INFER_H))
-                scale_x = vid_w / INFER_W
-                scale_y = vid_h / INFER_H
-                results = model.predict(small, imgsz=320, conf=args.conf, verbose=False)
+                # Run in same order as vision.py:
+                # 1. Pose → person_boxes
+                pose_dets, person_boxes = _run_pose(pose_model, frame)
+                # 2. Object detection
+                obj_dets = _run_object(obj_model, frame, args.conf)
+                # 3. Desk, filtered by person_boxes
+                desk_boxes = _run_desk(desk_model, frame, person_boxes)
 
-                pred_labels = set()
-                pred_boxes  = []
-                for r in results:
-                    for box in r.boxes:
-                        cls = int(box.cls[0].item())
-                        lbl = OBJECT_LABELS.get(cls, "").lower()
-                        pred_labels.add(lbl)
-                        if args.save_annotated:
-                            x1, y1, x2, y2 = box.xyxy[0].tolist()
-                            pred_boxes.append((cls, [int(x1*scale_x), int(y1*scale_y),
-                                                     int(x2*scale_x), int(y2*scale_y)]))
-
+                # Object evaluation against CSV ground truth
                 if has_labels:
-                    frame_time = vid_start_dt + timedelta(seconds=frame_idx / vid_fps)
-                    gt_labels  = _active_labels_at(events, frame_time)
+                    pred_labels = {det[0].lower() for det in obj_dets}
+                    frame_time  = vid_start_dt + timedelta(seconds=frame_idx / vid_fps)
+                    gt_labels   = _active_labels_at(events, frame_time)
 
                     for lbl in pred_labels:
                         cls_id = LABEL_TO_ID.get(lbl, -1)
@@ -357,14 +626,13 @@ def run_evaluation(args):
                         if lbl not in pred_labels:
                             total_counts[cls_id]["fn"] += 1
 
+                # Draw all three models onto annotated frame
                 if args.save_annotated:
                     ann = frame.copy()
-                    for cls, (x1, y1, x2, y2) in pred_boxes:
-                        lbl = OBJECT_LABELS.get(cls, f"Class{cls}")
-                        cv2.rectangle(ann, (x1, y1), (x2, y2), (0, 225, 255), 2)
-                        cv2.putText(ann, lbl, (x1, y1-10),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 140, 255), 2)
-                    cv2.imwrite(os.path.join(out_dir, f"{name}_annotated.jpg"), ann)
+                    _draw_pose(ann, pose_dets)
+                    _draw_object(ann, obj_dets)
+                    _draw_desk(ann, desk_boxes)
+                    cv2.imwrite(os.path.join(frames_dir, f"{name}_annotated.jpg"), ann)
 
             saved_idx += 1
             if saved_idx % 100 == 0:
@@ -374,15 +642,16 @@ def run_evaluation(args):
 
     cap.release()
     eval_end = datetime.now()
-    print(f"\n[INFO] Done - {saved_idx} frames saved to:\n       {out_dir}\n")
+    print(f"\n[INFO] Done - {saved_idx} frames saved to:\n       {frames_dir}\n")
 
     if not has_labels:
         if args.extract_only:
-            print("[INFO] Extract-only mode - evaluation skipped.")
+            print("[INFO] Extract-only mode — evaluation skipped.")
         else:
-            print("[INFO] No CSV log selected - evaluation skipped.")
+            print("[INFO] No CSV log selected — evaluation skipped.")
         return
 
+    # ── Print evaluation ──────────────────────────────────────────────────────
     print(f"{'='*66}")
     print("  EVALUATION RESULTS - Argus Object Detection")
     print(f"{'='*66}")
@@ -443,21 +712,34 @@ def run_evaluation(args):
         frames_evaluated = saved_idx,
         eval_start       = eval_start,
         eval_end         = eval_end,
+        pose_available   = pose_model is not None,
+        desk_available   = desk_model is not None,
     )
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Entry point
+# ─────────────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(prog="extract_frames.py",
-        description="Argus - YOLO Object Detection Model Evaluator")
+        description="Argus - Object / Pose / Desk Model Evaluator")
     parser.add_argument("--video",          default=None)
     parser.add_argument("--csv",            default=None)
-    parser.add_argument("--model",          default=DEFAULT_MODEL)
+    parser.add_argument("--model",          default=DEFAULT_OBJ_MODEL,
+                        help="Path to object detection weights (best.pt)")
+    parser.add_argument("--pose-model",     default=DEFAULT_POSE_MODEL,
+                        help="Path to pose estimation weights (best.pt)")
+    parser.add_argument("--desk-model",     default=DEFAULT_DESK_MODEL,
+                        help="Path to desk detection weights (best.pt)")
     parser.add_argument("--output-dir",     default="extracted_frames")
     parser.add_argument("--step",           type=int,   default=1)
-    parser.add_argument("--conf",           type=float, default=CONF_THRESHOLD)
+    parser.add_argument("--conf",           type=float, default=OBJ_CONF,
+                        help="Confidence threshold for object detection")
     parser.add_argument("--iou-threshold",  type=float, default=IOU_THRESHOLD)
-    parser.add_argument("--extract-only",   action="store_true")
-    parser.add_argument("--save-annotated", action="store_true")
+    parser.add_argument("--extract-only",   action="store_true",
+                        help="Save raw frames only, skip all model inference")
+    parser.add_argument("--save-annotated", action="store_true",
+                        help="Also save annotated frames with all model overlays")
 
     args = parser.parse_args()
 

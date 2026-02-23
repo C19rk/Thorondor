@@ -95,21 +95,22 @@ def mjpeg_generator(cam_name):
 async def lifespan(app: FastAPI):
     global recorder, log_recorder
 
-    # Probe the Tapo cam for its native FPS.
-    # RTSP streams often return 0 from a cold cap.get(), so we read a few
-    # frames first to force the demuxer to parse the stream header.
-    first_cam_url = list(CAMERA_SOURCES.values())[0]
-    cap_init      = cv2.VideoCapture(first_cam_url, cv2.CAP_FFMPEG)
-    for _ in range(5):
-        cap_init.read()
-    actual_fps = cap_init.get(cv2.CAP_PROP_FPS)
-    cap_init.release()
+    # Wait for the capture threads (started by cameras.py import) to parse
+    # the stream header and populate detected_fps.  Avoids opening a second
+    # RTSP connection to the Tapo just to probe frame rate.
+    from core.cameras import detected_fps as _cam_fps
+    first_cam = list(CAMERA_SOURCES.keys())[0]
+    for _ in range(100):                         # wait up to 10 s
+        if first_cam in _cam_fps:
+            break
+        await asyncio.sleep(0.1)
+
+    actual_fps = _cam_fps.get(first_cam, 25.0)
     if actual_fps <= 0 or actual_fps > 120:
-        # stream1 = 25 fps, stream2 = 15 fps — default to stream1
         actual_fps = 25.0
-        print(f"[WARN] Could not read FPS from RTSP — defaulting to {actual_fps} fps")
+        print(f"[WARN] Could not read FPS from cameras — defaulting to {actual_fps} fps")
     else:
-        print(f"[INFO] Tapo cam FPS detected: {actual_fps:.2f}")
+        print(f"[INFO] Tapo cam FPS (from capture thread): {actual_fps:.2f}")
     recorder, log_recorder = init_recorders(fps=actual_fps)
 
     warm_events = []
