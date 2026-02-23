@@ -120,15 +120,27 @@ class VideoRecorder:
             targets = list(CAMERA_SOURCES.keys())
 
         print(f"[INFO] Recorder starting for cameras: {targets}")
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.current_file = os.path.join(self.output_dir, f"Argus_Record_{ts}.mp4")
+
+        now      = datetime.now()
+        ts_label = f"{now.strftime('%b')} {now.day}, {now.year} {now.strftime('%I-%M-%S %p')}"
+        self.current_file = os.path.join(
+            self.output_dir, f"Argus Surveillance Recording - {ts_label}.mp4"
+        )
 
         try:
             for cn in targets:
                 w, h = self._get_frame_size(cn)
-                safe_name = cn.replace(" ", "_")
-                ann_path = os.path.join(self.output_dir, f"Argus_{safe_name}_{ts}.mp4")
-                raw_path = os.path.join(self.output_dir, f"Argus_{safe_name}_{ts}_raw.mp4")
+
+                # Webcam sessions use cam_name "cam1" (from wcapp.py).
+                # Tapo sessions use "Camera 1", "Camera 2", etc. (from app.py).
+                is_webcam = (cn == "cam1")
+                if is_webcam:
+                    base_name = f"Argus Webcam Surveillance Recording - {ts_label}"
+                else:
+                    base_name = f"Argus Surveillance Recording - {cn} - {ts_label}"
+
+                ann_path = os.path.join(self.output_dir, f"{base_name}.mp4")
+                raw_path = os.path.join(self.output_dir, f"{base_name} (Raw).mp4")
 
                 # Annotated: runs at AI pipeline speed (variable, ≤ camera FPS)
                 # Raw:       runs at full camera FPS (self.fps)
