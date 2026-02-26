@@ -1,11 +1,10 @@
 import os
 # ── CRITICAL: Set BEFORE any numpy/cv2/onnxruntime imports ───────────────────
-os.environ["YOLO_AUTOINSTALL"] = "False"  # Prevent Ultralytics stomping onnxruntime-directml
-os.environ.setdefault("OMP_NUM_THREADS",      "1")
-os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
-os.environ.setdefault("MKL_NUM_THREADS",      "1")
-os.environ.setdefault("NUMEXPR_NUM_THREADS",  "1")
-os.environ.setdefault("OMP_WAIT_POLICY",      "PASSIVE")
+os.environ["YOLO_AUTOINSTALL"] = "False"
+os.environ.setdefault("OMP_WAIT_POLICY", "PASSIVE")
+# Suppress OpenCV obsensor (depth camera) driver — causes errors on machines
+# without a depth camera and pollutes logs with obsensor_uvc_stream_channel errors
+os.environ["OPENCV_VIDEOIO_PRIORITY_OBSENSOR"] = "0"
 # ─────────────────────────────────────────────────────────────────────────────
 
 import asyncio
@@ -48,6 +47,17 @@ _cam_backend   = 0
 # ─────────────────────────────────────────────
 # Camera probe
 # ─────────────────────────────────────────────
+
+def _try_read(cap, attempts=5, delay=0.05):
+    """Try reading a frame multiple times — MSMF needs a few frames to warm up."""
+    for _ in range(attempts):
+        ret, frame = cap.read()
+        if ret and frame is not None:
+            return True
+        time.sleep(delay)
+    return False
+
+
 def _find_working_camera():
     backends = [cv2.CAP_MSMF, cv2.CAP_DSHOW, 0] if sys.platform == "win32" else [0]
     for idx in range(6):
@@ -56,16 +66,18 @@ def _find_working_camera():
                 cap = (cv2.VideoCapture(idx, backend)
                        if backend != 0 else cv2.VideoCapture(idx))
                 if not cap.isOpened():
-                    cap.release(); continue
-                ret, _ = cap.read()
+                    cap.release()
+                    continue
+                ok = _try_read(cap)
                 cap.release()
-                if ret:
+                if ok:
                     print(f"[INFO] Camera found: index={idx}, backend={backend}")
                     return idx, backend
             except Exception:
                 pass
     print("[WARN] No working camera found — defaulting index=0")
     return 0, 0
+
 
 def _open_cap(src, backend):
     if backend != 0:
@@ -95,11 +107,9 @@ def capture_frames(cam_name, src, backend, fps):
         print(f"[ERROR] Could not open webcam: {src}")
         return
 
-    frame_interval = 1.0 / max(fps, 1.0)
     consecutive_failures = 0
 
     while True:
-        t0 = time.perf_counter()
         ret, frame = cap.read()
         if not ret:
             consecutive_failures += 1
@@ -115,11 +125,6 @@ def capture_frames(cam_name, src, backend, fps):
             continue
         consecutive_failures = 0
         frames[cam_name].append(frame)
-
-        elapsed = time.perf_counter() - t0
-        sleep_t = frame_interval - elapsed
-        if sleep_t > 0.002:
-            time.sleep(sleep_t)
 
 
 # ─────────────────────────────────────────────
