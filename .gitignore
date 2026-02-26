@@ -28,6 +28,8 @@ Dockerfile
 docker-compose.yml
 # Ignore extracted frames
 system/extracted_frames/
+# Ignore database
+system/users.db
 
 
 # ==========Ignore for now!==========
