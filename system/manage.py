@@ -4,25 +4,21 @@ manage.py — Argus User Management CLI
 ======================================
 Run from the project root (same folder as app.py / wcapp.py).
 
+All accounts created via sign-up are plain users by default.
+Use this tool or the Admin Panel to promote users.
+
 Commands:
   list                                    Show all users
   make-admin   <username>                 Promote a user to admin
   revoke-admin <username>                 Remove admin from a user
-  create       <username> <email> <pw>    Create a new user
+  create       <username> <email> <pw>    Create a new user (plain user)
                          [--admin]        Add --admin to make them an admin
   delete       <username>                 Delete a user (asks for confirmation)
-  whitelist                               Show the admin whitelist
-  whitelist add    <username_or_email>    Add an entry to the whitelist
-  whitelist remove <username_or_email>    Remove an entry from the whitelist
 
-Admin Whitelist
----------------
-The whitelist (admin_whitelist.txt) lets you pre-approve usernames or
-email addresses. When a whitelisted account registers via /signup it is
-automatically granted admin status, even if other users already exist.
-
-One entry per line. Lines starting with # are comments.
-This does NOT affect existing accounts -- use make-admin for those.
+First-time setup
+----------------
+Sign up normally, then run:
+    python manage.py make-admin <your_username>
 """
 
 import sys

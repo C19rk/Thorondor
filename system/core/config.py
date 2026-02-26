@@ -18,8 +18,8 @@ CAMERA_SOURCES = {
     # Format: "rtsp://username:password@ip:554/stream1" (stream1=HD, stream2=low)
     # All cameras must be on the same 2.4 GHz network
     "Camera 1": "rtsp://FINALBOSS:IWILLGRADUATE@192.168.254.110:554/stream1",
-    "Camera 2": "rtsp://FINALBOSS:IWILLGRADUATE@192.168.254.110:554/stream1",
-    "Camera 3": "rtsp://FINALBOSS:IWILLGRADUATE@192.168.254.110:554/stream1",
+    # "Camera 2": "rtsp://FINALBOSS:IWILLGRADUATE@192.168.254.110:554/stream1",
+    # "Camera 3": "rtsp://FINALBOSS:IWILLGRADUATE@192.168.254.110:554/stream1",
 }
 
 # === RESOLUTION ===

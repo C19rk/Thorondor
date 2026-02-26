@@ -131,6 +131,17 @@ body {
   background: #f3f4f6;
   color: #374151;
 }
+.btn-promote {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  border: 1px solid #2563eb;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-promote:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
 
 .btn-sm {
   padding: 5px 11px;
@@ -353,4 +364,22 @@ td {
 /* ── Hidden rows (search filter) ─────────────────────────── */
 tr.hidden {
   display: none;
+}
+
+/* ── Footer note ─────────────────────────────────────────── */
+.footer-note {
+  margin-top: 20px;
+  font-size: 0.78rem;
+  color: #9ca3af;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.footer-note code {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  color: #374151;
 }

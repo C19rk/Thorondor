@@ -1,12 +1,30 @@
 // admin.js
 
+// ── Confirmation dialogs ──────────────────────────────────────────────────────
+
 function confirmDelete(username) {
+  return confirm('Delete user "' + username + '"?\n\nThis CANNOT be undone.');
+}
+
+function confirmPromote(username) {
   return confirm(
-    'Are you sure you want to delete user "' +
+    'Promote "' +
       username +
-      '"?\nThis cannot be undone.',
+      '" to Admin?\n\n' +
+      "They will gain full access to this admin panel and all admin features.",
   );
 }
+
+function confirmDemote(username) {
+  return confirm(
+    'Remove admin from "' +
+      username +
+      '"?\n\n' +
+      "They will be downgraded to a regular user.",
+  );
+}
+
+// ── Search / filter ───────────────────────────────────────────────────────────
 
 function filterTable() {
   var query = document.getElementById("searchInput").value.toLowerCase();
@@ -27,3 +45,18 @@ function filterTable() {
     }
   });
 }
+
+// ── Auto-dismiss alert after 4 s ─────────────────────────────────────────────
+
+document.addEventListener("DOMContentLoaded", function () {
+  var alert = document.querySelector(".alert");
+  if (alert) {
+    setTimeout(function () {
+      alert.style.transition = "opacity 0.5s ease";
+      alert.style.opacity = "0";
+      setTimeout(function () {
+        alert.remove();
+      }, 500);
+    }, 4000);
+  }
+});

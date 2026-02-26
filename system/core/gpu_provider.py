@@ -2,15 +2,17 @@
 core/gpu_provider.py
 --------------------
 GPU / execution-provider detection for ONNX Runtime.
-Priority: CUDA (NVIDIA) → DirectML (Windows AMD/Intel) → CPU
+Priority: CUDA/ROCm (NVIDIA/AMD) → DirectML (Windows AMD/Intel) → CPU
 
-CPU fallback is always available — if no GPU provider loads the app
-runs normally on CPU, no crash, no manual intervention needed.
+Works on:
+  - NVIDIA GPU  : CUDA via PyTorch + onnxruntime (standard build)
+  - AMD GPU     : ROCm via PyTorch on Linux  (torch built with ROCm)
+                  DirectML on Windows        (onnxruntime-directml)
+  - Intel GPU   : DirectML on Windows        (onnxruntime-directml)
+  - No GPU      : CPU fallback — always works, no crash
 
-AMD / Intel GPU users (Windows):
-  The standard onnxruntime package does NOT include DirectML.
-  Run setup_gpu.py once from the project root, then restart:
-      python setup_gpu.py
+If you have an AMD or Intel GPU on Windows, run setup_gpu.py once:
+    python setup_gpu.py
 """
 import sys
 
@@ -20,36 +22,45 @@ import sys
 def get_device() -> str:
     """
     Returns 'cuda', 'directml', or 'cpu'.
+    'cuda' covers both NVIDIA CUDA and AMD ROCm (both use the CUDA API in PyTorch).
     Never raises — always falls back to 'cpu' on any error.
     """
-    # 1. CUDA (NVIDIA)
+    # 1. CUDA (NVIDIA) or ROCm (AMD on Linux) — both surface as torch.cuda
     try:
         import torch
         if torch.cuda.is_available():
             name = torch.cuda.get_device_name(0)
-            print(f"[GPU] CUDA available: {name}")
+            backend = "ROCm/AMD" if _is_rocm(torch) else "CUDA/NVIDIA"
+            print(f"[GPU] {backend} GPU detected: {name}")
             return "cuda"
     except Exception:
         pass
 
-    # 2. DirectML (AMD / Intel — Windows only)
+    # 2. DirectML (AMD / Intel on Windows) — needs onnxruntime-directml
     if sys.platform == "win32":
         try:
             import onnxruntime as ort
             if "DmlExecutionProvider" in ort.get_available_providers():
                 print("[GPU] DirectML ready — AMD/Intel GPU will be used")
                 return "directml"
-            # DML not present — hint the user but don't crash
             print(
-                "[GPU] AMD/Intel GPU detected but DirectML is NOT available.\n"
+                "[GPU] AMD/Intel GPU found but DirectML is NOT installed.\n"
                 "      Run once from the project root, then restart:\n"
                 "          python setup_gpu.py"
             )
         except Exception:
             pass
 
-    print("[GPU] Running on CPU")
+    print("[GPU] No GPU acceleration found — running on CPU")
     return "cpu"
+
+
+def _is_rocm(torch) -> bool:
+    """Return True if the running PyTorch was built with ROCm support."""
+    try:
+        return bool(getattr(torch.version, "hip", None))
+    except Exception:
+        return False
 
 
 # ── Provider list ─────────────────────────────────────────────────────────────
@@ -57,9 +68,8 @@ def get_device() -> str:
 def get_ort_providers(device: str) -> list:
     """
     Return ordered ORT provider list for the given device.
-    CPUExecutionProvider is always appended as the final fallback so that
-    even if the GPU provider fails to load at session-creation time, ORT
-    silently drops to CPU instead of raising.
+    CPUExecutionProvider is always last so ORT silently falls back to CPU
+    if the GPU provider fails to initialise instead of crashing.
     """
     try:
         import onnxruntime as ort
@@ -67,12 +77,17 @@ def get_ort_providers(device: str) -> list:
     except ImportError:
         return ["CPUExecutionProvider"]
 
-    if device == "cuda" and "CUDAExecutionProvider" in available:
-        return ["CUDAExecutionProvider", "CPUExecutionProvider"]
+    if device == "cuda":
+        # ROCm builds of onnxruntime use ROCMExecutionProvider;
+        # NVIDIA builds use CUDAExecutionProvider.
+        # Try both so the same code works for both GPU brands.
+        for provider in ("CUDAExecutionProvider", "ROCMExecutionProvider"):
+            if provider in available:
+                return [provider, "CPUExecutionProvider"]
+
     if device == "directml" and "DmlExecutionProvider" in available:
         return ["DmlExecutionProvider", "CPUExecutionProvider"]
 
-    # CPU fallback — always valid
     return ["CPUExecutionProvider"]
 
 
@@ -80,9 +95,8 @@ def get_ort_providers(device: str) -> list:
 
 def make_session_options(num_threads: int = 1):
     """
-    Conservative thread count per session.
-    1 thread/session keeps 3 parallel ONNX sessions from starving the CPU.
-    Ignored for GPU sessions (inference runs on-device).
+    Conservative thread count per session so 3 parallel ONNX sessions
+    don't starve each other on CPU. Ignored for GPU sessions.
     """
     try:
         import onnxruntime as ort
@@ -99,21 +113,19 @@ def make_session_options(num_threads: int = 1):
 
 def configure_onnx_session(model, model_path: str, providers: list) -> bool:
     """
-    Swap the ORT session inside a loaded Ultralytics YOLO model for one that
-    uses the correct execution providers (GPU → CPU fallback).
+    Swap the ORT session inside a loaded Ultralytics YOLO model for one
+    that uses the correct execution providers (GPU → CPU fallback).
 
-    - For ONNX models, Ultralytics' device= argument to .predict() is ignored;
-      the session providers set HERE control where inference actually runs.
-    - CPUExecutionProvider is always included so ORT can fall back silently if
-      the GPU provider fails to initialise for any reason.
-    - Never raises — returns False on failure so callers can log and continue.
+    For ONNX models, Ultralytics ignores the device= argument passed to
+    .predict(); the session providers set HERE control where inference runs.
+    Never raises — returns False on failure so callers can log and continue.
     """
     try:
         import onnxruntime as ort
 
         available = ort.get_available_providers()
 
-        # Filter to what's actually in this ORT build; always keep CPU last
+        # Keep only providers that are actually in this ORT build
         filtered = [p for p in providers if p in available]
         if "CPUExecutionProvider" not in filtered:
             filtered.append("CPUExecutionProvider")
@@ -150,7 +162,7 @@ def configure_onnx_session(model, model_path: str, providers: list) -> bool:
                 print(f"[GPU] Session ready → {active}")
                 return True
 
-        print(f"[GPU] Could not locate ONNX session — model will use default provider")
+        print("[GPU] Could not locate ONNX session — model will use default provider")
         return False
 
     except Exception as e:

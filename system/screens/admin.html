@@ -88,6 +88,33 @@
               <td class="td-date">{{ user.created }}</td>
               <td class="td-actions">
                 {% if user.id != current_user_id %}
+
+                <!-- Promote to Admin -->
+                {% if not user.is_admin %}
+                <form
+                  method="POST"
+                  action="/admin/make_admin/{{ user.id }}"
+                  onsubmit="return confirmPromote('{{ user.username }}')"
+                >
+                  <button type="submit" class="btn btn-promote btn-sm">
+                    ↑ Make Admin
+                  </button>
+                </form>
+
+                <!-- Demote from Admin -->
+                {% else %}
+                <form
+                  method="POST"
+                  action="/admin/remove_admin/{{ user.id }}"
+                  onsubmit="return confirmDemote('{{ user.username }}')"
+                >
+                  <button type="submit" class="btn btn-ghost btn-sm">
+                    ↓ Remove Admin
+                  </button>
+                </form>
+                {% endif %}
+
+                <!-- Delete -->
                 <form
                   method="POST"
                   action="/admin/delete/{{ user.id }}"
@@ -97,19 +124,8 @@
                     Delete
                   </button>
                 </form>
-                {% if not user.is_admin %}
-                <form method="POST" action="/admin/make_admin/{{ user.id }}">
-                  <button type="submit" class="btn btn-secondary btn-sm">
-                    Make Admin
-                  </button>
-                </form>
+
                 {% else %}
-                <form method="POST" action="/admin/remove_admin/{{ user.id }}">
-                  <button type="submit" class="btn btn-ghost btn-sm">
-                    Remove Admin
-                  </button>
-                </form>
-                {% endif %} {% else %}
                 <span class="cant-edit">—</span>
                 {% endif %}
               </td>
@@ -122,6 +138,12 @@
         <div class="empty-state">No users found.</div>
         {% endif %}
       </div>
+
+      <!-- ── Footer note ─────────────────────────────────────────────────── -->
+      <p class="footer-note">
+        You can also promote users via the terminal:
+        <code>python manage.py make-admin &lt;username&gt;</code>
+      </p>
     </div>
     <script src="/static/scripts/admin.js"></script>
   </body>

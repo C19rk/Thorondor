@@ -13,12 +13,16 @@ latest_raw       = {}   # raw camera frame with no AI annotations
 # wakes immediately when a fresh frame is ready instead of polling.
 on_frame_ready = None  # signature: (cam_name: str) -> None
 
-# ── Frame-skip config ─────────────────────────────────────────────────────────
+# ── Frame-skip config ─────────────────────────────────────────────────────
 # Run full inference every Nth frame; redraw cached annotations on the rest.
-# N=4 → inference at ~1/4 camera FPS, drawing at full camera FPS.
-# On a 4-core CPU with 3 parallel ONNX sessions, 4 is the sweet spot.
-# Decrease toward 2 if you have a GPU; increase toward 6 if CPU is still maxed.
-INFERENCE_EVERY_N_FRAMES = 4
+# Auto-tuned: N=2 when GPU is active (faster), N=4 on CPU (balanced).
+def _auto_skip() -> int:
+    try:
+        from core.gpu_provider import get_device
+        return 2 if get_device() != "cpu" else 4
+    except Exception:
+        return 4
+INFERENCE_EVERY_N_FRAMES = _auto_skip()
 _frame_counters: dict[str, int] = {}
 
 # ── Pose background thread ────────────────────────────────────────────────────

@@ -73,8 +73,8 @@ def load_admin_whitelist() -> set:
 
 def create_user(username: str, email: str, password: str, is_admin: bool = False) -> dict:
     """Register a new user. Returns {"success": True} or {"success": False, "error": "..."}
-    The very first user ever registered is automatically made an admin.
-    Users whose username or email is in admin_whitelist.txt are also made admins."""
+    All accounts created via sign-up are plain users.
+    Promote via terminal (manage.py) or the Admin Panel."""
     username = username.strip()
     email    = email.strip().lower()
 
@@ -88,16 +88,6 @@ def create_user(username: str, email: str, password: str, is_admin: bool = False
 
     conn = get_connection()
     try:
-        # If no users exist yet, first account automatically becomes admin
-        existing = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
-        if existing == 0:
-            is_admin = True
-
-        # Check admin whitelist (username or email match → admin)
-        if not is_admin:
-            whitelist = load_admin_whitelist()
-            if username.lower() in whitelist or email in whitelist:
-                is_admin = True
 
         conn.execute(
             "INSERT INTO users (username, email, password, salt, is_admin) VALUES (?, ?, ?, ?, ?)",
