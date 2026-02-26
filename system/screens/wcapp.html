@@ -34,6 +34,10 @@
           >
             STOP LOG
           </button>
+          {% if is_admin %}
+          <a href="/admin" class="btn admin-btn">VIEW DATABASE</a>
+          {% endif %}
+          <a href="/logout" class="btn logout-btn">LOGOUT</a>
         </div>
 
         <div id="progress"><div id="progressBar"></div></div>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Argus — Admin</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles/admin.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- ── Header ─────────────────────────────────────────────────────── -->
+      <div class="header">
+        <div class="header-left">
+          <h1>ARGUS <span class="badge">ADMIN</span></h1>
+          <p>User Database Management</p>
+        </div>
+        <div class="header-right">
+          <span class="logged-in-as"
+            >Logged in as <strong>{{ username }}</strong></span
+          >
+          <a href="/" class="btn btn-secondary">← Back to App</a>
+          <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ── Alert ──────────────────────────────────────────────────────── -->
+      {% if message %}
+      <div class="alert alert-{{ message_type }}">{{ message }}</div>
+      {% endif %}
+
+      <!-- ── Stats ──────────────────────────────────────────────────────── -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number">{{ users | length }}</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">
+            {{ users | selectattr('is_admin') | list | length }}
+          </div>
+          <div class="stat-label">Admins</div>
+        </div>
+      </div>
+
+      <!-- ── Table ──────────────────────────────────────────────────────── -->
+      <div class="section-header">
+        <h2>All Users</h2>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search by username or email…"
+          oninput="filterTable()"
+        />
+      </div>
+
+      <div class="table-wrapper">
+        <table id="userTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr id="row-{{ user.id }}">
+              <td class="td-id">{{ user.id }}</td>
+              <td class="td-username">
+                {{ user.username }} {% if user.id == current_user_id %}
+                <span class="you-badge">YOU</span>
+                {% endif %}
+              </td>
+              <td class="td-email">{{ user.email }}</td>
+              <td>
+                {% if user.is_admin %}
+                <span class="role-badge admin">Admin</span>
+                {% else %}
+                <span class="role-badge user">User</span>
+                {% endif %}
+              </td>
+              <td class="td-date">{{ user.created }}</td>
+              <td class="td-actions">
+                {% if user.id != current_user_id %}
+                <form
+                  method="POST"
+                  action="/admin/delete/{{ user.id }}"
+                  onsubmit="return confirmDelete('{{ user.username }}')"
+                >
+                  <button type="submit" class="btn btn-danger btn-sm">
+                    Delete
+                  </button>
+                </form>
+                {% if not user.is_admin %}
+                <form method="POST" action="/admin/make_admin/{{ user.id }}">
+                  <button type="submit" class="btn btn-secondary btn-sm">
+                    Make Admin
+                  </button>
+                </form>
+                {% else %}
+                <form method="POST" action="/admin/remove_admin/{{ user.id }}">
+                  <button type="submit" class="btn btn-ghost btn-sm">
+                    Remove Admin
+                  </button>
+                </form>
+                {% endif %} {% else %}
+                <span class="cant-edit">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        {% if not users %}
+        <div class="empty-state">No users found.</div>
+        {% endif %}
+      </div>
+    </div>
+    <script src="/static/scripts/admin.js"></script>
+  </body>
+</html>

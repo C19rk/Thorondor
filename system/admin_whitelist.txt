@@ -1,0 +1,22 @@
+# admin_whitelist.txt
+# ─────────────────────────────────────────────────────────────────────────────
+# Users listed here are automatically granted ADMIN status when they
+# register via /signup -- even if other users already exist.
+#
+# Rules:
+#   - One entry per line: username OR email address (case-insensitive)
+#   - Lines starting with # are ignored
+#   - Only affects new registrations, NOT existing accounts
+#   - To promote an existing account: python manage.py make-admin <username>
+#
+# Manage via CLI:
+#   python manage.py whitelist                        (show entries)
+#   python manage.py whitelist add    <name_or_email>
+#   python manage.py whitelist remove <name_or_email>
+# To promote an existing user:  manage.py make-admin <username>
+#
+# Example entries (remove the # to activate):
+#   # alice
+#   # admin@yourschool.edu
+# ─────────────────────────────────────────────────────────────────────────────
+test

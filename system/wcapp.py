@@ -12,6 +12,7 @@ import sys
 import threading
 import time
 import atexit
+import secrets
 from contextlib import asynccontextmanager
 from collections import deque
 
@@ -25,11 +26,13 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
 
 from core.vision import generate_frames, latest_annotated, latest_raw
 from core.config import FRAME_HEIGHT, FRAME_WIDTH, LOG_FILE, CSV_FILE
 from core.recorders import init_recorders
 from core.routes import register_routes
+from core.auth import init_db
 
 # ─────────────────────────────────────────────
 # Global state
@@ -243,10 +246,14 @@ async def lifespan(app: FastAPI):
             media_type="multipart/x-mixed-replace; boundary=frame"
         )
 
-    print("\n" + "─" * 44)
+    from core.auth import DB_PATH as _db_path
+    import os as _os
+    print("\n" + "─" * 52)
     print("  Argus Webcam is running!")
-    print("  Open in browser: http://localhost:5000")
-    print("─" * 44 + "\n")
+    print("  App Link: http://localhost:5000/login")
+    print("  Database: http://localhost:5000/admin")
+    print("  DB file: " + _os.path.abspath(_db_path))
+    print("─" * 52 + "\n")
 
     yield
 
@@ -254,7 +261,13 @@ async def lifespan(app: FastAPI):
 # ─────────────────────────────────────────────
 # App
 # ─────────────────────────────────────────────
+init_db()  # Create users.db if it does not exist
+
 app = FastAPI(lifespan=lifespan)
+
+# Fresh random key every run — all sessions wiped when server stops
+app.add_middleware(SessionMiddleware, secret_key=secrets.token_hex(32))
+
 app.mount("/static", StaticFiles(directory="screens/static"), name="static")
 templates = Jinja2Templates(directory="screens")
 

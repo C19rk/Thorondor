@@ -1,0 +1,356 @@
+/* ============================================================
+   admin.css  —  matches Argus app design language exactly
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    "Segoe UI",
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f4f6f9, #e9edf3);
+  color: #1f2937;
+  padding: 32px 24px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.header-left h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: #111827;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-left p {
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+.badge {
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  background: #111827;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-weight: 700;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.logged-in-as {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin-right: 4px;
+}
+
+.logged-in-as strong {
+  color: #374151;
+}
+
+/* ── Buttons (mirrors app .btn style) ────────────────────── */
+.btn {
+  cursor: pointer;
+  border: none;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+.btn-danger {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.btn-danger:hover {
+  background: #fee2e2;
+}
+
+.btn-ghost {
+  background: #f9fafb;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+
+.btn-ghost:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-sm {
+  padding: 5px 11px;
+  font-size: 0.76rem;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 20px 0;
+}
+
+/* ── Alerts ──────────────────────────────────────────────── */
+.alert {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+}
+
+.alert-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+}
+
+.alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+/* ── Stats ───────────────────────────────────────────────── */
+.stats-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px 28px;
+  min-width: 130px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+/* ── Section header + search ─────────────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.section-header h2 {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.search-input {
+  padding: 8px 13px;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #1f2937;
+  font-size: 0.88rem;
+  font-family: inherit;
+  width: 260px;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.search-input:focus {
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.2);
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.table-wrapper {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead tr {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  padding: 11px 16px;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  text-align: left;
+  font-weight: 600;
+}
+
+tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.1s;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: #fafafa;
+}
+
+td {
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.td-id {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+.td-date {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.td-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.td-actions form {
+  margin: 0;
+  padding: 0;
+}
+
+.you-badge {
+  font-size: 0.62rem;
+  background: #f3f4f6;
+  color: #9ca3af;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  border: 1px solid #e5e7eb;
+}
+
+.cant-edit {
+  color: #d1d5db;
+}
+
+/* ── Role badges ─────────────────────────────────────────── */
+.role-badge {
+  font-size: 0.7rem;
+  padding: 3px 9px;
+  border-radius: 5px;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+}
+
+.role-badge.admin {
+  background: #fefce8;
+  color: #a16207;
+  border: 1px solid #fde68a;
+}
+
+.role-badge.user {
+  background: #f9fafb;
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty-state {
+  padding: 48px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+/* ── Hidden rows (search filter) ─────────────────────────── */
+tr.hidden {
+  display: none;
+}

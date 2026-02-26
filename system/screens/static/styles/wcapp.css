@@ -224,3 +224,31 @@ video {
   border-radius: 10px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
+
+/* ---------------- LOGOUT BUTTON ---------------- */
+
+.logout-btn {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.logout-btn:hover {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.12);
+}
+
+.admin-btn {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+}
+.admin-btn:hover {
+  background: linear-gradient(135deg, #6d28d9, #5b21b6);
+}

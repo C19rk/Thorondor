@@ -23,12 +23,16 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
 
 from core.vision import generate_frames, latest_annotated
 from core.cameras import frames
 from core.config import FRAME_HEIGHT, FRAME_WIDTH, LOG_FILE, CSV_FILE, CAMERA_SOURCES
 from core.recorders import init_recorders
 from core.routes import register_routes
+from core.auth import init_db, DB_PATH
+
+import secrets
 
 recorder     = None
 log_recorder = None
@@ -46,8 +50,6 @@ def ai_processing_loop(cam_name):
             time.sleep(1)
 
 
-# Lower quality = faster encode = higher delivered FPS over MJPEG.
-# 65 is visually fine for surveillance; raise to 75 if it looks too blocky.
 MJPEG_JPEG_QUALITY = 65
 
 def mjpeg_generator(cam_name):
@@ -74,8 +76,6 @@ def mjpeg_generator(cam_name):
 
         fid = id(frame)
         if fid == last_id:
-            # No new frame yet — yield nothing, spin tight so we send
-            # the next frame the instant the AI pipeline produces it.
             time.sleep(0.001)
             continue
 
@@ -95,12 +95,9 @@ def mjpeg_generator(cam_name):
 async def lifespan(app: FastAPI):
     global recorder, log_recorder
 
-    # Wait for the capture threads (started by cameras.py import) to parse
-    # the stream header and populate detected_fps.  Avoids opening a second
-    # RTSP connection to the Tapo just to probe frame rate.
     from core.cameras import detected_fps as _cam_fps
     first_cam = list(CAMERA_SOURCES.keys())[0]
-    for _ in range(100):                         # wait up to 10 s
+    for _ in range(100):
         if first_cam in _cam_fps:
             break
         await asyncio.sleep(0.1)
@@ -154,10 +151,12 @@ async def lifespan(app: FastAPI):
             }
         )
 
-    print("\n" + "─" * 44)
+    print("\n" + "─" * 52)
     print("  Argus is running!")
-    print("  Open in browser: http://localhost:5000")
-    print("─" * 44 + "\n")
+    print("  App Link: http://localhost:5000/login")
+    print("  Database: http://localhost:5000/admin")
+    print("  DB file: " + os.path.abspath(DB_PATH))
+    print("─" * 52 + "\n")
 
     yield
 
@@ -168,7 +167,13 @@ async def lifespan(app: FastAPI):
         pass
 
 
+init_db()
+
 app = FastAPI(lifespan=lifespan)
+
+# Fresh random key every run — sessions invalidated when server stops
+app.add_middleware(SessionMiddleware, secret_key=secrets.token_hex(32))
+
 app.mount("/static", StaticFiles(directory="screens/static"), name="static")
 templates = Jinja2Templates(directory="screens")
 
