@@ -32,9 +32,9 @@ YOLO_DESK_MODEL_PATH = "../machine_learning/runs/argus_desk_detection/weights/be
 POSE_MODEL_PATH      = "../machine_learning/runs/pose/argus_pose_estimation/weights/best.pt"
 
 # === DETECTION THRESHOLDS ===
-YOLO_CONF_THRESHOLD      = 0.75
-YOLO_DESK_CONF_THRESHOLD = 0.55
-POSE_CONF_THRESHOLD      = 0.55
+YOLO_CONF_THRESHOLD      = 0.60
+YOLO_DESK_CONF_THRESHOLD = 0.50
+POSE_CONF_THRESHOLD      = 0.50
 
 # # === GSM / ALERTS ===
 # PHONE_NUMBERS    = ["+639XXXXXXXXX", "+639YYYYYYYYY"]
