@@ -71,14 +71,22 @@ function setupToggle(inputId) {
   const button = input && input.parentElement.querySelector(".toggle-pw");
   if (!input || !button) return;
 
+  const eyeIcon = button.querySelector(".icon-eye");
+  const eyeOffIcon = button.querySelector(".icon-eye-off");
+
   button.addEventListener("click", function () {
-    const isHidden = input.type === "password";
-    input.type = isHidden ? "text" : "password";
-    button.querySelector(".icon-eye").style.display = isHidden
-      ? "none"
-      : "block";
-    button.querySelector(".icon-eye-off").style.display = isHidden
-      ? "block"
-      : "none";
+    const isCurrentlyPassword = input.type === "password";
+
+    if (isCurrentlyPassword) {
+      // Switching to visible text
+      input.type = "text";
+      eyeIcon.style.display = "block"; // Show the "Eye" icon
+      eyeOffIcon.style.display = "none"; // Hide the "Eye Off" icon
+    } else {
+      // Switching back to hidden password
+      input.type = "password";
+      eyeIcon.style.display = "none"; // Hide the "Eye" icon
+      eyeOffIcon.style.display = "block"; // Show the "Eye Off" icon
+    }
   });
 }
