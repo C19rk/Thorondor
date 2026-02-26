@@ -4,7 +4,7 @@ import numpy as np
 import time
 from datetime import datetime
 
-from core.pose_models import pose_model, DEVICE
+from core.pose_models import pose_model
 from core.config import (
     POSE_CONF_THRESHOLD,
     LOG_FILE,
@@ -147,7 +147,7 @@ def predict(frame, cam_name):
         imgsz=256,
         conf=conf_threshold,
         verbose=False,
-        device=DEVICE if DEVICE != "directml" else "cpu",
+        device="cpu",
     )
 
     current_detections = []

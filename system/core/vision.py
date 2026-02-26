@@ -13,16 +13,7 @@ latest_raw       = {}   # raw camera frame with no AI annotations
 # wakes immediately when a fresh frame is ready instead of polling.
 on_frame_ready = None  # signature: (cam_name: str) -> None
 
-# ── Frame-skip config ─────────────────────────────────────────────────────
-# Run full inference every Nth frame; redraw cached annotations on the rest.
-# Auto-tuned: N=2 when GPU is active (faster), N=4 on CPU (balanced).
-def _auto_skip() -> int:
-    try:
-        from core.gpu_provider import get_device
-        return 2 if get_device() != "cpu" else 4
-    except Exception:
-        return 4
-INFERENCE_EVERY_N_FRAMES = _auto_skip()
+INFERENCE_EVERY_N_FRAMES = 4
 _frame_counters: dict[str, int] = {}
 
 # ── Pose background thread ────────────────────────────────────────────────────
@@ -32,8 +23,6 @@ _pose_input_lock = threading.Lock()
 _pose_cache_lock = threading.Lock()
 
 def _pose_worker(cam_name):
-    # Warmup on THIS thread so Ultralytics initialises its predictor here,
-    # preventing a second cold-start "Loading..." when the first real frame arrives.
     try:
         _dummy = np.zeros((256, 256, 3), dtype=np.uint8)
         pose_predict(_dummy, cam_name)
@@ -48,7 +37,12 @@ def _pose_worker(cam_name):
             time.sleep(0.005)
             continue
         last_frame_id = id(frame)
-        matched = pose_predict(frame, cam_name)
+        try:
+            matched = pose_predict(frame, cam_name)
+        except Exception as e:
+            print(f"[WARN] Pose inference error ({cam_name}): {e}")
+            time.sleep(0.1)
+            continue
         with _pose_cache_lock:
             _pose_cache[cam_name] = matched
 
@@ -80,7 +74,12 @@ def _obj_worker(cam_name):
             time.sleep(0.005)
             continue
         last_frame_id = id(frame)
-        matched = obj_predict(frame, cam_name)
+        try:
+            matched = obj_predict(frame, cam_name)
+        except Exception as e:
+            print(f"[WARN] Object inference error ({cam_name}): {e}")
+            time.sleep(0.1)
+            continue
         with _obj_cache_lock:
             _obj_cache[cam_name] = matched
 
@@ -112,7 +111,12 @@ def _desk_worker(cam_name):
             time.sleep(0.005)
             continue
         last_frame_id = id(frame)
-        matched = desk_predict(frame, cam_name)
+        try:
+            matched = desk_predict(frame, cam_name)
+        except Exception as e:
+            print(f"[WARN] Desk inference error ({cam_name}): {e}")
+            time.sleep(0.1)
+            continue
         with _desk_cache_lock:
             _desk_cache[cam_name] = matched
 

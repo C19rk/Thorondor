@@ -1,11 +1,7 @@
 import os
 # ── CRITICAL: Set BEFORE any numpy/cv2/onnxruntime imports ───────────────────
-os.environ["YOLO_AUTOINSTALL"] = "False"  # Prevent Ultralytics stomping onnxruntime-directml
-os.environ.setdefault("OMP_NUM_THREADS",      "1")
-os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
-os.environ.setdefault("MKL_NUM_THREADS",      "1")
-os.environ.setdefault("NUMEXPR_NUM_THREADS",  "1")
-os.environ.setdefault("OMP_WAIT_POLICY",      "PASSIVE")
+os.environ["YOLO_AUTOINSTALL"] = "False"
+os.environ.setdefault("OMP_WAIT_POLICY", "PASSIVE")
 # ─────────────────────────────────────────────────────────────────────────────
 
 import asyncio

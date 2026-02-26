@@ -24,9 +24,9 @@ detected_fps: dict = {}
 #   For single-camera testing, reduce CAMERA_SOURCES to 1 entry.
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Extra grab() calls to flush stale RTSP buffer before retrieve().
-# 2 works for stream2 (15fps). Use 3 for stream1 (25fps).
-DRAIN_GRABS = 3
+# 1 grab flushes the single buffered packet before retrieve() so we always
+# get the freshest frame. 3 was overkill and added ~200ms of deliberate delay.
+DRAIN_GRABS = 1
 
 
 def _open_rtsp(src: str) -> cv2.VideoCapture:
@@ -65,14 +65,11 @@ def capture_frames(cam_name, src):
 
     # Store AFTER priming so app.py's wait loop gets the real value, not 0.
     detected_fps[cam_name] = stream_fps
-    frame_interval = 1.0 / stream_fps
     print(f"[INFO] Capture started: '{cam_name}' @ {stream_fps:.1f} fps (drain-grab active)")
 
     consecutive_failures = 0
 
     while True:
-        t0 = time.perf_counter()
-
         # Drain stale buffered RTSP frames cheaply (no decode) before retrieve
         for _ in range(DRAIN_GRABS):
             cap.grab()
@@ -95,12 +92,7 @@ def capture_frames(cam_name, src):
             continue
 
         consecutive_failures = 0
-        frames[cam_name].append(frame)  # deque owns frame; AI threads read-only
-
-        elapsed = time.perf_counter() - t0
-        sleep_t = frame_interval - elapsed
-        if sleep_t > 0.001:
-            time.sleep(sleep_t)
+        frames[cam_name].append(frame)
 
 
 # === Background camera capture threads ===

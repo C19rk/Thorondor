@@ -3,7 +3,7 @@ import csv
 import threading
 from datetime import datetime
 
-from core.yolo_models import yolo, DEVICE
+from core.yolo_models import yolo
 from core.config import (
     YOLO_CONF_THRESHOLD,
     LOG_FILE,
@@ -117,7 +117,7 @@ def predict(frame, cam_name):
         imgsz=320,
         conf=conf_threshold,
         verbose=False,
-        device=DEVICE if DEVICE != "directml" else "cpu",
+        device="cpu",
     )
 
     current_detections = []

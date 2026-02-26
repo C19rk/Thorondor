@@ -3,7 +3,7 @@ import csv
 import threading
 from datetime import datetime
 
-from core.yolo_desk_models import yolo_desk, DEVICE
+from core.yolo_desk_models import yolo_desk
 from core.config import (
     YOLO_DESK_CONF_THRESHOLD,
     LOG_FILE,
@@ -117,7 +117,7 @@ def predict(frame, cam_name, person_boxes=None):
         imgsz=320,
         conf=conf_threshold,
         verbose=False,
-        device=DEVICE if DEVICE != "directml" else "cpu",
+        device="cpu",
     )
 
     current_boxes = []
