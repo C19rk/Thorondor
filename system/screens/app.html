@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Argus — Multi-Camera</title>
+    <title>Argus — App</title>
     <link rel="stylesheet" type="text/css" href="/static/styles/app.css" />
   </head>
   <body data-default-cam="{{ default_cam }}">
@@ -19,6 +19,9 @@
             >&nbsp;&nbsp;VIDEO RECORDING IN PROGRESS</span
           >
         </h2>
+        <div class="divider-app-type"></div>
+
+        <p class="app-type">Multi-Camera Detection</p>
 
         <!-- Camera switcher -->
         <div class="camera-buttons">
@@ -61,6 +64,8 @@
 
           <a href="/logout" class="btn logout-btn">LOGOUT</a>
         </div>
+
+        <div class="divider"></div>
 
         <!-- Progress Bar -->
         <div class="progress-space">

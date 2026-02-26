@@ -250,8 +250,8 @@ async def lifespan(app: FastAPI):
     import os as _os
     print("\n" + "─" * 52)
     print("  Argus Webcam is running!")
-    print("  App Link: http://localhost:5000/login")
-    print("  Database: http://localhost:5000/admin")
+    print("  App Link: http://localhost:5001/login")
+    print("  Database: http://localhost:5001/admin")
     print("  DB file: " + _os.path.abspath(_db_path))
     print("─" * 52 + "\n")
 
@@ -291,7 +291,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "wcapp:app",
         host="0.0.0.0",
-        port=5000,
+        port=5001,
         log_level="warning",
         reload=False
     )

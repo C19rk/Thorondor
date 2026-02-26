@@ -17,7 +17,7 @@ function switchCam(camName) {
 
 // ─── Recording ───────────────────────────────────────────────────────────────
 function doRec(action) {
-  let isStart = action === "start";
+  const isStart = action === "start";
   fetch("/" + action + "_record")
     .then((r) => r.json())
     .then(() => {
@@ -33,12 +33,13 @@ function doRec(action) {
       if (!isStart) handleProgress();
       else if (progressInterval) {
         clearInterval(progressInterval);
+        progressInterval = null;
         toggleProgressUI(false);
       }
     });
 }
 
-function handleProgress() {
+function handleProgress(navigateAfter) {
   const inner = document.getElementById("progressBar");
   const text = document.getElementById("progressText");
   document.getElementById("startB").disabled = true;
@@ -54,24 +55,31 @@ function handleProgress() {
         text.textContent = p.percent + "%";
         if (p.done) {
           clearInterval(progressInterval);
+          progressInterval = null;
           toggleProgressUI(false);
           document.getElementById("startB").disabled = false;
+
+          // Show saved filenames
           const files =
             p.saved_files && p.saved_files.length
               ? p.saved_files
               : p.file && p.file !== "None"
                 ? [p.file]
                 : [];
-          if (files.length) {
-            alert(
-              "Videos Saved!\n\n" +
-                files.map((f, i) => `${i + 1}. ${f}`).join("\n"),
-            );
+          const msg = files.length
+            ? "Videos Saved!\n\n" +
+              files.map((f, i) => `${i + 1}. ${f}`).join("\n")
+            : "Videos Saved!";
+
+          if (navigateAfter) {
+            alert(msg);
+            window.location.href = navigateAfter;
           } else {
-            alert("Videos Saved!");
+            alert(msg);
           }
         }
-      });
+      })
+      .catch(() => {});
   }, 500);
 }
 
@@ -84,7 +92,7 @@ function toggleProgressUI(show) {
 
 // ─── Log recording ───────────────────────────────────────────────────────────
 function doLogRec(action) {
-  let isStart = action === "start";
+  const isStart = action === "start";
   fetch("/" + action + "_log_record")
     .then((r) => r.json())
     .then(() => {
@@ -107,16 +115,22 @@ function doLogRec(action) {
     });
 }
 
-function pollLogSaved() {
+function pollLogSaved(navigateAfter) {
   const interval = setInterval(() => {
     fetch("/log_record_status")
       .then((r) => r.json())
       .then((s) => {
         if (s.saved) {
           clearInterval(interval);
-          alert("Log Saved: " + s.file);
+          if (navigateAfter) {
+            alert("Log Saved: " + s.file);
+            window.location.href = navigateAfter;
+          } else {
+            alert("Log Saved: " + s.file);
+          }
         }
-      });
+      })
+      .catch(() => {});
   }, 500);
 }
 
@@ -166,14 +180,12 @@ function initLogStream() {
   };
 }
 
-// ─── Logout / navigation guard ───────────────────────────────────────────────
-// If a recording is active when the user tries to logout or view database,
-// show a modal with two choices:
-//   "Stop Recording & Logout"    → stops recorders cleanly, waits, then navigates
-//   "Logout & Cancel Recordings" → stops recorders immediately and navigates
-//   "Cancel"                     → stays on page
+// ─── Navigation guard ────────────────────────────────────────────────────────
+// Shown when the user clicks Logout or View Database while recording.
+// "Save and Stop Recording" — stops cleanly, shows saved filenames, stays on page.
+// "Cancel"                  — dismisses the modal, keeps recording, no navigation.
 
-function _buildModal(message, onStopAndGo, onCancelAndGo, onCancel) {
+function _buildModal(message, onSaveAndStop) {
   const existing = document.getElementById("_logoutModal");
   if (existing) existing.remove();
 
@@ -189,22 +201,15 @@ function _buildModal(message, onStopAndGo, onCancelAndGo, onCancel) {
                 max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.12);
                 font-family:'Segoe UI',Inter,sans-serif;text-align:center;
                 border:1px solid #e5e7eb;">
-      <div style="font-size:2rem;margin-bottom:12px;">⏺️</div>
       <h2 style="margin:0 0 8px;font-size:1.1rem;font-weight:800;letter-spacing:2px;
                  color:#111827;text-transform:uppercase;">Recording in Progress</h2>
       <p style="color:#6b7280;margin:0 0 24px;line-height:1.6;font-size:13px;">${message}</p>
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <button id="_btnStopGo" style="
+        <button id="_btnSaveStop" style="
           cursor:pointer;padding:8px 14px;font-weight:600;font-size:13px;
           border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.08);
           background:#fef2f2;color:#dc2626;border:1px solid #fecaca;width:100%;">
-          Stop Recording &amp; Logout
-        </button>
-        <button id="_btnCancelGo" style="
-          cursor:pointer;padding:8px 14px;font-weight:600;font-size:13px;
-          border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.08);
-          background:#f9fafb;color:#4b5563;border:1px solid #4b5563;width:100%;">
-          Logout &amp; Cancel Recordings
+          Save and Stop Recording
         </button>
         <button id="_btnCancel" style="
           cursor:pointer;padding:8px 14px;font-weight:600;font-size:13px;
@@ -217,17 +222,12 @@ function _buildModal(message, onStopAndGo, onCancelAndGo, onCancel) {
   `;
 
   document.body.appendChild(overlay);
-  document.getElementById("_btnStopGo").onclick = () => {
+  document.getElementById("_btnSaveStop").onclick = () => {
     overlay.remove();
-    onStopAndGo();
-  };
-  document.getElementById("_btnCancelGo").onclick = () => {
-    overlay.remove();
-    onCancelAndGo();
+    onSaveAndStop();
   };
   document.getElementById("_btnCancel").onclick = () => {
     overlay.remove();
-    if (onCancel) onCancel();
   };
 }
 
@@ -244,12 +244,13 @@ async function _checkAndNavigate(targetUrl) {
   const videoRec = status.recording;
   const logRec = status.log_recording;
 
+  // Nothing recording — navigate straight through
   if (!videoRec && !logRec) {
     window.location.href = targetUrl;
     return;
   }
 
-  // Build a precise message describing exactly what is recording
+  // Precise message — only mention what is actually recording
   let what;
   if (videoRec && logRec) {
     what = "A video recording and a log recording are currently in progress.";
@@ -258,45 +259,85 @@ async function _checkAndNavigate(targetUrl) {
   } else {
     what = "A log recording is currently in progress.";
   }
-  const msg = `${what} What would you like to do?`;
 
   _buildModal(
-    msg,
-    // Stop recorders cleanly, then navigate
-    async () => {
-      try {
-        if (videoRec) await fetch("/stop_record");
-        if (logRec) await fetch("/stop_log_record");
-        await new Promise((r) => setTimeout(r, 800));
-      } catch (_) {}
-      window.location.href = targetUrl;
-    },
-    // Cancel recordings immediately and navigate
+    `${what} Please save and stop before proceeding.`,
+    // "Save and Stop Recording" — stop cleanly, show filenames, stay on page
     async () => {
       try {
         if (videoRec) await fetch("/stop_record");
         if (logRec) await fetch("/stop_log_record");
       } catch (_) {}
-      window.location.href = targetUrl;
+
+      if (videoRec) {
+        // Show progress bar and wait for finalization, then show saved filenames
+        document.getElementById("startB").disabled = true;
+        toggleProgressUI(true);
+        const inner = document.getElementById("progressBar");
+        const text = document.getElementById("progressText");
+        const poll = setInterval(() => {
+          fetch("/record_progress")
+            .then((r) => r.json())
+            .then((p) => {
+              inner.style.width = p.percent + "%";
+              text.textContent = p.percent + "%";
+              if (p.done) {
+                clearInterval(poll);
+                toggleProgressUI(false);
+                document.getElementById("startB").disabled = false;
+                // Reset UI to show Record Video button again
+                document.getElementById("startB").style.display = "block";
+                document.getElementById("stopB").style.display = "none";
+                document.getElementById("status").style.display = "none";
+                const files =
+                  p.saved_files && p.saved_files.length
+                    ? p.saved_files
+                    : p.file && p.file !== "None"
+                      ? [p.file]
+                      : [];
+                alert(
+                  files.length
+                    ? "Videos Saved!\n\n" +
+                        files.map((f, i) => `${i + 1}. ${f}`).join("\n")
+                    : "Videos Saved!",
+                );
+              }
+            })
+            .catch(() => {
+              clearInterval(poll);
+              toggleProgressUI(false);
+            });
+        }, 500);
+      }
+
+      if (logRec) {
+        // Reset log UI and wait for save confirmation
+        document.getElementById("startLogB").style.display = "block";
+        document.getElementById("stopLogB").style.display = "none";
+        document.getElementById("logStatus").style.display = "none";
+        pollLogSaved();
+      }
     },
-    // Stay on page
-    null,
+    // "Cancel" button just removes the modal (no second arg needed)
   );
 }
 
+// Intercept LOGOUT and VIEW DATABASE clicks using capture phase
+// so the listener fires before the browser follows the href
 function _interceptNavLinks() {
-  document.querySelectorAll("a.logout-btn, a[href='/logout']").forEach((el) => {
-    el.addEventListener("click", (e) => {
+  document.addEventListener(
+    "click",
+    (e) => {
+      const el = e.target.closest(
+        "a.logout-btn, a[href='/logout'], a.admin-btn, a[href='/admin']",
+      );
+      if (!el) return;
       e.preventDefault();
-      _checkAndNavigate("/logout");
-    });
-  });
-  document.querySelectorAll("a.admin-btn, a[href='/admin']").forEach((el) => {
-    el.addEventListener("click", (e) => {
-      e.preventDefault();
-      _checkAndNavigate(el.getAttribute("href") || "/admin");
-    });
-  });
+      e.stopImmediatePropagation();
+      _checkAndNavigate(el.getAttribute("href") || "/logout");
+    },
+    true,
+  ); // capture: true ensures this fires before browser follows href
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
