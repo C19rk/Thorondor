@@ -2,17 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Argus - Multi-Camera Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Argus — Multi-Camera</title>
     <link rel="stylesheet" type="text/css" href="/static/styles/app.css" />
   </head>
   <body data-default-cam="{{ default_cam }}">
     <div class="container">
+      <!-- ── Video Panel (Left) ────────────────────────────────────────── -->
       <div class="video">
-        <h2>
-          Live Multi-Camera
-          <span id="status">REC</span>
+        <h2 class="header-title">
+          ARGUS {% if is_admin %}
+          <span class="badge">ADMIN</span>
+          {% endif %}
+
+          <span id="status" style="display: none"
+            >&nbsp;&nbsp;VIDEO RECORDING IN PROGRESS</span
+          >
         </h2>
 
+        <!-- Camera switcher -->
         <div class="camera-buttons">
           {% for cam in cams %}
           <button class="btn cam-btn" onclick="switchCam('{{ cam }}')">
@@ -21,14 +29,16 @@
           {% endfor %}
         </div>
 
+        <!-- Controls -->
         <div class="overlay">
           <button id="startB" class="btn rec-btn" onclick="doRec('start')">
             RECORD VIDEO
           </button>
+
           <button id="stopB" class="btn stop-btn" onclick="doRec('stop')">
             STOP VIDEO
           </button>
-          <br style="width: 100%" />
+
           <button
             id="startLogB"
             class="btn log-rec-btn"
@@ -36,6 +46,7 @@
           >
             RECORD LOG
           </button>
+
           <button
             id="stopLogB"
             class="btn log-stop-btn"
@@ -43,31 +54,42 @@
           >
             STOP LOG
           </button>
+
           {% if is_admin %}
           <a href="/admin" class="btn admin-btn">VIEW DATABASE</a>
           {% endif %}
+
           <a href="/logout" class="btn logout-btn">LOGOUT</a>
         </div>
 
-        <div id="progress"><div id="progressBar"></div></div>
-        <div id="progressText">0%</div>
-        <div id="saveWarning">SAVING VIDEO - DO NOT CLOSE APP</div>
+        <!-- Progress Bar -->
+        <div class="progress-space">
+          <div id="saveWarning">
+            Finalizing Video Export. Do not close the application!
+          </div>
 
-        <img
-          id="videoStream"
-          src=""
-          style="width: 100%; height: auto; display: block"
-        />
+          <div id="progress">
+            <div id="progressBar"></div>
+            <span id="progressText">0%</span>
+          </div>
+        </div>
+
+        <!-- Video feed -->
+        <img id="videoStream" src="" alt="Live Video" />
       </div>
 
+      <!-- ── Log Panel (Right) ─────────────────────────────────────────── -->
       <div class="log">
         <h2>
           Live Detection Log
-          <span id="logStatus" style="display: none">REC</span>
+          <span id="logStatus" style="display: none"
+            >&nbsp;&nbsp;RECORDING IN PROGRESS</span
+          >
         </h2>
         <div id="log"></div>
       </div>
     </div>
+
     <script src="/static/scripts/app.js"></script>
   </body>
 </html>

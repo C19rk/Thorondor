@@ -9,6 +9,7 @@ from core.config import (
     LOG_FILE,
     CSV_FILE,
 )
+from core.lighting_distance import preprocess_frame, _dynamic_confidence
 
 DESK_LABELS   = {0: "Desk"}
 DESK_COLOR    = (255, 0, 0)
@@ -18,6 +19,9 @@ IOU_THRESHOLD = 0.3
 # Inference resolution — 16:9 slice of imgsz=320.
 _INFER_W = 320
 _INFER_H = 180
+
+# Far-distance support: accept smaller boxes (was 1000, lowered to 400)
+_MIN_BOX_AREA = 400
 
 _last_desk_state: dict[str, dict] = {}
 _next_instance_id = 0
@@ -88,7 +92,8 @@ def _match_desks(prev_instances, current_boxes):
 
 
 def predict(frame, cam_name, person_boxes=None):
-    """Run YOLO desk inference on downscaled frame, scale coords back to full-res.
+    """Run YOLO desk inference on downscaled, lighting-normalised frame.
+    Works in bright/dark lighting and at far/close distances.
     Returns matched instances dict. Does NOT draw.
     """
     if person_boxes is None:
@@ -96,15 +101,21 @@ def predict(frame, cam_name, person_boxes=None):
 
     orig_h, orig_w = frame.shape[:2]
 
-    # ── Pre-resize to inference resolution ──
-    small   = cv2.resize(frame, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
+    # ── Lighting normalisation (CLAHE + adaptive gamma) ──
+    enhanced, brightness = preprocess_frame(frame)
+    small   = cv2.resize(enhanced, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
     scale_x = orig_w / _INFER_W
     scale_y = orig_h / _INFER_H
+
+    # Adaptive confidence — relax in poor lighting
+    conf_threshold = _dynamic_confidence(YOLO_DESK_CONF_THRESHOLD, brightness)
+
+    infer_area = _INFER_W * _INFER_H
 
     desk_results = yolo_desk.predict(
         small,
         imgsz=320,
-        conf=YOLO_DESK_CONF_THRESHOLD,
+        conf=conf_threshold,
         verbose=False,
         device=DEVICE if DEVICE != "directml" else "cpu",
     )
@@ -114,12 +125,22 @@ def predict(frame, cam_name, person_boxes=None):
     for r in desk_results:
         for box in r.boxes:
             x1, y1, x2, y2 = box.xyxy[0].tolist()
-            # Scale back to original resolution before filtering
+
+            # Compute area ratio at inference scale (for distance-aware conf)
+            infer_box_area = (x2 - x1) * (y2 - y1)
+            area_ratio = infer_box_area / infer_area
+
+            # Scale back to original resolution
             x1 = int(x1 * scale_x); y1 = int(y1 * scale_y)
             x2 = int(x2 * scale_x); y2 = int(y2 * scale_y)
-
             box_area = (x2 - x1) * (y2 - y1)
-            if box_area < 1000:
+
+            # Distance-aware confidence: small (far) objects get looser threshold
+            eff_conf = _dynamic_confidence(conf_threshold, brightness, area_ratio)
+            raw_conf = float(box.conf[0].item())
+            if raw_conf < eff_conf:
+                continue
+            if box_area < _MIN_BOX_AREA:
                 continue
 
             overlaps_person = False

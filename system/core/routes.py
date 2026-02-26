@@ -140,8 +140,21 @@ def register_routes(app, recorder, log_recorder, generate_frames, frames,
         })
 
     # ── Auth: Logout ──────────────────────────────────────────────────────────
+    @app.get("/logout_check")
+    async def logout_check(request: Request):
+        """Return recording status so the frontend can warn before logout."""
+        if not request.session.get("user_id"):
+            return JSONResponse({"recording": False, "log_recording": False})
+        return JSONResponse({
+            "recording":     bool(getattr(recorder,     "recording", False)),
+            "log_recording": bool(getattr(log_recorder, "recording", False)),
+        })
+
     @app.get("/logout")
     async def logout(request: Request):
+        # Recordings keep running — they are server-side background processes.
+        # The JS modal asks the user to stop them first; but if they force
+        # logout we still just clear the session and redirect.
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
 
@@ -240,11 +253,13 @@ def register_routes(app, recorder, log_recorder, generate_frames, frames,
     async def record_progress(request: Request):
         if not request.session.get("user_id"):
             return _not_logged_in_response(request)
+        done = not recorder.finalizing and not recorder.recording
         return JSONResponse({
             "status":  recorder.status_msg,
             "file":    os.path.basename(recorder.current_file) if recorder.current_file else "None",
             "percent": 100 if not recorder.finalizing else 50,
-            "done":    not recorder.finalizing and not recorder.recording
+            "done":    done,
+            "saved_files": list(recorder.saved_files) if done else [],
         })
 
     @app.get("/recorder_status")

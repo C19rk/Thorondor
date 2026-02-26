@@ -33,6 +33,7 @@ class VideoRecorder:
 
         self.current_file  = "None"
         self.status_msg    = "Ready"
+        self.saved_files   = []   # populated after finalization
 
         # Per-camera state — keyed by cam_name
         self._cameras      = {}
@@ -116,6 +117,7 @@ class VideoRecorder:
         self._kill_zombies()
         self._cameras = {}
         self._feed_threads = []
+        self.saved_files = []
 
         if cam_names:
             targets = cam_names
@@ -405,4 +407,5 @@ class VideoRecorder:
 
                 saved.append(os.path.basename(path))
 
+        self.saved_files = saved
         self.status_msg = f"Saved {len(saved)} file(s)" if saved else "Recording failed (Empty)"

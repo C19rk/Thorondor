@@ -1,20 +1,28 @@
 """
-GPU/provider detection for ONNX Runtime and PyTorch.
-Priority: CUDA (NVIDIA) → DirectML (Windows AMD/Intel GPU) → CPU
+core/gpu_provider.py
+--------------------
+GPU / execution-provider detection for ONNX Runtime.
+Priority: CUDA (NVIDIA) → DirectML (Windows AMD/Intel) → CPU
 
-NOTE FOR AMD GPU USERS:
-  DirectML requires a different package than standard onnxruntime.
-  Run:  pip uninstall onnxruntime
-        pip install onnxruntime-directml
-  Then restart the app. Your AMD Radeon GPU will be used automatically.
+CPU fallback is always available — if no GPU provider loads the app
+runs normally on CPU, no crash, no manual intervention needed.
+
+AMD / Intel GPU users (Windows):
+  The standard onnxruntime package does NOT include DirectML.
+  Run setup_gpu.py once from the project root, then restart:
+      python setup_gpu.py
 """
 import sys
-import numpy as np
 
+
+# ── Device detection ──────────────────────────────────────────────────────────
 
 def get_device() -> str:
-    """Returns 'cuda', 'directml', or 'cpu'."""
-    # 1. Try CUDA (NVIDIA)
+    """
+    Returns 'cuda', 'directml', or 'cpu'.
+    Never raises — always falls back to 'cpu' on any error.
+    """
+    # 1. CUDA (NVIDIA)
     try:
         import torch
         if torch.cuda.is_available():
@@ -24,43 +32,35 @@ def get_device() -> str:
     except Exception:
         pass
 
-    # 2. Try DirectML (AMD / Intel on Windows)
+    # 2. DirectML (AMD / Intel — Windows only)
     if sys.platform == "win32":
         try:
             import onnxruntime as ort
-            providers = ort.get_available_providers()
-            if "DmlExecutionProvider" in providers:
-                print("[GPU] DirectML available — AMD/Intel GPU will be used")
+            if "DmlExecutionProvider" in ort.get_available_providers():
+                print("[GPU] DirectML ready — AMD/Intel GPU will be used")
                 return "directml"
-            else:
-                # Check if the standard (non-DML) package is installed
-                try:
-                    import importlib.metadata
-                    pkg = importlib.metadata.packages_distributions()
-                    has_dml = any("onnxruntime-directml" in str(v) for v in pkg.values())
-                    if not has_dml:
-                        print(
-                            "[GPU] AMD/Intel GPU detected but DirectML is not available.\n"
-                            "      To enable GPU acceleration, run:\n"
-                            "        pip uninstall onnxruntime\n"
-                            "        pip install onnxruntime-directml\n"
-                            "      Then restart the app."
-                        )
-                except Exception:
-                    print(
-                        "[GPU] No DirectML provider found. If you have an AMD/Intel GPU, run:\n"
-                        "        pip uninstall onnxruntime\n"
-                        "        pip install onnxruntime-directml"
-                    )
+            # DML not present — hint the user but don't crash
+            print(
+                "[GPU] AMD/Intel GPU detected but DirectML is NOT available.\n"
+                "      Run once from the project root, then restart:\n"
+                "          python setup_gpu.py"
+            )
         except Exception:
             pass
 
-    print("[GPU] Using CPU — no GPU acceleration active")
+    print("[GPU] Running on CPU")
     return "cpu"
 
 
-def get_ort_providers(device: str) -> list[str]:
-    """Ordered list of ONNX Runtime providers for the detected device."""
+# ── Provider list ─────────────────────────────────────────────────────────────
+
+def get_ort_providers(device: str) -> list:
+    """
+    Return ordered ORT provider list for the given device.
+    CPUExecutionProvider is always appended as the final fallback so that
+    even if the GPU provider fails to load at session-creation time, ORT
+    silently drops to CPU instead of raising.
+    """
     try:
         import onnxruntime as ort
         available = ort.get_available_providers()
@@ -71,14 +71,18 @@ def get_ort_providers(device: str) -> list[str]:
         return ["CUDAExecutionProvider", "CPUExecutionProvider"]
     if device == "directml" and "DmlExecutionProvider" in available:
         return ["DmlExecutionProvider", "CPUExecutionProvider"]
+
+    # CPU fallback — always valid
     return ["CPUExecutionProvider"]
 
 
+# ── Session options ───────────────────────────────────────────────────────────
+
 def make_session_options(num_threads: int = 1):
     """
-    Create ORT SessionOptions with conservative thread counts.
-    With 3 parallel sessions on a 4-core CPU, 1 thread per session
-    leaves cores free for the draw path and event loop.
+    Conservative thread count per session.
+    1 thread/session keeps 3 parallel ONNX sessions from starving the CPU.
+    Ignored for GPU sessions (inference runs on-device).
     """
     try:
         import onnxruntime as ort
@@ -91,53 +95,64 @@ def make_session_options(num_threads: int = 1):
         return None
 
 
-def configure_onnx_session(model, model_path: str, providers: list[str]):
-    """
-    Replace the ONNX Runtime session inside a loaded Ultralytics YOLO model
-    with one using the correct GPU providers and thread settings.
+# ── Session configuration ─────────────────────────────────────────────────────
 
-    Ultralytics stores the session at model.model.session (AutoBackend).
-    We recreate it with our providers and SessionOptions, then write it back.
-    This prevents worker threads from triggering a second session load.
+def configure_onnx_session(model, model_path: str, providers: list) -> bool:
+    """
+    Swap the ORT session inside a loaded Ultralytics YOLO model for one that
+    uses the correct execution providers (GPU → CPU fallback).
+
+    - For ONNX models, Ultralytics' device= argument to .predict() is ignored;
+      the session providers set HERE control where inference actually runs.
+    - CPUExecutionProvider is always included so ORT can fall back silently if
+      the GPU provider fails to initialise for any reason.
+    - Never raises — returns False on failure so callers can log and continue.
     """
     try:
         import onnxruntime as ort
 
-        opts = make_session_options(num_threads=1)
+        available = ort.get_available_providers()
 
+        # Filter to what's actually in this ORT build; always keep CPU last
+        filtered = [p for p in providers if p in available]
+        if "CPUExecutionProvider" not in filtered:
+            filtered.append("CPUExecutionProvider")
+
+        opts        = make_session_options(num_threads=1)
         new_session = ort.InferenceSession(
             model_path,
             sess_options=opts,
-            providers=providers,
+            providers=filtered,
         )
 
-        # Ultralytics AutoBackend stores the session at model.model.session
+        active = new_session.get_providers()[0] if new_session.get_providers() else "CPUExecutionProvider"
+
+        # Primary path: model.model.session  (Ultralytics AutoBackend)
         backend = getattr(model, "model", None)
         if backend is not None and hasattr(backend, "session"):
             backend.session = new_session
-            print(f"[GPU] Session configured: {providers[0]} | threads=1")
+            print(f"[GPU] Session ready → {active}")
             return True
 
-        # Fallback paths for different Ultralytics versions
-        for attr_path in ["session", "predictor.model.session"]:
+        # Fallback paths for older Ultralytics versions
+        for attr_path in ("session", "predictor.model.session"):
             obj = model
             for part in attr_path.split("."):
                 obj = getattr(obj, part, None)
                 if obj is None:
                     break
             if obj is not None and hasattr(obj, "run"):
-                # Found a session — replace it
                 parent = model
-                parts = attr_path.split(".")
+                parts  = attr_path.split(".")
                 for part in parts[:-1]:
                     parent = getattr(parent, part)
                 setattr(parent, parts[-1], new_session)
-                print(f"[GPU] Session configured (fallback path): {providers[0]}")
+                print(f"[GPU] Session ready → {active}")
                 return True
 
-        print(f"[GPU] Could not locate ONNX session in model — providers may not apply")
+        print(f"[GPU] Could not locate ONNX session — model will use default provider")
         return False
 
     except Exception as e:
-        print(f"[GPU] Session configuration failed: {e}")
+        print(f"[GPU] Session setup failed ({e}) — falling back to CPU")
         return False

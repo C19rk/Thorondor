@@ -11,6 +11,8 @@ import asyncio
 import sys
 import threading
 import time
+import atexit
+import secrets
 from contextlib import asynccontextmanager
 
 if sys.platform == "win32":
@@ -31,8 +33,6 @@ from core.config import FRAME_HEIGHT, FRAME_WIDTH, LOG_FILE, CSV_FILE, CAMERA_SO
 from core.recorders import init_recorders
 from core.routes import register_routes
 from core.auth import init_db, DB_PATH
-
-import secrets
 
 recorder     = None
 log_recorder = None
@@ -160,9 +160,12 @@ async def lifespan(app: FastAPI):
 
     yield
 
+    # Cleanly stop recorders on shutdown
     try:
-        with open(LOG_FILE, "w") as f: f.truncate(0)
-        with open(CSV_FILE, "w") as f: f.truncate(0)
+        if recorder and recorder.recording:
+            recorder.stop()
+        if log_recorder and log_recorder.recording:
+            log_recorder.stop()
     except Exception:
         pass
 

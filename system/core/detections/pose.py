@@ -10,6 +10,7 @@ from core.config import (
     LOG_FILE,
     CSV_FILE,
 )
+from core.lighting_distance import preprocess_frame, _dynamic_confidence
 
 POSE_LABELS = {
     0: "Cheating",
@@ -35,7 +36,6 @@ KPT_CONF_THRESHOLD = 0.3
 IOU_THRESHOLD      = 0.3
 
 # Inference resolution — 16:9 slice of imgsz=256.
-# YOLO letterboxes this to 256×256 internally; we scale coords back to full-res.
 _INFER_W = 256
 _INFER_H = 144
 
@@ -125,20 +125,27 @@ def _log_behavior(cam_name, inst_id, label, timestamp):
 
 
 def predict(frame, cam_name):
-    """Run inference on a downscaled copy, scale coordinates back to full-res.
+    """Run pose inference on a downscaled, lighting-normalised copy.
+    Works in bright/dark lighting and at far/close distances.
     Returns raw matched detections dict. Does NOT draw.
     """
     orig_h, orig_w = frame.shape[:2]
 
-    # ── Pre-resize to inference resolution (much less memory to read/transfer) ──
-    small = cv2.resize(frame, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
+    # ── Lighting normalisation (CLAHE + adaptive gamma) ──
+    enhanced, brightness = preprocess_frame(frame)
+    small = cv2.resize(enhanced, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
     scale_x = orig_w / _INFER_W
     scale_y = orig_h / _INFER_H
+
+    # Adaptive confidence — relax in poor lighting
+    conf_threshold = _dynamic_confidence(POSE_CONF_THRESHOLD, brightness)
+
+    infer_area = _INFER_W * _INFER_H
 
     pose_results = pose_model.predict(
         small,
         imgsz=256,
-        conf=POSE_CONF_THRESHOLD,
+        conf=conf_threshold,
         verbose=False,
         device=DEVICE if DEVICE != "directml" else "cpu",
     )
@@ -159,6 +166,14 @@ def predict(frame, cam_name):
 
             # Scale from inference space → original frame space
             x1, y1, x2, y2 = box.xyxy[0].tolist()
+
+            # Distance-aware confidence check (inference-space area ratio)
+            infer_box_area = (x2 - x1) * (y2 - y1)
+            area_ratio = infer_box_area / infer_area
+            eff_conf = _dynamic_confidence(conf_threshold, brightness, area_ratio)
+            if conf_val < eff_conf:
+                continue
+
             x1 = int(x1 * scale_x); y1 = int(y1 * scale_y)
             x2 = int(x2 * scale_x); y2 = int(y2 * scale_y)
 

@@ -1,3 +1,7 @@
+/* ============================================================
+   APP CSS — Multi-Camera Layout (matches wcapp style)
+   ============================================================ */
+
 /* ---------------- GLOBAL ---------------- */
 body {
   font-family:
@@ -12,28 +16,43 @@ body {
   color: #1f2937;
 }
 
+.header-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: #111827;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge {
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  background: #111827;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-weight: 700;
+}
+
 .container {
   display: flex;
   height: 100vh;
 }
 
 /* ---------------- VIDEO PANEL ---------------- */
-
 .video {
   flex: 2;
   padding: 20px;
-  position: relative;
   background: #ffffff;
   box-shadow: inset -1px 0 0 #e5e7eb;
+  display: flex;
+  flex-direction: column;
 }
 
-.video h2 {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  margin-bottom: 15px;
-}
-
-/* Stream */
+/* Keep video intact */
 img,
 video {
   width: 100%;
@@ -42,37 +61,6 @@ video {
   border: 1px solid #d1d5db;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   display: block;
-}
-
-/* ---------------- LOG PANEL ---------------- */
-
-.log {
-  flex: 1;
-  padding: 20px;
-  background: #f9fafb;
-  border-left: 1px solid #e5e7eb;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  box-sizing: border-box;
-}
-
-/* Keep title fixed */
-.log h2 {
-  margin: 0 0 10px 0;
-  flex-shrink: 0;
-}
-
-/* Only this area scrolls */
-#log {
-  flex: 1;
-  overflow-y: auto;
-  background: white;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  font-size: 13px;
-  line-height: 1.5;
 }
 
 /* ---------------- CAMERA BUTTONS ---------------- */
@@ -84,50 +72,85 @@ video {
 }
 
 .cam-btn {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
   cursor: pointer;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 8px;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  display: inline-block;
+  line-height: 1.2;
+  text-align: center;
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
 }
 
 .cam-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
+  background: #dbeafe;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
-/* Active camera */
 .cam-btn.active {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: #dcfce7;
+  color: #166534;
+  border-color: #86efac;
 }
 
-/* ---------------- OVERLAY CONTROLS ---------------- */
-
+/* ---------------- CONTROLS (NO FLOATING) ---------------- */
 .overlay {
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  padding: 15px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
+  position: static;
   display: flex;
-  gap: 8px;
-  align-items: center;
   flex-wrap: wrap;
-  z-index: 10;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  gap: 8px;
+  justify-content: flex-end;
 }
 
-/* ---------------- BUTTONS ---------------- */
+/* Hide STOP buttons by default */
+#stopB,
+#stopLogB {
+  display: none;
+}
 
-.btn {
+/* ---------------- LOG PANEL ---------------- */
+.log {
+  flex: 1;
+  padding: 20px;
+  background: #f9fafb;
+  border-left: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.log h2 {
+  margin: 0 0 10px 0;
+  flex-shrink: 0;
+}
+
+#log {
+  flex: 1;
+  overflow-y: auto;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ---------------- BUTTON BASE ---------------- */
+.btn,
+.admin-btn,
+.logout-btn,
+.rec-btn,
+.stop-btn,
+.log-rec-btn,
+.log-stop-btn {
   cursor: pointer;
   border: none;
   padding: 8px 14px;
@@ -135,76 +158,104 @@ video {
   font-size: 13px;
   border-radius: 8px;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  display: inline-block;
+  line-height: 1.2;
+  text-align: center;
 }
 
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
-}
-
-/* Record Buttons */
-
+/* ---------------- RECORD VIDEO ---------------- */
 .rec-btn {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
-  display: block;
+  background: #ebf3ff;
+  color: #1e40af;
+  border: 1px solid #1d4ed8;
+  transition: all 0.2s ease;
 }
 
-.rec-btn:disabled {
-  background: #d1d5db;
-  color: #6b7280;
-  cursor: not-allowed;
-  box-shadow: none;
+.rec-btn:hover {
+  background: #dbe7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
-.stop-btn {
-  background: #111827;
-  color: white;
-  display: none;
-}
-
+/* ---------------- RECORD LOG ---------------- */
 .log-rec-btn {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: white;
-  display: block;
+  background: #d9fdd3;
+  color: #166534;
+  border: 1px solid #16a34a;
+  transition: all 0.2s ease;
 }
 
-.log-rec-btn:disabled {
-  background: #d1d5db;
-  color: #6b7280;
-  cursor: not-allowed;
-  box-shadow: none;
+.log-rec-btn:hover {
+  background: #bbf7c6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
+/* ---------------- STOP VIDEO ---------------- */
+.stop-btn {
+  background: #f9fafb;
+  color: #4b5563;
+  border: 1px solid #4b5563;
+  transition: all 0.2s ease;
+}
+
+.stop-btn:hover {
+  background: #f3f4f6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------------- STOP LOG ---------------- */
 .log-stop-btn {
-  background: #111827;
-  color: white;
-  display: none;
+  background: #f9fafb;
+  color: #4b5563;
+  border: 1px solid #4b5563;
+  transition: all 0.2s ease;
 }
 
-/* ---------------- STATUS INDICATORS ---------------- */
-
-#status {
-  color: #ef4444;
-  font-weight: bold;
-  display: none;
-  margin-right: 10px;
-  animation: blinker 1s linear infinite;
+.log-stop-btn:hover {
+  background: #f3f4f6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
+/* ---------------- VIEW DATABASE ---------------- */
+.admin-btn {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+}
+
+.admin-btn:hover {
+  background: #e5e7eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------------- LOGOUT ---------------- */
+.logout-btn {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #fee2e2;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------------- STATUS ---------------- */
+#status,
 #logStatus {
-  color: #ef4444;
   font-weight: bold;
+  color: #ef4444;
   display: none;
-  margin-left: 8px;
   animation: blinker 1s linear infinite;
-}
-
-#webrtcStatus {
-  font-size: 0.75em;
-  font-weight: 500;
-  color: #6b7280;
 }
 
 @keyframes blinker {
@@ -213,7 +264,10 @@ video {
   }
 }
 
-/* ---------------- PROGRESS BAR ---------------- */
+/* ---------------- PROGRESS ---------------- */
+.progress-space {
+  height: 75px;
+}
 
 #progress {
   width: 100%;
@@ -222,7 +276,7 @@ video {
   display: none;
   margin-top: 10px;
   border-radius: 20px;
-  overflow: hidden;
+  position: relative;
 }
 
 #progressBar {
@@ -230,56 +284,28 @@ video {
   height: 100%;
   background: linear-gradient(90deg, #3b82f6, #2563eb);
   transition: width 0.3s ease;
+  border-radius: 20px;
 }
 
 #progressText {
+  font-weight: bold;
+  color: white;
+  font-size: 12px;
   position: absolute;
-  top: 18px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  font-weight: 600;
-  color: #111827;
-  display: none;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  display: block;
 }
 
-/* ---------------- SAVE WARNING ---------------- */
-
 #saveWarning {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  padding: 12px;
+  color: rgb(0, 0, 0);
   font-weight: 600;
   text-align: center;
   display: none;
-  margin-top: 15px;
+  margin-top: 10px;
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-}
-
-/* ---------------- LOGOUT BUTTON ---------------- */
-
-.logout-btn {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  text-decoration: none;
-  display: inline-block;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-}
-
-.logout-btn:hover {
-  background: #fef2f2;
-  color: #dc2626;
-  border-color: #fecaca;
-  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.12);
-}
-
-.admin-btn {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  color: white;
-  text-decoration: none;
-  display: inline-block;
-}
-.admin-btn:hover {
-  background: linear-gradient(135deg, #6d28d9, #5b21b6);
+  width: auto;
 }
