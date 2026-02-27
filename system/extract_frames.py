@@ -31,7 +31,98 @@ try:
     REPORTLAB_OK = True
 except ImportError:
     REPORTLAB_OK = False
-    print("[WARN] reportlab not installed — PDF export skipped. Run: pip install reportlab")
+    print("  ⚠  reportlab not installed — PDF export will be skipped.  Run: pip install reportlab")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Terminal UI helpers  (no external deps — pure ANSI)
+# ─────────────────────────────────────────────────────────────────────────────
+_IS_TTY = sys.stdout.isatty()
+
+class C:
+    """ANSI colour palette — gracefully degrades on non-TTY outputs."""
+    _on = _IS_TTY
+    RESET  = "\033[0m"     if _on else ""
+    BOLD   = "\033[1m"     if _on else ""
+    DIM    = "\033[2m"     if _on else ""
+    # Foreground
+    WHITE  = "\033[97m"    if _on else ""
+    CYAN   = "\033[96m"    if _on else ""
+    GREEN  = "\033[92m"    if _on else ""
+    YELLOW = "\033[93m"    if _on else ""
+    RED    = "\033[91m"    if _on else ""
+    BLUE   = "\033[94m"    if _on else ""
+    GRAY   = "\033[90m"    if _on else ""
+    # Backgrounds
+    BG_BLUE  = "\033[44m"  if _on else ""
+    BG_DARK  = "\033[40m"  if _on else ""
+
+
+def _c(color, text):
+    return f"{color}{text}{C.RESET}"
+
+
+def _header(title, width=66):
+    """Print a bold banner header."""
+    pad   = max(0, width - len(title) - 4)
+    left  = pad // 2
+    right = pad - left
+    bar   = "─" * width
+    print(f"\n{_c(C.BOLD + C.CYAN, bar)}")
+    print(f"{_c(C.BOLD + C.CYAN, '│')} {' ' * left}{_c(C.BOLD + C.WHITE, title)}{' ' * right} {_c(C.BOLD + C.CYAN, '│')}")
+    print(f"{_c(C.BOLD + C.CYAN, bar)}")
+
+
+def _section(title):
+    """Print a subtle section divider."""
+    line = f"  {_c(C.CYAN + C.BOLD, '▸')} {_c(C.BOLD, title)}"
+    print(f"\n{line}")
+    print(f"  {_c(C.GRAY, '─' * 60)}")
+
+
+def _ok(msg):
+    print(f"  {_c(C.GREEN, '✔')}  {msg}")
+
+def _warn(msg):
+    print(f"  {_c(C.YELLOW, '⚠')}  {_c(C.YELLOW, msg)}")
+
+def _err(msg):
+    print(f"  {_c(C.RED, '✖')}  {_c(C.RED, msg)}")
+
+def _info(msg):
+    print(f"  {_c(C.GRAY, '·')}  {msg}")
+
+
+def _progress(done, total, start_time, bar_width=36):
+    """
+    Overwrite the current line with a progress bar + ETA.
+    Example:  ████████████░░░░░░░░  512 / 1066  [00:14 < 00:13]
+    """
+    frac     = done / total if total else 0
+    filled   = int(bar_width * frac)
+    empty    = bar_width - filled
+    bar      = _c(C.CYAN,  "█" * filled) + _c(C.GRAY, "░" * empty)
+    pct      = f"{frac * 100:5.1f}%"
+    elapsed  = (datetime.now() - start_time).total_seconds()
+    eta_s    = (elapsed / frac - elapsed) if frac > 0 else 0
+    elapsed_str = f"{int(elapsed)//60:02d}:{int(elapsed)%60:02d}"
+    eta_str     = f"{int(eta_s)//60:02d}:{int(eta_s)%60:02d}"
+    counter  = _c(C.BOLD, f"{done:>{len(str(total))}}/{total}")
+    timing   = _c(C.GRAY, f"[{elapsed_str} < {eta_str}]")
+    print(f"\r  {bar}  {counter}  {pct}  {timing}   ", end="", flush=True)
+
+
+def _score_bar(value, width=20):
+    """Return a compact coloured ░▒▓█ bar representing a 0-1 score."""
+    filled = int(round(value * width))
+    empty  = width - filled
+    if value >= 0.75:
+        color = C.GREEN
+    elif value >= 0.50:
+        color = C.YELLOW
+    else:
+        color = C.RED
+    return _c(color, "█" * filled) + _c(C.GRAY, "░" * empty)
+
 
 # ── Object detection ──────────────────────────────────────────────────────────
 OBJECT_LABELS    = {0: "Phone", 1: "Calculator", 2: "Smartwatch", 3: "Watch"}
@@ -123,12 +214,12 @@ def _parse_video_timestamp(video_path):
             pass
 
     # Last resort — warn loudly; every frame timestamp will be wrong.
-    print(
-        f"\n[WARN] Could not parse a recording timestamp from:\n"
-        f"       {os.path.basename(video_path)}\n"
-        f"       Ground-truth frame times will be relative to RIGHT NOW.\n"
-        f"       TP/FP/FN counts will be incorrect. Rename the file to include\n"
-        f"       a timestamp like \'Feb 23, 2026 10-27-15 AM\' or \'20260223_102715\'.\n"
+    _warn(
+        f"Couldn't read a recording timestamp from the filename:\n"
+        f"         {os.path.basename(video_path)}\n"
+        f"         Frame times will be anchored to right now, which will\n"
+        f"         corrupt TP/FP/FN counts. Rename the file to include a\n"
+        f"         timestamp like  'Feb 23, 2026 10-27-15 AM'  or  '20260223_102715'."
     )
     return datetime.now()
 
@@ -146,63 +237,99 @@ def _make_output_folder(video_path, base_dir):
 # ─────────────────────────────────────────────────────────────────────────────
 def _pick_video():
     videos = sorted(glob.glob(os.path.join(RECORDINGS_DIR, "*.mp4")))
-    print("\n" + "=" * 64)
-    print("  ARGUS - Object / Pose / Desk Model Evaluator")
-    print("=" * 64)
+
+    _header("ARGUS  ·  Model Evaluator")
+    print(f"\n  {_c(C.GRAY, 'Runs object, pose, and desk detection on a recorded session')}")
+    print(f"  {_c(C.GRAY, 'and scores the models against the matching detection log.')}\n")
+
     if not videos:
-        print(f"\n  [!] No .mp4 files found in: {RECORDINGS_DIR}")
-        return input("  Enter full path to video file: ").strip().strip('"\'')
+        _warn(f"No .mp4 files found in  {RECORDINGS_DIR}")
+        print()
+        path = input(f"  {_c(C.BOLD, 'Paste the full path to your video:')}  ").strip().strip('"\'')
+        return path
+
     raw_videos   = [v for v in videos if "(Raw)" in v or "_raw" in os.path.basename(v).lower()]
     other_videos = [v for v in videos if v not in raw_videos]
     ordered      = raw_videos + other_videos
-    print(f"\n  Videos in recordings/  (* = raw, recommended for evaluation)\n")
+
+    _section("Choose a video to evaluate")
     for i, v in enumerate(ordered, 1):
-        size_mb = os.path.getsize(v) / (1024 * 1024)
-        star    = "* " if v in raw_videos else "  "
-        print(f"    [{i}]{star}{os.path.basename(v)}  ({size_mb:.1f} MB)")
-    print(f"\n    [0] Enter a custom path\n")
+        size_mb  = os.path.getsize(v) / (1024 * 1024)
+        is_raw   = v in raw_videos
+        tag      = _c(C.GREEN + C.BOLD, " ★ raw") if is_raw else _c(C.GRAY, "      ")
+        name     = _c(C.WHITE if is_raw else C.GRAY, os.path.basename(v))
+        idx_str  = _c(C.CYAN + C.BOLD, f"[{i}]")
+        size_str = _c(C.GRAY, f"({size_mb:.1f} MB)")
+        print(f"    {idx_str}{tag}  {name}  {size_str}")
+
+    print(f"\n    {_c(C.CYAN + C.BOLD, '[0]')}  {_c(C.GRAY, 'Enter a custom path')}\n")
+    print(f"  {_c(C.DIM, '★ raw = unprocessed recording, best for evaluation')}\n")
+
     while True:
         try:
-            idx = int(input(f"  Select video [1-{len(ordered)}]: ").strip())
+            raw = input(f"  {_c(C.BOLD, 'Your choice:')}  ").strip()
+            idx = int(raw)
             if idx == 0:
-                return input("  Path: ").strip().strip('"\'')
+                path = input(f"  {_c(C.BOLD, 'Video path:')}  ").strip().strip('"\'')
+                return path
             if 1 <= idx <= len(ordered):
-                return ordered[idx - 1]
+                chosen = ordered[idx - 1]
+                _ok(f"Selected  {_c(C.WHITE, os.path.basename(chosen))}")
+                return chosen
         except (ValueError, KeyboardInterrupt):
-            print("\n  Cancelled."); sys.exit(0)
-        print(f"  Enter a number between 0 and {len(ordered)}.")
+            print(f"\n  {_c(C.GRAY, 'Goodbye.')}"); sys.exit(0)
+        print(f"  {_c(C.YELLOW, f'Please enter a number between 0 and {len(ordered)}.')}")
 
 
 def _pick_csv():
     csvs = sorted(glob.glob(os.path.join(DETECTION_LOGS_DIR, "*.csv")), reverse=True)
-    print("\n  -- Detection Log (CSV) ----------------------------------------------")
-    print("  Pick the session CSV that matches your video recording time.")
-    print("  This is used as ground truth for object detection evaluation.\n")
+
+    _section("Choose a detection log  (CSV ground truth)")
+    print(f"  {_c(C.GRAY, 'Pick the session log that was recorded at the same time as your video.')}")
+    print(f"  {_c(C.GRAY, 'The evaluator uses it to decide what was actually in each frame.')}\n")
+
     if not csvs:
-        print(f"  [!] No CSV files found in: {DETECTION_LOGS_DIR}")
-        print("\n    [1] Enter path manually\n    [0] Skip\n")
+        _warn(f"No CSV files found in  {DETECTION_LOGS_DIR}")
+        print()
+        print(f"    {_c(C.CYAN + C.BOLD, '[1]')}  Enter the path manually")
+        print(f"    {_c(C.CYAN + C.BOLD, '[0]')}  {_c(C.GRAY, 'Skip  (extract frames only, no scoring)')}\n")
         while True:
             try:
-                c = input("  Choice [1/0]: ").strip()
-                if c == "0": return None
+                c = input(f"  {_c(C.BOLD, 'Your choice:')}  ").strip()
+                if c == "0":
+                    _info("Skipping evaluation — frames will be extracted without scoring.")
+                    return None
                 if c == "1":
-                    p = input("  CSV path: ").strip().strip('"\'')
-                    return p if os.path.isfile(p) else None
+                    p = input(f"  {_c(C.BOLD, 'CSV path:')}  ").strip().strip('"\'')
+                    if os.path.isfile(p):
+                        _ok(f"Using  {_c(C.WHITE, os.path.basename(p))}")
+                        return p
+                    _warn("File not found. Try again.")
             except KeyboardInterrupt:
-                sys.exit(0)
-    print(f"  Session logs found (newest first):\n")
+                print(f"\n  {_c(C.GRAY, 'Goodbye.')}"); sys.exit(0)
+
     for i, c in enumerate(csvs, 1):
-        rows = max(sum(1 for _ in open(c, encoding="utf-8", errors="ignore")) - 1, 0)
-        print(f"    [{i}] {os.path.basename(c)}  ({rows} events)")
-    print(f"\n    [0] Skip - extract frames only, no evaluation\n")
+        rows     = max(sum(1 for _ in open(c, encoding="utf-8", errors="ignore")) - 1, 0)
+        idx_str  = _c(C.CYAN + C.BOLD, f"[{i}]")
+        name     = _c(C.WHITE, os.path.basename(c))
+        ev_str   = _c(C.GRAY, f"{rows} events")
+        print(f"    {idx_str}  {name}  {ev_str}")
+
+    print(f"\n    {_c(C.CYAN + C.BOLD, '[0]')}  {_c(C.GRAY, 'Skip  (extract frames only, no scoring)')}\n")
+
     while True:
         try:
-            idx = int(input(f"  Select CSV [1-{len(csvs)}]: ").strip())
-            if idx == 0: return None
-            if 1 <= idx <= len(csvs): return csvs[idx - 1]
+            idx = int(input(f"  {_c(C.BOLD, 'Your choice:')}  ").strip())
+            if idx == 0:
+                _info("Skipping evaluation — frames will be extracted without scoring.")
+                return None
+            if 1 <= idx <= len(csvs):
+                chosen = csvs[idx - 1]
+                _ok(f"Using  {_c(C.WHITE, os.path.basename(chosen))}")
+                return chosen
         except (ValueError, KeyboardInterrupt):
-            print("\n  Cancelled."); sys.exit(0)
-        print(f"  Enter a number between 0 and {len(csvs)}.")
+            print(f"\n  {_c(C.GRAY, 'Goodbye.')}"); sys.exit(0)
+        print(f"  {_c(C.YELLOW, f'Please enter a number between 0 and {len(csvs)}.')}")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -240,43 +367,94 @@ def _load_csv_events(csv_path):
     return events
 
 
-def _active_labels_at(events, query_time):
-    """Object detection ground truth: set of lower-case labels currently active."""
-    active = {}
-    for ts, event, label, *_ in events:
-        if ts > query_time: break
-        key = label.lower()
-        if event == "Object Detected":
-            active[key] = active.get(key, 0) + 1
-        elif event == "Object Left":
-            active[key] = max(0, active.get(key, 0) - 1)
-    return {lbl for lbl, cnt in active.items() if cnt > 0}
+def _active_labels_at(events, query_time, tp_window=5.0, fn_window=2.0):
+    """Object detection ground truth for a single frame.
 
+    Returns (tp_labels, fn_labels) — two separate sets with intentionally
+    different window sizes:
 
-def _desk_active_at(events, query_time):
-    """Desk ground truth: True if any desk instance is currently active."""
-    active = 0
-    for ts, event, label, *_ in events:
-        if ts > query_time: break
-        if event == "Desk Detected":
-            active += 1
-        elif event == "Desk Left":
-            active = max(0, active - 1)
-    return active > 0
+    tp_labels  (wide ±tp_window)
+        Used to validate model detections.  If the model fires and a GT event
+        exists anywhere within ±tp_window seconds, it is a TRUE POSITIVE.
+        Wide window absorbs tracker jitter so real detections aren't called FP.
 
-
-def _cheating_active_at(events, query_time):
-    """Pose ground truth: True if any tracked person is currently labeled Cheating.
-    pose.py logs 'Behavior Changed' every time a person's label changes, so the
-    current label for person P is their most recent 'Behavior Changed' event.
+    fn_labels  (tight backward fn_window)
+        Used to count misses.  A label is only considered "should have been
+        detected here" if a GT Detected event fired within the last fn_window
+        seconds.  This prevents a single Detected event from inflating FN
+        across hundreds of frames where the object genuinely wasn't visible.
     """
-    # Track most recent label per person_id
-    person_labels = {}
+    tp_start = query_time - timedelta(seconds=tp_window)
+    tp_end   = query_time + timedelta(seconds=tp_window)
+    fn_start = query_time - timedelta(seconds=fn_window)
+
+    tp_labels = set()
+    fn_labels = set()
+
+    for ts, event, label, *_ in events:
+        if ts > tp_end:
+            break
+        if event != "Object Detected":
+            continue
+        key = label.lower()
+        if tp_start <= ts <= tp_end:
+            tp_labels.add(key)
+        if fn_start <= ts <= query_time:
+            fn_labels.add(key)
+
+    return tp_labels, fn_labels
+
+
+def _desk_active_at(events, query_time, tp_window=5.0, fn_window=2.0):
+    """Desk ground truth: returns (gt_for_tp, gt_for_fn).
+
+    gt_for_tp — True if any Desk Detected within ±tp_window  (avoid FP)
+    gt_for_fn — True if any Desk Detected within last fn_window  (count misses)
+    """
+    tp_start = query_time - timedelta(seconds=tp_window)
+    tp_end   = query_time + timedelta(seconds=tp_window)
+    fn_start = query_time - timedelta(seconds=fn_window)
+
+    gt_tp = False
+    gt_fn = False
+
+    for ts, event, label, *_ in events:
+        if ts > tp_end:
+            break
+        if event != "Desk Detected":
+            continue
+        if tp_start <= ts <= tp_end:
+            gt_tp = True
+        if fn_start <= ts <= query_time:
+            gt_fn = True
+
+    return gt_tp, gt_fn
+
+
+def _cheating_active_at(events, query_time, tp_window=5.0, fn_window=2.0):
+    """Pose ground truth: returns (gt_for_tp, gt_for_fn).
+
+    gt_for_tp — True if any Cheating Behavior Changed within ±tp_window
+    gt_for_fn — True if any Cheating Behavior Changed within last fn_window
+    """
+    tp_start = query_time - timedelta(seconds=tp_window)
+    tp_end   = query_time + timedelta(seconds=tp_window)
+    fn_start = query_time - timedelta(seconds=fn_window)
+
+    gt_tp = False
+    gt_fn = False
+
     for ts, event, label, extra in events:
-        if ts > query_time: break
-        if event == "Behavior Changed":
-            person_labels[extra] = label.lower()   # extra = "person_N"
-    return any(lbl == "cheating" for lbl in person_labels.values())
+        if ts > tp_end:
+            break
+        if event != "Behavior Changed" or label.lower() != "cheating":
+            continue
+        if tp_start <= ts <= tp_end:
+            gt_tp = True
+        if fn_start <= ts <= query_time:
+            gt_fn = True
+
+    return gt_tp, gt_fn
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -435,7 +613,7 @@ def _generate_pdf(pdf_path, video_name, csv_name, args,
                   prec_all, rec_all, f1_all,
                   frames_evaluated, eval_start, eval_end):
     if not REPORTLAB_OK:
-        print("[WARN] Skipping PDF - reportlab not installed.")
+        _warn("Skipping PDF — reportlab not installed.")
         return
 
     doc       = SimpleDocTemplate(pdf_path, pagesize=letter,
@@ -475,6 +653,7 @@ def _generate_pdf(pdf_path, video_name, csv_name, args,
         ["Frames Evaluated",   str(frames_evaluated)],
         ["Conf Threshold",     str(args.conf)],
         ["IoU Threshold",      str(args.iou_threshold)],
+        ["GT Debounce Window", f"{args.gt_window}s  (presence window for CSV ground truth)"],
     ]
     meta_table = Table(meta_data, colWidths=[2.2*inch, 4.0*inch])
     meta_table.setStyle(TableStyle([
@@ -546,7 +725,7 @@ def _generate_pdf(pdf_path, video_name, csv_name, args,
     ))
 
     doc.build(elements)
-    print(f"[INFO] PDF report saved to:\n       {pdf_path}\n")
+    _ok(f"PDF saved  {_c(C.GRAY, pdf_path)}\n")
 
 
 def _div(n, d):
@@ -558,10 +737,10 @@ def _div(n, d):
 # ─────────────────────────────────────────────────────────────────────────────
 def run_evaluation(args):
     if not os.path.isfile(args.video):
-        sys.exit(f"\n[ERROR] Video not found: {args.video}")
+        _err(f"Video not found:  {args.video}"); sys.exit(1)
     cap = cv2.VideoCapture(args.video)
     if not cap.isOpened():
-        sys.exit(f"\n[ERROR] Could not open: {args.video}")
+        _err(f"OpenCV couldn't open:  {args.video}"); sys.exit(1)
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     vid_fps      = cap.get(cv2.CAP_PROP_FPS) or 15.0
@@ -576,48 +755,56 @@ def run_evaluation(args):
     desk_model = None
 
     if not args.extract_only:
+        _section("Loading models")
         if not os.path.isfile(args.model):
-            sys.exit(f"[ERROR] Object model not found:\n        {args.model}")
-        print(f"[INFO] Loading object model  -> {args.model}")
+            _err(f"Object model not found:\n        {args.model}"); sys.exit(1)
+
+        print(f"  {_c(C.GRAY, 'Object model')}   ", end="", flush=True)
         obj_model = YOLO(args.model)
-        print(f"[INFO] Object model ready.  Conf={args.conf}  IoU={args.iou_threshold}")
+        _ok(f"Object detection ready  {_c(C.GRAY, f'conf={args.conf}')}")
 
         if os.path.isfile(args.pose_model):
-            print(f"[INFO] Loading pose model    -> {args.pose_model}")
+            print(f"  {_c(C.GRAY, 'Pose model')}     ", end="", flush=True)
             pose_model = YOLO(args.pose_model)
-            print(f"[INFO] Pose model ready.")
+            _ok("Pose estimation ready")
         else:
-            print(f"[WARN] Pose model not found — skipping pose estimation.\n"
-                  f"       Expected: {args.pose_model}")
+            _warn(f"Pose model not found — pose estimation will be skipped\n"
+                  f"         Expected:  {args.pose_model}")
 
         if os.path.isfile(args.desk_model):
-            print(f"[INFO] Loading desk model    -> {args.desk_model}")
+            print(f"  {_c(C.GRAY, 'Desk model')}     ", end="", flush=True)
             desk_model = YOLO(args.desk_model)
-            print(f"[INFO] Desk model ready.")
+            _ok("Desk detection ready")
         else:
-            print(f"[WARN] Desk model not found — skipping desk detection.\n"
-                  f"       Expected: {args.desk_model}")
+            _warn(f"Desk model not found — desk detection will be skipped\n"
+                  f"         Expected:  {args.desk_model}")
 
-    print(f"\n{'='*64}")
-    print(f"  Video      : {os.path.basename(args.video)}")
-    print(f"  Video start: {vid_start_dt.strftime('%b %d, %Y %I:%M:%S %p')}  "
-          f"(used as t=0 for CSV ground-truth lookup)")
-    print(f"  Resolution : {vid_w}x{vid_h}  |  FPS: {vid_fps:.2f}")
-    print(f"  Frames     : {total_frames}  |  Step: every {args.step} frame(s)")
-    print(f"  Frames dir : {frames_dir}")
-    print(f"  Session dir: {out_dir}")
+    _section("Session details")
+    frames_to_process = (total_frames + args.step - 1) // args.step
+    dur_s  = total_frames / vid_fps
+    dur_str = f"{int(dur_s)//60}m {int(dur_s)%60:02d}s"
+    _info(f"Video       {_c(C.WHITE, os.path.basename(args.video))}")
+    _info(f"Recorded    {_c(C.WHITE, vid_start_dt.strftime('%b %d, %Y  %I:%M:%S %p'))}  {_c(C.GRAY, '(used as t=0 for ground truth)')}")
+    _info(f"Resolution  {_c(C.WHITE, f'{vid_w}×{vid_h}')}  @ {vid_fps:.1f} fps  ·  {dur_str}  ·  {total_frames} frames")
+    _info(f"Frames out  {_c(C.WHITE, str(frames_to_process))}  {_c(C.GRAY, f'(every {args.step} frame)' if args.step > 1 else '')}")
+    _info(f"Output dir  {_c(C.GRAY, frames_dir)}")
     if args.csv:
-        print(f"  CSV log    : {os.path.basename(args.csv)}")
-    print(f"  Models     : obj={'yes' if obj_model else 'skip'}  "
-          f"pose={'yes' if pose_model else 'skip'}  "
-          f"desk={'yes' if desk_model else 'skip'}")
-    print(f"{'='*64}\n")
+        _info(f"Ground truth  {_c(C.WHITE, os.path.basename(args.csv))}")
+    models_str = "  ".join([
+        _c(C.GREEN, "obj") if obj_model else _c(C.GRAY, "obj"),
+        _c(C.GREEN, "pose") if pose_model else _c(C.GRAY, "pose"),
+        _c(C.GREEN, "desk") if desk_model else _c(C.GRAY, "desk"),
+    ])
+    _info(f"Models      {models_str}")
+    if not args.extract_only and args.csv:
+        _info(f"GT window   {_c(C.WHITE, f'{args.gt_window}s')}  {_c(C.GRAY, '± for TP/FP  |  fn-window')}  {_c(C.WHITE, f'{args.fn_window}s')}  {_c(C.GRAY, 'backward for FN')}")
+    print()
 
     events     = []
     has_labels = bool(args.csv) and not args.extract_only
     if has_labels:
         events = _load_csv_events(args.csv)
-        print(f"[INFO] Loaded {len(events)} events from CSV.\n")
+        _ok(f"Loaded {_c(C.WHITE, str(len(events)))} events from CSV\n")
 
     # ── Frame loop ────────────────────────────────────────────────────────────
     total_counts = defaultdict(lambda: {"tp": 0, "fp": 0, "fn": 0})
@@ -625,7 +812,8 @@ def run_evaluation(args):
     frame_idx    = 0
     saved_idx    = 0
 
-    print("[INFO] Extracting and evaluating frames ...\n")
+    _section("Processing frames")
+    frames_expected = (total_frames + args.step - 1) // args.step
 
     while True:
         ret, frame = cap.read()
@@ -651,16 +839,17 @@ def run_evaluation(args):
 
                     # ── Object detection ──────────────────────────────────
                     pred_labels = {det[0].lower() for det in obj_dets}
-                    gt_labels   = _active_labels_at(events, frame_time)
+                    gt_tp_labels, gt_fn_labels = _active_labels_at(
+                        events, frame_time, args.gt_window, args.fn_window)
 
                     for lbl in pred_labels:
                         cls_id = LABEL_TO_ID.get(lbl, -1)
                         if cls_id < 0: continue
-                        if lbl in gt_labels:
+                        if lbl in gt_tp_labels:
                             total_counts[cls_id]["tp"] += 1
                         else:
                             total_counts[cls_id]["fp"] += 1
-                    for lbl in gt_labels:
+                    for lbl in gt_fn_labels:
                         cls_id = LABEL_TO_ID.get(lbl, -1)
                         if cls_id < 0: continue
                         if lbl not in pred_labels:
@@ -668,24 +857,26 @@ def run_evaluation(args):
 
                     # ── Desk detection ────────────────────────────────────
                     if desk_model is not None:
-                        pred_desk = len(desk_boxes) > 0
-                        gt_desk   = _desk_active_at(events, frame_time)
-                        if pred_desk and gt_desk:
+                        pred_desk        = len(desk_boxes) > 0
+                        gt_desk_tp, gt_desk_fn = _desk_active_at(
+                            events, frame_time, args.gt_window, args.fn_window)
+                        if pred_desk and gt_desk_tp:
                             total_counts["desk"]["tp"] += 1
-                        elif pred_desk and not gt_desk:
+                        elif pred_desk and not gt_desk_tp:
                             total_counts["desk"]["fp"] += 1
-                        elif not pred_desk and gt_desk:
+                        elif not pred_desk and gt_desk_fn:
                             total_counts["desk"]["fn"] += 1
 
                     # ── Pose / Cheating detection ─────────────────────────
                     if pose_model is not None:
                         pred_cheating = any(d["label"] == "Cheating" for d in pose_dets)
-                        gt_cheating   = _cheating_active_at(events, frame_time)
-                        if pred_cheating and gt_cheating:
+                        gt_cheat_tp, gt_cheat_fn = _cheating_active_at(
+                            events, frame_time, args.gt_window, args.fn_window)
+                        if pred_cheating and gt_cheat_tp:
                             total_counts["cheating"]["tp"] += 1
-                        elif pred_cheating and not gt_cheating:
+                        elif pred_cheating and not gt_cheat_tp:
                             total_counts["cheating"]["fp"] += 1
-                        elif not pred_cheating and gt_cheating:
+                        elif not pred_cheating and gt_cheat_fn:
                             total_counts["cheating"]["fn"] += 1
 
                 # Draw all three models onto annotated frame
@@ -697,39 +888,29 @@ def run_evaluation(args):
                     cv2.imwrite(os.path.join(frames_dir, f"{name}_annotated.jpg"), ann)
 
             saved_idx += 1
-            if saved_idx % 100 == 0:
-                print(f"  ... {saved_idx} frames processed", end="\r")
+            _progress(saved_idx, frames_expected, eval_start)
 
         frame_idx += 1
 
     cap.release()
     eval_end = datetime.now()
-    print(f"\n[INFO] Done - {saved_idx} frames saved to:\n       {frames_dir}\n")
+    elapsed  = (eval_end - eval_start).total_seconds()
+    print()  # newline after progress bar
+    _ok(f"{saved_idx} frames saved  {_c(C.GRAY, f'({elapsed:.1f}s  ·  {frames_dir})')}\n")
 
     if not has_labels:
         if args.extract_only:
-            print("[INFO] Extract-only mode — evaluation skipped.")
+            _info("Extract-only mode — no evaluation run.")
         else:
-            print("[INFO] No CSV log selected — evaluation skipped.")
+            _info("No CSV selected — evaluation skipped.")
         return
 
-    # ── Print evaluation ──────────────────────────────────────────────────────
-    print(f"{'='*66}")
-    print("  EVALUATION RESULTS - Argus Detection Suite")
-    print(f"{'='*66}")
-    print(f"  IoU Threshold   : {args.iou_threshold}")
-    print(f"  Conf Threshold  : {args.conf}")
-    print(f"  Frames Evaluated: {saved_idx}")
-    print(f"  CSV Ground Truth: {os.path.basename(args.csv)}")
-    print(f"{'='*66}")
-    print(f"  {'Class':<18} {'TP':>5} {'FP':>5} {'FN':>5}  "
-          f"{'Precision':>10} {'Recall':>8} {'F1-Score':>9}")
-    print(f"  {'-'*67}")
-
+    # ── Compute all metrics first, then interpret ─────────────────────────────
     all_tp = all_fp = all_fn = 0
-    csv_rows = []
+    csv_rows   = []
+    row_data   = {}   # label -> (tp, fp, fn, precision, recall, f1)
 
-    def _print_and_collect(label, key, include_in_overall=True):
+    def _compute(label, key, include_in_overall=True):
         nonlocal all_tp, all_fp, all_fn
         c          = total_counts[key]
         tp, fp, fn = c["tp"], c["fp"], c["fn"]
@@ -738,32 +919,171 @@ def run_evaluation(args):
         precision  = _div(tp, tp + fp)
         recall     = _div(tp, tp + fn)
         f1         = _div(2 * precision * recall, precision + recall)
-        print(f"  {label:<18} {tp:>5} {fp:>5} {fn:>5}  "
-              f"{precision:>10.4f} {recall:>8.4f} {f1:>9.4f}")
         csv_rows.append((label, tp, fp, fn, precision, recall, f1))
+        row_data[label] = (tp, fp, fn, precision, recall, f1)
 
-    # Object detection rows
-    print(f"  -- Object Detection {'─'*47}")
     for cls_id in sorted(OBJECT_LABELS):
-        _print_and_collect(OBJECT_LABELS[cls_id], cls_id)
-
-    # Desk detection row (only if model was loaded)
+        _compute(OBJECT_LABELS[cls_id], cls_id)
     if desk_model is not None:
-        print(f"  -- Desk Detection {'─'*49}")
-        _print_and_collect("Desk", "desk")
-
-    # Pose / Cheating row (always shown)
-    print(f"  -- Pose Estimation {'─'*48}")
-    _print_and_collect("Cheating", "cheating")
+        _compute("Desk", "desk")
+    _compute("Cheating", "cheating")
 
     prec_all = _div(all_tp, all_tp + all_fp)
     rec_all  = _div(all_tp, all_tp + all_fn)
     f1_all   = _div(2 * prec_all * rec_all, prec_all + rec_all)
 
-    print(f"  {'-'*67}")
-    print(f"  {'OVERALL':>18} {all_tp:>5} {all_fp:>5} {all_fn:>5}  "
-          f"{prec_all:>10.4f} {rec_all:>8.4f} {f1_all:>9.4f}")
-    print(f"{'='*66}\n")
+    # ── Plain-English interpretation ──────────────────────────────────────────
+    _section("What the results mean")
+
+    def _interpret_class(label, tp, fp, fn, precision, recall, f1):
+        """Emit a short paragraph explaining this class's numbers in plain English."""
+        total_pred  = tp + fp
+        total_real  = tp + fn
+        f1_col      = C.GREEN if f1 >= 0.75 else (C.YELLOW if f1 >= 0.50 else C.RED)
+        header      = f"  {_c(C.BOLD + C.WHITE, label)}  {_c(f1_col + C.BOLD, f'F1 {f1:.2f}')}"
+        print(header)
+
+        # Nothing was detected and nothing was there
+        if total_pred == 0 and total_real == 0:
+            print(f"  {_c(C.GRAY, 'Not present in this session — no detections and no ground-truth events.')}")
+            print()
+            return
+
+        # Nothing predicted at all but should have been
+        if total_pred == 0 and total_real > 0:
+            print(f"  {_c(C.YELLOW, f'The model never detected a {label} in this entire session,')}")
+            print(f"  {_c(C.YELLOW, f'even though the session log recorded {total_real} instance(s).')}")
+            print(f"  {_c(C.YELLOW, 'It missed everything — the model may not generalise to this footage.')}")
+            print()
+            return
+
+        # Build the narrative
+        lines = []
+
+        # TP — what went right
+        if tp > 0:
+            tp_pct = tp / max(total_pred, 1) * 100
+            lines.append(
+                f"Out of {total_pred} time{'s' if total_pred != 1 else ''} the model "
+                f"said it saw a {label}, {tp} of those ({tp_pct:.0f}%) were correct."
+            )
+        else:
+            lines.append(f"The model never made a correct {label} detection in this session.")
+
+        # FP — over-detection
+        if fp > 0:
+            if fp > tp * 3:
+                severity = "extremely trigger-happy"
+            elif fp > tp:
+                severity = "over-detecting"
+            else:
+                severity = "occasionally over-detecting"
+            lines.append(
+                f"It was {severity} though — {fp} false alarm{'s' if fp != 1 else ''} "
+                f"where it called something a {label} when it wasn't. "
+                f"{'That is more false alarms than correct hits, which drags precision down to ' + f'{precision:.2f}.' if fp >= tp else f'Precision sits at {precision:.2f}.'}"
+            )
+        else:
+            lines.append(
+                f"It had zero false alarms — every {label} it reported was confirmed. "
+                f"Precision is perfect at 1.00."
+            )
+
+        # FN — missed detections
+        if fn > 0:
+            if fn > tp:
+                lines.append(
+                    f"On the other side, it missed {fn} real {label} instance{'s' if fn != 1 else ''} "
+                    f"— more than it caught. Recall is only {recall:.2f}, meaning it's regularly "
+                    f"failing to spot what's actually there."
+                )
+            else:
+                lines.append(
+                    f"It also missed {fn} real instance{'s' if fn != 1 else ''} "
+                    f"(recall {recall:.2f}), though it caught more than it missed."
+                )
+        else:
+            lines.append(
+                f"Impressively, it didn't miss a single real {label} — recall is 1.00."
+            )
+
+        # Overall F1 verdict
+        if f1 >= 0.85:
+            lines.append(f"Overall, the {label} detector is working very well.")
+        elif f1 >= 0.75:
+            lines.append(f"The {label} detector is solid but has some room left to improve.")
+        elif f1 >= 0.50:
+            lines.append(
+                f"Performance is mediocre. "
+                + (f"Reducing false alarms would help most." if fp > fn else
+                   f"Getting it to catch more real instances would help most.")
+            )
+        else:
+            lines.append(
+                f"This is poor performance. "
+                + ("There are far more false alarms than real detections — consider raising the confidence threshold."
+                   if fp > fn * 2 else
+                   "The model is missing most real detections — it may not be trained well enough on this class.")
+            )
+
+        # Print wrapped at ~72 chars
+        import textwrap
+        for line in lines:
+            for wrapped in textwrap.wrap(line, width=70):
+                print(f"  {_c(C.GRAY, wrapped)}" if wrapped == line else f"  {_c(C.GRAY, wrapped)}")
+        print()
+
+    for cls_id in sorted(OBJECT_LABELS):
+        label = OBJECT_LABELS[cls_id]
+        _interpret_class(label, *row_data[label])
+
+    if desk_model is not None:
+        _interpret_class("Desk", *row_data["Desk"])
+
+    _interpret_class("Cheating", *row_data["Cheating"])
+
+    # ── Overall summary ───────────────────────────────────────────────────────
+    print(f"  {_c(C.GRAY, '─' * 60)}")
+    print(f"  {_c(C.BOLD, 'Overall')}  —  "
+          f"{all_tp} correct  /  {all_fp} false alarms  /  {all_fn} missed")
+    print(f"  Precision {prec_all:.2f}   Recall {rec_all:.2f}   "
+          f"{_c(C.BOLD, 'F1')} {_c((C.GREEN if f1_all >= 0.75 else C.YELLOW if f1_all >= 0.50 else C.RED) + C.BOLD, f'{f1_all:.2f}')}")
+    print()
+
+    import textwrap
+    if f1_all >= 0.85:
+        verdict = ("The suite is performing excellently across the board. "
+                   "You can trust these results in a real session.")
+    elif f1_all >= 0.75:
+        verdict = ("The suite is performing well overall. There are a few classes "
+                   "pulling the score down — the per-class notes above show where to focus.")
+    elif f1_all >= 0.50:
+        verdict = (
+            "Performance is moderate. "
+            + (f"The biggest problem right now is false alarms ({all_fp} FP vs {all_fn} FN) — "
+               f"try raising the confidence threshold or tightening the GT window."
+               if all_fp > all_fn else
+               f"The biggest problem right now is missed detections ({all_fn} FN vs {all_fp} FP) — "
+               f"the models aren't catching enough of what's really there.")
+        )
+    else:
+        if all_fp > all_fn * 2:
+            verdict = (
+                f"The results are poor, driven mainly by {all_fp} false alarms. "
+                f"Something in the footage is being misidentified repeatedly. "
+                f"Try a higher confidence threshold, check that the ground-truth CSV "
+                f"matches this video, or increase --gt-window if flicker is the cause."
+            )
+        else:
+            verdict = (
+                f"The results are poor, with {all_fn} missed detections dominating. "
+                f"The models may not be recognising objects in this lighting or camera angle. "
+                f"Consider retraining on footage closer to these conditions."
+            )
+
+    for line in textwrap.wrap(verdict, width=68):
+        print(f"  {_c(C.WHITE, line)}")
+    print()
 
     csv_out = os.path.join(out_dir, "evaluation_results.csv")
     with open(csv_out, "w", newline="") as f:
@@ -774,7 +1094,8 @@ def run_evaluation(args):
                         f"{row[4]:.4f}", f"{row[5]:.4f}", f"{row[6]:.4f}"])
         w.writerow(["OVERALL", all_tp, all_fp, all_fn,
                     f"{prec_all:.4f}", f"{rec_all:.4f}", f"{f1_all:.4f}"])
-    print(f"[INFO] CSV saved to:\n       {csv_out}\n")
+    print()
+    _ok(f"CSV saved  {_c(C.GRAY, csv_out)}")
 
     folder_ts = os.path.basename(out_dir)
     pdf_path  = os.path.join(out_dir, f"Argus Evaluation Report - {folder_ts}.pdf")
@@ -811,6 +1132,13 @@ def main():
     parser.add_argument("--conf",           type=float, default=OBJ_CONF,
                         help="Confidence threshold for object detection")
     parser.add_argument("--iou-threshold",  type=float, default=IOU_THRESHOLD)
+    parser.add_argument("--gt-window",      type=float, default=5.0,
+                        help="TP/FP validation window in seconds (default 5). "
+                             "A detection is TP if a GT event exists within ±gt-window.")
+    parser.add_argument("--fn-window",      type=float, default=2.0,
+                        help="FN counting window in seconds (default 2). "
+                             "A frame only counts as a miss if a GT event fired "
+                             "within the last fn-window seconds.")
     parser.add_argument("--extract-only",   action="store_true",
                         help="Save raw frames only, skip all model inference")
     parser.add_argument("--save-annotated", action="store_true",
