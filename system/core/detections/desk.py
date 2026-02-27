@@ -16,11 +16,16 @@ DESK_COLOR    = (255, 0, 0)
 _SNAP_GRID    = 10
 IOU_THRESHOLD = 0.3
 
-# Inference resolution — 16:9 slice of imgsz=320.
-_INFER_W = 320
-_INFER_H = 180
+# ── Inference resolution ──────────────────────────────────────────────────────
+# Bumped from 320×180 → 640×360 to match training resolution (imgsz=640).
+# Desks are large objects so the benefit here is less dramatic than for phones,
+# but matching training resolution still improves border/edge detection and
+# reduces missed detections when the camera is mounted far from the desk.
+_INFER_W = 640
+_INFER_H = 360
 
-# Far-distance support: accept smaller boxes (was 1000, lowered to 400)
+# Far-distance support: lowered minimum box area from 1000 → 400 because at
+# 640×360 a far desk still produces a reasonably sized box.
 _MIN_BOX_AREA = 400
 
 _last_desk_state: dict[str, dict] = {}
@@ -92,16 +97,17 @@ def _match_desks(prev_instances, current_boxes):
 
 
 def predict(frame, cam_name, person_boxes=None):
-    """Run YOLO desk inference on downscaled, lighting-normalised frame.
-    Works in bright/dark lighting and at far/close distances.
-    Returns matched instances dict. Does NOT draw.
+    """Run YOLO desk inference on a 640×360 lighting-normalised frame.
+
+    Running at the model's native training resolution (640) instead of the
+    old 320×180 restores detection capability at all distances without retraining.
     """
     if person_boxes is None:
         person_boxes = []
 
     orig_h, orig_w = frame.shape[:2]
 
-    # ── Lighting normalisation (CLAHE + adaptive gamma) ──
+    # ── Lighting normalisation (CLAHE + adaptive gamma + sharpening) ──────────
     enhanced, brightness = preprocess_frame(frame)
     small   = cv2.resize(enhanced, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
     scale_x = orig_w / _INFER_W
@@ -114,7 +120,7 @@ def predict(frame, cam_name, person_boxes=None):
 
     desk_results = yolo_desk.predict(
         small,
-        imgsz=320,
+        imgsz=640,
         conf=conf_threshold,
         verbose=False,
         device="cpu",

@@ -9,7 +9,14 @@ from core.config import (
     LOG_FILE,
     CSV_FILE,
 )
-from core.lighting_distance import preprocess_frame, _dynamic_confidence
+from core.lighting_distance import (
+    preprocess_frame,
+    _dynamic_confidence,
+    _estimate_sharpness,
+    get_tta_frames,
+    unflip_boxes,
+    merge_tta_detections,
+)
 
 OBJECT_LABELS = {
     0: "Phone",
@@ -22,15 +29,12 @@ OBJECT_TEXT_COLOR = (0, 140, 255)
 _LABEL_TO_CLS     = {v: k for k, v in OBJECT_LABELS.items()}
 
 IOU_THRESHOLD = 0.3
-
-# Inference resolution — 16:9 slice of imgsz=320.
-_INFER_W = 320
-_INFER_H = 180
+_INFER_W = 640
+_INFER_H = 360
 
 _last_object_state = {}
 _next_instance_id  = 0
 
-# ── Buffered file I/O ─────────────────────────────────────────────────────────
 _log_lock   = threading.Lock()
 _log_file   = None
 _csv_file   = None
@@ -48,7 +52,6 @@ def _write_event(timestamp, cam_name, event, label, inst_id):
     with _log_lock:
         _log_file.write(f"[{timestamp.strftime('%H:%M:%S')}] {cam_name}: {event}: {label} (id={inst_id})\n")
         _csv_writer.writerow([timestamp, cam_name, event, label, inst_id])
-# ─────────────────────────────────────────────────────────────────────────────
 
 def _get_label(cls):
     return OBJECT_LABELS.get(cls, f"Class{cls}")
@@ -94,33 +97,16 @@ def _match_instances(prev_instances, current_detections):
     return matched_instances, unmatched_current, lost_ids
 
 
-def predict(frame, cam_name):
-    """Run YOLO inference on downscaled, lighting-normalised frame.
-    Works in bright/dark lighting and at far/close distances.
-    Returns matched instances dict. Does NOT draw.
-    """
-    orig_h, orig_w = frame.shape[:2]
-
-    # ── Lighting normalisation (CLAHE + adaptive gamma) ──
-    enhanced, brightness = preprocess_frame(frame)
-    small   = cv2.resize(enhanced, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
-    scale_x = orig_w / _INFER_W
-    scale_y = orig_h / _INFER_H
-
-    # Adaptive confidence — relax in poor lighting
-    conf_threshold = _dynamic_confidence(YOLO_CONF_THRESHOLD, brightness)
-
-    infer_area = _INFER_W * _INFER_H
-
+def _run_inference(small_frame, conf_threshold, infer_area, brightness, scale_x, scale_y):
+    """Run YOLO on one frame variant. Returns list of (label, (x1,y1,x2,y2), conf)."""
     results = yolo.predict(
-        small,
-        imgsz=320,
+        small_frame,
+        imgsz=640,
         conf=conf_threshold,
         verbose=False,
         device="cpu",
     )
-
-    current_detections = []
+    detections = []
     for r in results:
         for box in r.boxes:
             cls      = int(box.cls[0].item())
@@ -128,20 +114,45 @@ def predict(frame, cam_name):
             label    = _get_label(cls)
             x1, y1, x2, y2 = box.xyxy[0].tolist()
 
-            # Compute area ratio at inference scale (for distance-aware conf)
-            infer_box_area = (x2 - x1) * (y2 - y1)
-            area_ratio = infer_box_area / infer_area
-
-            # Scale back to original resolution
+            area_ratio = (x2 - x1) * (y2 - y1) / infer_area
             x1 = int(x1 * scale_x); y1 = int(y1 * scale_y)
             x2 = int(x2 * scale_x); y2 = int(y2 * scale_y)
 
-            # Distance-aware confidence filter
             eff_conf = _dynamic_confidence(conf_threshold, brightness, area_ratio)
             if conf_val < eff_conf:
                 continue
 
-            current_detections.append((label, (x1, y1, x2, y2), conf_val))
+            detections.append((label, (x1, y1, x2, y2), conf_val))
+    return detections
+
+
+def predict(frame, cam_name):
+    """Run YOLO with optional TTA for dark/far conditions.
+    Normal conditions  → single inference pass (no overhead).
+    Dark/far conditions → 2-3 variants merged (better recall).
+    """
+    orig_h, orig_w = frame.shape[:2]
+
+    enhanced, brightness = preprocess_frame(frame)
+    sharpness  = _estimate_sharpness(frame)
+    scale_x    = orig_w / _INFER_W
+    scale_y    = orig_h / _INFER_H
+    infer_area = _INFER_W * _INFER_H
+    conf_threshold = _dynamic_confidence(YOLO_CONF_THRESHOLD, brightness)
+
+    tta_variants   = get_tta_frames(enhanced, brightness, sharpness)
+    is_multi       = len(tta_variants) > 1
+
+    all_detections = []
+    for i, variant in enumerate(tta_variants):
+        small = cv2.resize(variant, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
+        dets  = _run_inference(small, conf_threshold, infer_area, brightness, scale_x, scale_y)
+        # Last variant is always the horizontal flip — un-flip its boxes
+        if is_multi and i == len(tta_variants) - 1:
+            dets = unflip_boxes(dets, orig_w)
+        all_detections.append(dets)
+
+    current_detections = merge_tta_detections(all_detections, iou_threshold=IOU_THRESHOLD)
 
     prev_instances = _last_object_state.get(cam_name, {})
     matched, new_detections, lost_ids = _match_instances(prev_instances, current_detections)
@@ -160,7 +171,6 @@ def predict(frame, cam_name):
 
 
 def draw(frame, matched):
-    """Draw cached matched instances. Fast — pure OpenCV, no inference."""
     for inst_id, (label, (x1, y1, x2, y2)) in matched.items():
         color = _get_color(_LABEL_TO_CLS.get(label, 0))
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
@@ -170,6 +180,5 @@ def draw(frame, matched):
 
 
 def process(frame, cam_name):
-    """Legacy blocking path. Prefer predict()+draw()."""
     matched = predict(frame, cam_name)
     return draw(frame, matched)

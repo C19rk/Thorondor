@@ -1,7 +1,7 @@
 import cv2
 import csv
 import numpy as np
-import time
+from collections import deque
 from datetime import datetime
 
 from core.pose_models import pose_model
@@ -10,7 +10,12 @@ from core.config import (
     LOG_FILE,
     CSV_FILE,
 )
-from core.lighting_distance import preprocess_frame, _dynamic_confidence
+from core.lighting_distance import (
+    preprocess_frame,
+    _dynamic_confidence,
+    _estimate_sharpness,
+    get_tta_frames,
+)
 
 POSE_LABELS = {
     0: "Cheating",
@@ -32,14 +37,22 @@ SKELETON = [
     (12, 14), (14, 16),
 ]
 
-KPT_CONF_THRESHOLD = 0.3
+KPT_CONF_THRESHOLD = 0.2   # lowered from 0.3 — draws more keypoints on partial views
 IOU_THRESHOLD      = 0.3
 
-# Inference resolution — 16:9 slice of imgsz=256.
+# Keep the original resize that was working
 _INFER_W = 256
 _INFER_H = 144
 
+# Centre-point fallback: if IOU fails, match by proximity (15% of frame diagonal)
+_CENTRE_MATCH_RATIO  = 0.15
+
+# Majority-vote label smoothing over last N frames — stops Cheating/Normal flickering
+_LABEL_SMOOTH_WINDOW = 8
+
+# ── Per-camera state ──────────────────────────────────────────────────────────
 _person_instances: dict[str, dict] = {}
+_label_history:    dict[str, dict] = {}
 _next_instance_id = 0
 
 
@@ -56,6 +69,11 @@ def _get_label(cls):
     return name.capitalize()
 
 
+def _box_centre(box):
+    x1, y1, x2, y2 = box
+    return ((x1 + x2) / 2.0, (y1 + y2) / 2.0)
+
+
 def _iou(boxA, boxB):
     xA = max(boxA[0], boxB[0]); yA = max(boxA[1], boxB[1])
     xB = min(boxA[2], boxB[2]); yB = min(boxA[3], boxB[3])
@@ -68,13 +86,27 @@ def _iou(boxA, boxB):
     return interArea / float(areaA + areaB - interArea)
 
 
-def _match_persons(prev_instances, current_detections):
+def _match_persons(prev_instances, current_detections, frame_w, frame_h):
+    """
+    Two-stage matching:
+      Stage 1 — IOU (works when person barely moves)
+      Stage 2 — Centre-point distance fallback (works when person shifts/leans)
+    Stops the tracker assigning a new ID every few frames.
+    """
+    diag             = (frame_w ** 2 + frame_h ** 2) ** 0.5
+    centre_threshold = diag * _CENTRE_MATCH_RATIO
+
     used_prev = set()
     matched   = {}
     new_dets  = []
 
     for det in current_detections:
-        best_id, best_iou = None, IOU_THRESHOLD
+        best_id   = None
+        best_iou  = IOU_THRESHOLD
+        best_dist = centre_threshold
+        det_cx, det_cy = _box_centre(det["box"])
+
+        # Stage 1: IOU
         for inst_id, prev in prev_instances.items():
             if inst_id in used_prev:
                 continue
@@ -82,6 +114,17 @@ def _match_persons(prev_instances, current_detections):
             if iou > best_iou:
                 best_iou = iou
                 best_id  = inst_id
+
+        # Stage 2: centre-point fallback
+        if best_id is None:
+            for inst_id, prev in prev_instances.items():
+                if inst_id in used_prev:
+                    continue
+                px, py = _box_centre(prev["box"])
+                dist   = ((det_cx - px) ** 2 + (det_cy - py) ** 2) ** 0.5
+                if dist < best_dist:
+                    best_dist = dist
+                    best_id   = inst_id
 
         if best_id is not None:
             matched[best_id] = det
@@ -91,6 +134,20 @@ def _match_persons(prev_instances, current_detections):
 
     lost_ids = [i for i in prev_instances if i not in used_prev]
     return matched, new_dets, lost_ids
+
+
+def _smoothed_label(cam_name, inst_id, raw_label):
+    """Majority vote over last _LABEL_SMOOTH_WINDOW frames per person."""
+    if cam_name not in _label_history:
+        _label_history[cam_name] = {}
+    if inst_id not in _label_history[cam_name]:
+        _label_history[cam_name][inst_id] = deque(maxlen=_LABEL_SMOOTH_WINDOW)
+    history = _label_history[cam_name][inst_id]
+    history.append(raw_label)
+    counts = {}
+    for lbl in history:
+        counts[lbl] = counts.get(lbl, 0) + 1
+    return max(counts, key=counts.get)
 
 
 def _draw_skeleton(frame, keypoints_xy, keypoints_conf, color):
@@ -124,34 +181,17 @@ def _log_behavior(cam_name, inst_id, label, timestamp):
         ])
 
 
-def predict(frame, cam_name):
-    """Run pose inference on a downscaled, lighting-normalised copy.
-    Works in bright/dark lighting and at far/close distances.
-    Returns raw matched detections dict. Does NOT draw.
-    """
-    orig_h, orig_w = frame.shape[:2]
-
-    # ── Lighting normalisation (CLAHE + adaptive gamma) ──
-    enhanced, brightness = preprocess_frame(frame)
-    small = cv2.resize(enhanced, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
-    scale_x = orig_w / _INFER_W
-    scale_y = orig_h / _INFER_H
-
-    # Adaptive confidence — relax in poor lighting
-    conf_threshold = _dynamic_confidence(POSE_CONF_THRESHOLD, brightness)
-
-    infer_area = _INFER_W * _INFER_H
-
+def _run_inference(small_frame, conf_threshold, scale_x, scale_y):
+    """Run pose model on one frame variant. Returns list of detection dicts."""
     pose_results = pose_model.predict(
-        small,
+        small_frame,
         imgsz=256,
         conf=conf_threshold,
         verbose=False,
         device="cpu",
     )
 
-    current_detections = []
-
+    detections = []
     for r in pose_results:
         boxes    = r.boxes     if (hasattr(r, "boxes")     and r.boxes     is not None) else []
         kpts_obj = r.keypoints if (hasattr(r, "keypoints") and r.keypoints is not None) else None
@@ -164,29 +204,20 @@ def predict(frame, cam_name):
             conf_val = float(box.conf[0].item())
             label    = _get_label(cls)
 
-            # Scale from inference space → original frame space
             x1, y1, x2, y2 = box.xyxy[0].tolist()
 
-            # Distance-aware confidence check (inference-space area ratio)
-            infer_box_area = (x2 - x1) * (y2 - y1)
-            area_ratio = infer_box_area / infer_area
-            eff_conf = _dynamic_confidence(conf_threshold, brightness, area_ratio)
-            if conf_val < eff_conf:
-                continue
-
+            # Scale back to original resolution
             x1 = int(x1 * scale_x); y1 = int(y1 * scale_y)
             x2 = int(x2 * scale_x); y2 = int(y2 * scale_y)
 
-            kp_xy   = kpts_xy[idx]   if idx < len(kpts_xy)   and len(kpts_xy[idx]) > 0   else np.zeros((17, 2))
-            kp_conf = kpts_conf[idx] if idx < len(kpts_conf) and len(kpts_conf[idx]) > 0 else np.zeros(17)
+            kp_xy   = kpts_xy[idx].copy()   if idx < len(kpts_xy)   and len(kpts_xy[idx])   > 0 else np.zeros((17, 2))
+            kp_conf = kpts_conf[idx].copy() if idx < len(kpts_conf) and len(kpts_conf[idx]) > 0 else np.zeros(17)
 
-            # Scale keypoints back to full-res
-            if kp_xy is not None and len(kp_xy):
-                kp_xy = kp_xy.copy()
+            if len(kp_xy):
                 kp_xy[:, 0] *= scale_x
                 kp_xy[:, 1] *= scale_y
 
-            current_detections.append({
+            detections.append({
                 "box":       (x1, y1, x2, y2),
                 "label":     label,
                 "conf":      conf_val,
@@ -194,26 +225,98 @@ def predict(frame, cam_name):
                 "kpts_conf": kp_conf,
             })
 
-    prev_instances = _person_instances.get(cam_name, {})
-    matched, new_dets, lost_ids = _match_persons(prev_instances, current_detections)
+    return detections
 
+
+def _merge_pose_tta(all_detections, iou_threshold=0.3):
+    """Merge TTA variants — keep highest-confidence box per person."""
+    if len(all_detections) == 1:
+        return all_detections[0]
+    merged = [det for dets in all_detections for det in dets]
+    if not merged:
+        return []
+    merged.sort(key=lambda d: d["conf"], reverse=True)
+    kept = []
+    for det in merged:
+        if not any(_iou(det["box"], k["box"]) > iou_threshold for k in kept):
+            kept.append(det)
+    return kept
+
+
+def predict(frame, cam_name):
+    """
+    Run pose inference using the original 256×144 resize that works well,
+    with 4 additional fixes applied on top:
+      1. No double confidence penalty  — detects close AND far
+      2. TTA for dark/far conditions   — better recall
+      3. Centre-point tracking         — stable person IDs
+      4. Label smoothing               — no Cheating/Normal flickering
+    """
+    orig_h, orig_w = frame.shape[:2]
+
+    enhanced, brightness = preprocess_frame(frame)
+    sharpness = _estimate_sharpness(frame)
+    scale_x   = orig_w / _INFER_W
+    scale_y   = orig_h / _INFER_H
+
+    # Single threshold — NOT re-applied per box (was causing over-filtering)
+    conf_threshold = _dynamic_confidence(POSE_CONF_THRESHOLD, brightness)
+
+    # TTA: no overhead in normal conditions, 2-3 variants in dark/far
+    tta_variants = get_tta_frames(enhanced, brightness, sharpness)
+    is_multi     = len(tta_variants) > 1
+
+    all_detections = []
+    for i, variant in enumerate(tta_variants):
+        small = cv2.resize(variant, (_INFER_W, _INFER_H), interpolation=cv2.INTER_LINEAR)
+        dets  = _run_inference(small, conf_threshold, scale_x, scale_y)
+
+        # Un-flip boxes and keypoints from the flipped variant
+        if is_multi and i == len(tta_variants) - 1:
+            for det in dets:
+                x1, y1, x2, y2 = det["box"]
+                det["box"] = (orig_w - x2, y1, orig_w - x1, y2)
+                if len(det["kpts_xy"]):
+                    det["kpts_xy"] = det["kpts_xy"].copy()
+                    det["kpts_xy"][:, 0] = orig_w - det["kpts_xy"][:, 0]
+
+        all_detections.append(dets)
+
+    current_detections = _merge_pose_tta(all_detections, iou_threshold=IOU_THRESHOLD)
+
+    prev_instances = _person_instances.get(cam_name, {})
+    matched, new_dets, lost_ids = _match_persons(
+        prev_instances, current_detections, orig_w, orig_h
+    )
+
+    # Apply label smoothing to all matched persons
+    for inst_id, det in matched.items():
+        det["label"] = _smoothed_label(cam_name, inst_id, det["label"])
+
+    # New persons — seed their label history
     for det in new_dets:
         inst_id = _new_id()
+        det["label"] = _smoothed_label(cam_name, inst_id, det["label"])
         matched[inst_id] = det
         _log_behavior(cam_name, inst_id, det["label"], datetime.now())
 
+    # Log only sustained changes (post-smoothing)
     for inst_id, det in matched.items():
         if inst_id in prev_instances:
-            prev_label = prev_instances[inst_id]["label"]
-            if det["label"] != prev_label:
+            if det["label"] != prev_instances[inst_id]["label"]:
                 _log_behavior(cam_name, inst_id, det["label"], datetime.now())
+
+    # Clean up label history for lost persons
+    for inst_id in lost_ids:
+        if cam_name in _label_history and inst_id in _label_history[cam_name]:
+            del _label_history[cam_name][inst_id]
 
     _person_instances[cam_name] = {
         inst_id: {"box": det["box"], "label": det["label"]}
         for inst_id, det in matched.items()
     }
 
-    return matched  # raw detections only, no drawing
+    return matched
 
 
 def draw(frame, matched):

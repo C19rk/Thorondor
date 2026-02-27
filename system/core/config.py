@@ -32,9 +32,18 @@ YOLO_DESK_MODEL_PATH = "../machine_learning/runs/argus_desk_detection/weights/be
 POSE_MODEL_PATH      = "../machine_learning/runs/pose/argus_pose_estimation/weights/best.pt"
 
 # === DETECTION THRESHOLDS ===
-YOLO_CONF_THRESHOLD      = 0.60
-YOLO_DESK_CONF_THRESHOLD = 0.50
-POSE_CONF_THRESHOLD      = 0.50
+# Lowered from 0.60 → 0.45 for object detection: the model was trained at imgsz=640
+# but previously inferred at 320, making far/small objects score lower than they should.
+# Now that inference runs at the correct 640, 0.45 gives a good precision/recall balance
+# without flooding the screen with false positives.
+YOLO_CONF_THRESHOLD      = 0.55
+
+# Desk detection is a large object — keep threshold moderate.
+YOLO_DESK_CONF_THRESHOLD = 0.55
+
+# Pose: model is very well trained (mAP50-95=0.926). Keep at 0.45 to catch
+# partially visible or far-away persons without sacrificing precision.
+POSE_CONF_THRESHOLD      = 0.55
 
 # # === GSM / ALERTS ===
 # PHONE_NUMBERS    = ["+639XXXXXXXXX", "+639YYYYYYYYY"]

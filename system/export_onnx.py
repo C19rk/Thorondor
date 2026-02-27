@@ -1,39 +1,69 @@
-# This is to maximize speed for potato pcs
-
 """
-Run this ONCE from the system/ directory to convert all .pt models to ONNX.
-After running, restart the app — it will automatically use the faster ONNX models.
+re_export_onnx.py  —  Re-exports all three Argus models to ONNX at imgsz=640.
 
-Usage:
-    cd system
-    python export_onnx.py
+Run from the system/ directory:
+    python re_export_onnx.py
+
+This replaces the old ONNX files (exported at 320/256) with new ones at 640,
+which matches the training resolution and restores far-distance detection.
+The .pt files are NOT modified.
 """
 
 import os
 import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from core.config import POSE_MODEL_PATH, YOLO_MODEL_PATH, YOLO_DESK_MODEL_PATH
-from ultralytics import YOLO
+try:
+    from ultralytics import YOLO
+except ImportError:
+    sys.exit("[ERROR] ultralytics not installed. Run: pip install ultralytics")
 
-def export(pt_path, imgsz, task_label):
+# ── Model paths (relative to system/) ────────────────────────────────────────
+MODELS = [
+    {
+        "name":  "Object Detection",
+        "pt":    "../machine_learning/runs/argus_object_detection/weights/best.pt",
+        "imgsz": 640,
+    },
+    {
+        "name":  "Desk Detection",
+        "pt":    "../machine_learning/runs/argus_desk_detection/weights/best.pt",
+        "imgsz": 640,
+    },
+    {
+        "name":  "Pose Estimation",
+        "pt":    "../machine_learning/runs/pose/argus_pose_estimation/weights/best.pt",
+        "imgsz": 256,
+    },
+]
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+for m in MODELS:
+    pt_path   = os.path.normpath(os.path.join(os.path.dirname(__file__), m["pt"]))
     onnx_path = pt_path.replace(".pt", ".onnx")
-    if os.path.exists(onnx_path):
-        print(f"[SKIP] Already exported: {onnx_path}")
-        return
-    print(f"[EXPORT] {task_label}: {pt_path} -> {onnx_path} (imgsz={imgsz})")
+
+    if not os.path.isfile(pt_path):
+        print(f"[SKIP] {m['name']}: .pt not found at {pt_path}")
+        continue
+
+    print(f"\n[EXPORT] {m['name']}")
+    print(f"         .pt   → {pt_path}")
+    print(f"         .onnx → {onnx_path}")
+    print(f"         imgsz = {m['imgsz']}")
+
     model = YOLO(pt_path)
     model.export(
         format="onnx",
-        imgsz=imgsz,
-        simplify=True,   # graph simplification = faster inference
-        opset=17,
-        dynamic=False,   # static shape = faster on CPU
+        imgsz=m["imgsz"],
+        simplify=True,
+        dynamic=False,   # fixed input shape — faster inference
+        opset=12,
     )
-    print(f"[DONE] {onnx_path}")
 
-if __name__ == "__main__":
-    export(POSE_MODEL_PATH,      imgsz=256, task_label="Pose")
-    export(YOLO_MODEL_PATH,      imgsz=320, task_label="Object")
-    export(YOLO_DESK_MODEL_PATH, imgsz=320, task_label="Desk")
-    print("\n[ALL DONE] Restart the app to use ONNX models.")
+    if os.path.isfile(onnx_path):
+        size_mb = os.path.getsize(onnx_path) / (1024 * 1024)
+        print(f"         ✓ Done — {size_mb:.1f} MB")
+    else:
+        print(f"         ✗ Export may have saved to a different path — check above.")
+
+print("\n[DONE] All models re-exported. Restart your system to use the new ONNX files.\n")

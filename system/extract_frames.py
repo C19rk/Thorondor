@@ -38,9 +38,9 @@ OBJECT_LABELS    = {0: "Phone", 1: "Calculator", 2: "Smartwatch", 3: "Watch"}
 LABEL_TO_ID      = {v.lower(): k for k, v in OBJECT_LABELS.items()}
 OBJ_COLOR        = (0, 225, 255)
 OBJ_TEXT_COLOR   = (0, 140, 255)
-OBJ_CONF         = 0.75
-OBJ_INFER_W      = 320
-OBJ_INFER_H      = 180
+OBJ_CONF         = 0.55
+OBJ_INFER_W      = 640
+OBJ_INFER_H      = 360
 
 # ── Pose estimation ───────────────────────────────────────────────────────────
 POSE_LABELS      = {0: "Cheating", 1: "Normal"}
@@ -62,8 +62,8 @@ SKELETON         = [
 # ── Desk detection ────────────────────────────────────────────────────────────
 DESK_COLOR       = (255, 0, 0)
 DESK_CONF        = 0.55
-DESK_INFER_W     = 320
-DESK_INFER_H     = 180
+DESK_INFER_W     = 640
+DESK_INFER_H     = 360
 DESK_MIN_AREA    = 1000
 
 # ── Evaluation ────────────────────────────────────────────────────────────────
@@ -364,7 +364,7 @@ def _run_desk(model, frame, person_boxes):
     scale_x = orig_w / DESK_INFER_W
     scale_y = orig_h / DESK_INFER_H
 
-    results = model.predict(small, imgsz=320, conf=DESK_CONF, verbose=False)
+    results = model.predict(small, imgsz=640, conf=DESK_CONF, verbose=False)
 
     boxes = []
     for r in results:
@@ -405,7 +405,7 @@ def _run_object(model, frame, conf):
     scale_x = orig_w / OBJ_INFER_W
     scale_y = orig_h / OBJ_INFER_H
 
-    results = model.predict(small, imgsz=320, conf=conf, verbose=False)
+    results = model.predict(small, imgsz=640, conf=conf, verbose=False)
 
     detections = []
     for r in results:
